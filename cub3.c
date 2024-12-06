@@ -3,33 +3,28 @@
 
 int check_extension(char *file_name){
     
-    char extension[4]= ".cub";
+    const char extension[5]= ".cub";
     int check_counter = 3;
-    int file_counter = 0;
-    while(file_name[file_counter])
-        file_counter++;
-    file_counter--;
-    while(file_name[file_counter && extension[check_counter]] && extension[check_counter] > 0 && file_name[file_counter] > 0)
+    int file_counter = strlen(file_name) - 1;
+    while(check_counter >= 0 && extension[check_counter])
     {
-        if(file_name[file_counter] != extension[check_counter])
-        {
-            printf("uncorrect extension\n");
+        if(file_name[file_counter--] != extension[check_counter--])
             return 0;
-        }
-        file_counter--;
-        check_counter--;
     }
-    printf("f: %c e: %c\n", file_name[file_counter], extension[check_counter]);
-    printf("correct extension\n");
     return 1;
 }
+
+
 
 int main(int ac, char **av){
 
     if(ac == 2)
     {
-        char *file = av[1];
-        // printf("%s\n", file);
-        check_extension(file);
+        if(check_extension(av[1]))
+        {
+            printf("correct");
+        }
+        else
+            printf("uncorrect");
     }
 }
