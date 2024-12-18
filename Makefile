@@ -1,7 +1,7 @@
 NAME=cub3
 CC=gcc 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
-SRC=$(wildcard *.c)
+SRC=$(wildcard *.c) ./getnextline/get_next_line.c ./getnextline/get_next_line_utils.c
 OBJ=$(SRC:.c=.o)
 
 all: $(NAME)

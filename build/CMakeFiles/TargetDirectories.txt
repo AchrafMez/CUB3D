@@ -1,0 +1,3 @@
+/home/captain/Desktop/CUB3D/build/CMakeFiles/CUB3D.dir
+/home/captain/Desktop/CUB3D/build/CMakeFiles/edit_cache.dir
+/home/captain/Desktop/CUB3D/build/CMakeFiles/rebuild_cache.dir

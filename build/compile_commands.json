@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/captain/Desktop/CUB3D/build",
+  "command": "/usr/bin/cc  -I/home/captain/Desktop/CUB3D/. -I/home/captain/Desktop/CUB3D/getnextline -g -std=gnu11 -o CMakeFiles/CUB3D.dir/getnextline/get_next_line.c.o -c /home/captain/Desktop/CUB3D/getnextline/get_next_line.c",
+  "file": "/home/captain/Desktop/CUB3D/getnextline/get_next_line.c",
+  "output": "CMakeFiles/CUB3D.dir/getnextline/get_next_line.c.o"
+},
+{
+  "directory": "/home/captain/Desktop/CUB3D/build",
+  "command": "/usr/bin/cc  -I/home/captain/Desktop/CUB3D/. -I/home/captain/Desktop/CUB3D/getnextline -g -std=gnu11 -o CMakeFiles/CUB3D.dir/getnextline/get_next_line_utils.c.o -c /home/captain/Desktop/CUB3D/getnextline/get_next_line_utils.c",
+  "file": "/home/captain/Desktop/CUB3D/getnextline/get_next_line_utils.c",
+  "output": "CMakeFiles/CUB3D.dir/getnextline/get_next_line_utils.c.o"
+},
+{
+  "directory": "/home/captain/Desktop/CUB3D/build",
+  "command": "/usr/bin/cc  -I/home/captain/Desktop/CUB3D/. -I/home/captain/Desktop/CUB3D/getnextline -g -std=gnu11 -o CMakeFiles/CUB3D.dir/cub3.c.o -c /home/captain/Desktop/CUB3D/cub3.c",
+  "file": "/home/captain/Desktop/CUB3D/cub3.c",
+  "output": "CMakeFiles/CUB3D.dir/cub3.c.o"
+}
+]
