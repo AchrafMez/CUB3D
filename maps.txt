@@ -2,7 +2,7 @@
 
 
 
-    NO ./no.jpeg            
+    NO /home/captain/Desktop/CUB3D/no.jpeg     
 
     
 SO ./so.jpeg
