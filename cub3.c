@@ -1,5 +1,4 @@
 #include "cub3.h"
-#include <string.h>
 
 int check_extension(char *file_name){
     
@@ -209,7 +208,7 @@ int valid_color(char *line)
     }
     return 0;
 }
-
+0...
 void parse_colors(char *line, t_map **map)
 {
     int i = 0;
@@ -226,19 +225,34 @@ void parse_colors(char *line, t_map **map)
 //then go to parse the map lines
 
 int check_fc_prototype(char *line)
-{
-    int i = 0;
+{\123
+    unsigned long i = 0;
     while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
         i++;
     int comma = 0;
     while(line[i])
     {
+        // printf("FC:    '%c'\n", line[i]);
         if(line[i] == ',')
+        {
             comma++;
-        if(line[i] >= '0' && line[i] <= '9' && line[i] != ',')
-            
+            printf("comma %d\n", comma);
+        }
+        if(isdigit(line[i]) == 0 && line[i] != ',' && line[i] != ' ')
+        {
+            printf("line[i]: %c", line[i]);
+            printf("not a valid color\n");
+            return 1;
+        }
         i++;
+        if(i == (strlen(line)))
+        {
+            printf("correct colors\n");
+            return 0;
+        }
     }
+    printf("not correct colors");
+    return 1;
 }
 
 int check_FC(char *line)
@@ -250,10 +264,12 @@ int check_FC(char *line)
     {
         i++;
         if(check_fc_prototype(line + i) == 0)
-        return 0;
+        {
+            printf("colors is good\n");
+            return 0;
+        }
     }
-    else 
-        return 1;
+    return 1;
 }
 void read_map(char *file_name, t_map **map)
 {

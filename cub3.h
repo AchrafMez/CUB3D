@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include "./getnextline/get_next_line.h"
 #include "unistd.h"
+#include <string.h>
+#include <fcntl.h>
 #include "stdlib.h"
+#include <ctype.h>
 
 typedef struct s_map
 {
