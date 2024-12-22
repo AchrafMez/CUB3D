@@ -126,10 +126,10 @@ int check_positions(char *line, char f, char s, t_map **map)
             while(line[i] == ' ' || line[i] == '\t' || line[i] == '\v')
                 i++;
             char *path = ft_substr(line + i);
+            printf("PATH: '%s'\n", path);
             // printf("'%c%c': '%s'\n", f, s, path);
             if(check_texture_perm(path) == 0)
             {
-                // printf("PATH: '%s'\n", path);
                 // printf("texture exist\n");
                 store_textures(f, path, map);
             }
@@ -156,35 +156,104 @@ int check_identif(char *line)
             // printf("there is an id--------------------->%c%c\n", line[i] , line[i + 1]);
             return 0;
         }
+        else if(line[i] == 'F' || line[i] == 'C')
+        {
+            // printf("there is an id--------------------->%c\n", line[i]);
+            return 0;
+        }
         i++;
     }
     return 1;
 }
 
-int check(char *line, t_map **map)
+// int check(char *line, t_map **map)
+// {
+//     int i = 0;
+//     while(line[i])
+//     {
+//         if(line[i] == 'N' && line[i + 1] == 'O')
+//             check_positions(line, 'N', 'O', map);
+//         else if(line[i] == 'S' && line[i + 1] == 'O')
+//             check_positions(line, 'S', 'O', map);
+//         else if(line[i] == 'W' && line[i + 1] == 'E')
+//             check_positions(line, 'W', 'E', map);
+//         else if(line[i] == 'E' && line[i + 1] == 'A')
+//             check_positions(line, 'E', 'A', map);
+//         else if(line[i] == 'F')
+//         {
+//             printf("fff here]n\n");
+//             check_positions(line, 'F', ' ', map);
+//         }
+//         else if(line[i] == 'C')
+//         {
+//             printf("c here]n\n");
+//             check_positions(line, 'C', ' ', map);
+//         }
+//         else{
+//             printf("no edentifiers\n");
+//             return 1;
+//         }
+//         i++;
+//     }
+//     return 0;
+// }
+
+int valid_color(char *line)
 {
     int i = 0;
     while(line[i])
     {
-        if(line[i] == 'N' && line[i + 1] == 'O')
-            check_positions(line, 'N', 'O', map);
-        else if(line[i] == 'S' && line[i + 1] == 'O')
-            check_positions(line, 'S', 'O', map);
-        else if(line[i] == 'W' && line[i + 1] == 'E')
-            check_positions(line, 'W', 'E', map);
-        else if(line[i] == 'E' && line[i + 1] == 'A')
-            check_positions(line, 'E', 'A', map);
-        else{
-            printf("no edentifiers\n");
+        if(line[i] < '0' || line[i] > '9')
             return 1;
-        }
-        // else if(line[i] == 'F')
-        //     check_positions(line, 'N', '*', map);
-        // else if(line[i] == 'C')
-        //     check_positions(line, 'N', '*', map);
         i++;
     }
     return 0;
+}
+
+void parse_colors(char *line, t_map **map)
+{
+    int i = 0;
+    (void)map;
+    while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
+        i++;
+    if(line[i] == 'F' || line[i] == 'C')
+        i++;
+    char *floor = ft_substr(line + i);
+    printf("fc: %s\n", floor);
+    free(floor);
+}
+//i need to parse colors and store them in the map
+//then go to parse the map lines
+
+int check_fc_prototype(char *line)
+{
+    int i = 0;
+    while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
+        i++;
+    int comma = 0;
+    while(line[i])
+    {
+        if(line[i] == ',')
+            comma++;
+        if(line[i] >= '0' && line[i] <= '9' && line[i] != ',')
+            
+        i++;
+    }
+}
+
+int check_FC(char *line)
+{
+    int i = 0;
+    while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
+        i++;
+    if(line[i] == 'F' || line[i] == 'C')
+    {
+        i++;
+        if(check_fc_prototype(line + i) == 0)
+        return 0;
+    }
+    else 
+        return 1;
 }
 void read_map(char *file_name, t_map **map)
 {
@@ -207,7 +276,16 @@ void read_map(char *file_name, t_map **map)
             check_positions(line, 'S', 'O', map);
             check_positions(line, 'W', 'E', map);
             check_positions(line, 'E', 'A', map);
+            // parse_floor(line, map);
+            // check_positions(line, 'F', ' ', map);
+            // check_positions(line, 'C', ' ', map);
         }
+        if(check_FC(line) == 0)
+        {
+            printf("check fc true\n");
+            parse_colors(line, map);
+        }
+
         free(line);  
         line = get_next_line(fd);
     }
@@ -260,7 +338,7 @@ int main(int ac, char **av){
         }
         else
             printf("uncorrect");
-        print_map(map);
+        // print_map(map);
        free_map(map);
     }
     return 0;

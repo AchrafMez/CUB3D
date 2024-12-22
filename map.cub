@@ -1,7 +1,5 @@
 
 
-
-
     NO ./no.jpeg     
 
     
@@ -9,7 +7,7 @@ SO ./so.jpeg
 WE ./we.jpeg
 EA ./ea.jpeg
 
-F 220,100,0
+F220,100,0
 C 225,30,0
 
 
