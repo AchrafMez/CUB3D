@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/06 10:24:44 by amezioun          #+#    #+#             */
-/*   Updated: 2024/07/14 00:06:42 by amezioun         ###   ########.fr       */
+/*   Updated: 2024/12/23 06:50:00 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 #  define BUFFER_SIZE 10
 # endif
 
+#include "../lib/lib.h"
 # include <fcntl.h>
 # include <stdlib.h>
 # include <unistd.h>
 
 char	*ft_read(int fd, char *sbuff, char *buffer);
 char	*get_next_line(int fd);
-int		ft_strlen(char *s);
+int		ft_strlen(const char *s);
 char	*ft_strdup(char *s);
 char	*ft_strjoin(char *s1, char *s2);
 int		contains_nl(char *sbuff);

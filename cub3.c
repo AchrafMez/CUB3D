@@ -13,7 +13,7 @@ int check_extension(char *file_name){
     return 1;
 }
 
-char *ft_substr(char *line)
+char *substring(char *line)
 {
     if(!line)
         return NULL;
@@ -124,8 +124,8 @@ int check_positions(char *line, char f, char s, t_map **map)
             i+= 2;
             while(line[i] == ' ' || line[i] == '\t' || line[i] == '\v')
                 i++;
-            char *path = ft_substr(line + i);
-            printf("PATH: '%s'\n", path);
+            char *path = substring(line + i);
+            // printf("PATH: '%s'\n", path);
             // printf("'%c%c': '%s'\n", f, s, path);
             if(check_texture_perm(path) == 0)
             {
@@ -208,24 +208,104 @@ int valid_color(char *line)
     }
     return 0;
 }
-0...
-void parse_colors(char *line, t_map **map)
+
+void print_fc(char **fc)
 {
     int i = 0;
+    while(fc[i])
+        printf("rgb: %s\n", fc[i++]);
+}
+
+void init_floor(t_map **map)
+{
+    (*map)->floor_rgb = malloc(sizeof(int) * 3);
+    if(!(*map)->floor_rgb)
+        return ;
+    (*map)->floor_rgb[0] = -1;
+    (*map)->floor_rgb[1] = -1;
+    (*map)->floor_rgb[2] = -1;
+}
+
+void init_ciel(t_map **map)
+{
+    (*map)->ciel_rgb = malloc(sizeof(int) * 3);
+    if(!(*map)->ciel_rgb)
+        return ;
+    (*map)->ciel_rgb[0] = -1;
+    (*map)->ciel_rgb[1] = -1;
+    (*map)->ciel_rgb[2] = -1;
+}
+// int check_clors(char *color)
+// {
+
+// }
+int valide_color(char **fc)
+{
+    int i = 0;
+    while(fc[i])
+    {
+        if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
+        {
+            printf("unsoported colors format\n");
+            return 1;
+        }
+        i++;
+    }
+    if(i != 3)
+    {
+        printf("unsoported colors format\n");
+        return 1;
+    }
+    return 0;
+}
+void fill_colors(char *line, t_map **map, int flag)
+{
+    // (void)map;
+    printf("parsing colors\n");
+    char **fc = ft_split(line, ',');
+    valide_color(fc);
+    int i = 0;
+    if(flag == 0)
+    {
+        init_floor(map);
+        printf("integer: %d\n", ft_atoi(fc[0]));
+        while(fc[i])
+        {
+            i++;
+        }
+        print_fc(fc);
+    }
+    else{
+        init_ciel(map);
+    }
+
+}
+
+void parse_colors(char *line, t_map **map)
+{
+    // int i = 0;
     (void)map;
-    while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
-        i++;
-    if(line[i] == 'F' || line[i] == 'C')
-        i++;
-    char *floor = ft_substr(line + i);
-    printf("fc: %s\n", floor);
-    free(floor);
+    while(*line && (*line == ' ' || *line == '\t' || *line == '\v'))
+        line++;
+    if(*line == 'F')
+    {
+        line++;
+        char *floor = substring(line);
+        fill_colors(floor, map, 0);
+    }
+    else if(*line == 'C')
+    {
+        line++;
+        char *floor = substring(line);
+        fill_colors(floor, map, 1);
+    }
+    // free(floor);
 }
 //i need to parse colors and store them in the map
 //then go to parse the map lines
 
 int check_fc_prototype(char *line)
-{\123
+{
     unsigned long i = 0;
     while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
         i++;
@@ -236,22 +316,22 @@ int check_fc_prototype(char *line)
         if(line[i] == ',')
         {
             comma++;
-            printf("comma %d\n", comma);
+            // printf("comma %d\n", comma);
         }
         if(isdigit(line[i]) == 0 && line[i] != ',' && line[i] != ' ')
         {
-            printf("line[i]: %c", line[i]);
-            printf("not a valid color\n");
+            // printf("line[i]: %c", line[i]);
+            // printf("not a valid color\n");
             return 1;
         }
         i++;
         if(i == (strlen(line)))
         {
-            printf("correct colors\n");
+            // printf("correct colors\n");
             return 0;
         }
     }
-    printf("not correct colors");
+    // printf("not correct colors");
     return 1;
 }
 
@@ -265,7 +345,7 @@ int check_FC(char *line)
         i++;
         if(check_fc_prototype(line + i) == 0)
         {
-            printf("colors is good\n");
+            // printf("colors is good\n");
             return 0;
         }
     }

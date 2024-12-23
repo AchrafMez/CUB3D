@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 13:12:39 by amezioun          #+#    #+#             */
-/*   Updated: 2024/07/14 00:28:53 by amezioun         ###   ########.fr       */
+/*   Updated: 2024/12/23 06:40:59 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int	ft_strlen(char *s)
+int	ft_strlen(const char *s)
 {
 	int	ret;
 
 	ret = 0;
 	if (!s)
-		return (-1);
+		return (0);
 	while (s[ret])
 		ret++;
 	return (ret);
