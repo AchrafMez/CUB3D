@@ -245,40 +245,72 @@ int valide_color(char **fc)
     while(fc[i])
     {
         if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
-        {
-            printf("unsoported colors format\n");
             return 1;
-        }
         i++;
     }
     if(i != 3)
-    {
-        printf("unsoported colors format\n");
         return 1;
-    }
     return 0;
+}
+
+void print_color(t_map *map)
+{
+    if(map->floor_rgb)
+        printf("floor %d %d %d\n", map->floor_rgb[0], map->floor_rgb[1], map->floor_rgb[2]);
+    if(map->ciel_rgb)
+        printf("ciel %d %d %d\n", map->ciel_rgb[0], map->ciel_rgb[1], map->ciel_rgb[2]);
+}
+void store_FC(char **fc, int flag, t_map **map){
+    int i = 0;
+       
+    if(flag == 0)
+        {
+            while(fc[i])
+            {
+                if((*map)->floor_rgb[i] == -1)
+                    (*map)->floor_rgb[i] = ft_atoi(fc[i]);
+                else if((*map)->floor_rgb[i] != -1)
+                    printf("floor color already exist\n");
+                i++;
+            }
+            print_fc(fc);
+            i = 0;
+        }
+        else{
+            i = 0;
+            while(fc[i])
+            {
+                printf("filling ciel\n");
+                if((*map)->ciel_rgb[i] == -1){
+                    (*map)->ciel_rgb[i] = ft_atoi(fc[i]);
+                }
+                else if((*map)->ciel_rgb[i] != -1)
+                    printf("ciel color already exist\n");
+                i++;
+            }
+            i = 0;
+        }
+}
+
+void free_fc(char **fc)
+{
+    int i = 0;
+    while(fc[i])
+    {
+        free(fc[i]);
+        i++;
+    }
+    free(fc);
 }
 void fill_colors(char *line, t_map **map, int flag)
 {
     // (void)map;
-    printf("parsing colors\n");
     char **fc = ft_split(line, ',');
-    valide_color(fc);
-    int i = 0;
-    if(flag == 0)
-    {
-        init_floor(map);
-        printf("integer: %d\n", ft_atoi(fc[0]));
-        while(fc[i])
-        {
-            i++;
-        }
-        print_fc(fc);
-    }
-    else{
-        init_ciel(map);
-    }
-
+    if(valide_color(fc) == 0)
+        store_FC(fc, flag, map);
+    else
+        printf("alwan ghayr la2i9a\n");
+    free_fc(fc);
 }
 
 void parse_colors(char *line, t_map **map)
@@ -292,14 +324,15 @@ void parse_colors(char *line, t_map **map)
         line++;
         char *floor = substring(line);
         fill_colors(floor, map, 0);
+        free(floor);
     }
     else if(*line == 'C')
     {
         line++;
         char *floor = substring(line);
         fill_colors(floor, map, 1);
+        free(floor);
     }
-    // free(floor);
 }
 //i need to parse colors and store them in the map
 //then go to parse the map lines
@@ -395,6 +428,8 @@ void free_map(t_map *map)
     free(map->SO);
     free(map->WE);
     free(map->map);
+    free(map->floor_rgb);
+    free(map->ciel_rgb);
     free(map);
 }
 
@@ -407,15 +442,26 @@ void null_init(t_map *map)
     map->map = NULL;
     map->player_x = 0;
     map->player_y = 0;
+    init_ciel(&map);
+    init_floor(&map);
 }
 void print_map(t_map *map)
 {
+    printf("---------------map--------------\n");
     printf("NO: %s\n", map->NO);
     printf("SO: %s\n", map->SO);
     printf("WE: %s\n", map->WE);
     printf("EA: %s\n", map->EA);
     printf("player_x: %d\n", map->player_x);
     printf("player_y: %d\n", map->player_y);
+    print_color(map);
+    printf("---------------map--------------\n");
+
+}
+
+void leak()
+{
+    system("leaks cub3");
 }
 
 int main(int ac, char **av){
@@ -434,8 +480,9 @@ int main(int ac, char **av){
         }
         else
             printf("uncorrect");
-        // print_map(map);
+        print_map(map);
        free_map(map);
+    //    atexit(leak);
     }
     return 0;
 }
