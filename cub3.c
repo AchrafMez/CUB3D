@@ -136,6 +136,9 @@ int check_positions(char *line, char f, char s, t_map **map)
             {
                 // printf("PATH: '%s'\n", path);
                 printf("texture doesn't exist\n");
+                free(line);
+                free(path);
+                exit(EXIT_FAILURE);
             }
             free(path);
             return 0;
@@ -398,16 +401,12 @@ void read_map(char *file_name, t_map **map)
     line = get_next_line(fd);
     while(line)
     {
-        // printf("line:  %s\n", line);
         if(check_identif(line) == 0)
         {
             check_positions(line, 'N', 'O', map);
             check_positions(line, 'S', 'O', map);
             check_positions(line, 'W', 'E', map);
             check_positions(line, 'E', 'A', map);
-            // parse_floor(line, map);
-            // check_positions(line, 'F', ' ', map);
-            // check_positions(line, 'C', ' ', map);
         }
         if(check_FC(line) == 0)
         {
@@ -461,6 +460,7 @@ void print_map(t_map *map)
 
 void leak()
 {
+    printf("leaks\n\n");
     system("leaks cub3");
 }
 
@@ -482,7 +482,8 @@ int main(int ac, char **av){
             printf("uncorrect");
         print_map(map);
        free_map(map);
-    //    atexit(leak);
+       atexit(leak);
+
     }
     return 0;
 }
