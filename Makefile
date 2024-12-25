@@ -1,6 +1,6 @@
 NAME=cub3
 CC=gcc 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
 
 SRC=$(wildcard *.c) \
     ./getnextline/get_next_line.c \

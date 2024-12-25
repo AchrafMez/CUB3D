@@ -15,7 +15,7 @@ int check_extension(char *file_name){
 
 char *substring(char *line)
 {
-    if(!line)
+    if(!line || *line == '\0')
         return NULL;
     // int len = strlen(line);
     int i = 0;
@@ -387,6 +387,169 @@ int check_FC(char *line)
     }
     return 1;
 }
+
+int is_map(char *line)
+{
+    int i = 0;
+    if(!line)
+        return 0;
+    while(line[i])
+    {
+        if(line[i] != ' ' && line[i] != '1' && line[i] != '0' && line[i] != 'W' && line[i] != 'E' && line[i] != 'S' && line[i] != 'N')
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
+int empty_line(char *line)
+{
+    if(!line)
+        return 1;
+    while(*line)
+    {
+        if(*line != ' ' && *line != '\t')
+            return 1;
+        line++;
+    }
+    return 0;
+}
+
+char *trime_line(char *line)
+{
+    if(*line == '\0')
+        return NULL;
+    while(*line)
+    {
+        if(*line == ' ' || *line == '\t' || *line == '\v')
+            line++;
+    }
+    return line;
+}
+
+
+int is_start(char *line)
+{
+    if(*line == '\0')
+        return 1;
+    return 0;
+}
+
+char *skip_whiespaces(char *line)
+{
+    while(*line && (*line == ' ' || *line == '\t' || *line == '\v'))
+        line++;
+    return line;
+}
+
+
+int map_lines(int fd)
+{
+    char *line;
+    int map_started = 0;
+    int count = 0;
+
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        char *trimmed_line = skip_whiespaces(line);
+        if (*trimmed_line == '\0' && map_started == 0)
+        {
+            free(line);
+            continue;
+        }
+        else if (*trimmed_line == '\0' && map_started == 1)
+        {
+            printf("empty lines inside map\n");
+            free(line);
+            return -1;
+        }
+
+        if (is_map(trimmed_line) == 0)
+        {
+            // printf("line in map lines: %s\n", trimmed_line);
+            map_started = 1;
+            //store map
+            count++;
+        }
+        else if (map_started == 1)
+        {
+            printf("Error: Invalid line inside the map\n");
+            free(line);
+            return -1;
+        }
+
+        free(line);
+    }
+    // printf("\n\n ---map lines : %d----\n\n", count);
+    return count;
+}
+void fill_mapline(int map_line, int fd, t_map **map)
+{
+    printf("map line: %d\n", map_line);
+    if(map_line < 0)
+    {
+        printf("there is no map\n");
+        return ;
+    }
+    (*map)->map = malloc(sizeof(char *) * (map_line + 1));
+    printf("map line + 1 == %d\n", map_line + 1);
+    if(!(*map)->map)
+    {
+        printf("allocation failed\n");
+        return ;
+    }
+    printf("%d\n", fd);
+    char *line = NULL;
+    int map_started = 0;
+    int i = 0;
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        char *trimmed_line = skip_whiespaces(line);
+        if (*trimmed_line == '\0' && map_started == 0)
+        {
+            // printf("here\n");
+            free(line);
+            continue;
+        }
+        if (is_map(trimmed_line) == 0)
+        {
+            // printf("heere\n");
+            map_started = 1;
+            (*map)->map[i] = ft_strdup(trimmed_line);
+            // printf("map[%d]: %s\n", i,(*map)->map[i]);
+            i++; 
+        }
+        free(line);
+    }
+    // printf("i:   %d\n", i);
+    (*map)->map[i] = NULL;
+}
+
+void fill_map(int fd, char *file_namp, t_map **map)
+{
+    // char *line;
+    (void)map;
+    fd = open(file_namp, O_RDONLY);
+    if(fd < 0)
+    {
+        perror("Error");
+        return ;
+    }
+    close(fd);
+    fd = open(file_namp, O_RDONLY);
+    if(fd  < 0)
+    {
+        perror("Errro");
+        return ;
+    }
+    int map_line = map_lines(fd);
+    close(fd);
+    fd = open(file_namp, O_RDONLY);
+    fill_mapline(map_line, fd, map);
+    close(fd);
+    // printf("map lines: %d\n", map_line);
+}
+
 void read_map(char *file_name, t_map **map)
 {
     (void)map;
@@ -410,16 +573,31 @@ void read_map(char *file_name, t_map **map)
         }
         if(check_FC(line) == 0)
         {
-            printf("check fc true\n");
+            // printf("check fc true\n");
             parse_colors(line, map);
         }
-
+        // if(is_map(line) == 0)
+        // {
+            // printf("here is the map lines\n");
+            // printf("line: %s\n", line);
+        // }
         free(line);  
         line = get_next_line(fd);
     }
-
+    close(fd);
+    fill_map(fd, file_name, map);
 }
 
+void fre_maplines(char **map)
+{
+    int i = 0;
+    while(map[i] != NULL)
+    {
+        free(map[i]);
+        i++;
+    }
+    // free(map);
+}
 void free_map(t_map *map)
 {
     free(map->NO);
@@ -429,6 +607,7 @@ void free_map(t_map *map)
     free(map->map);
     free(map->floor_rgb);
     free(map->ciel_rgb);
+    fre_maplines(map->map);
     free(map);
 }
 
@@ -444,6 +623,14 @@ void null_init(t_map *map)
     init_ciel(&map);
     init_floor(&map);
 }
+
+
+void print_maplines(char **map)
+{
+    int i = 0;
+    while(map[i])
+        printf("map lines: %s\n", map[i++]);
+}
 void print_map(t_map *map)
 {
     printf("---------------map--------------\n");
@@ -454,13 +641,13 @@ void print_map(t_map *map)
     printf("player_x: %d\n", map->player_x);
     printf("player_y: %d\n", map->player_y);
     print_color(map);
+    print_maplines(map->map);
     printf("---------------map--------------\n");
 
 }
 
 void leak()
 {
-    printf("leaks\n\n");
     system("leaks cub3");
 }
 
@@ -482,8 +669,7 @@ int main(int ac, char **av){
             printf("uncorrect");
         print_map(map);
        free_map(map);
-       atexit(leak);
-
+    //    atexit(leak);
     }
     return 0;
 }
