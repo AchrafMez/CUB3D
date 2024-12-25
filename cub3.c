@@ -154,15 +154,9 @@ int check_identif(char *line)
     while(line[i])
     {
         if((line[i] == 'N' && line[i + 1] == 'O') || (line[i] == 'S' && line[i + 1] == 'O') || (line[i] == 'W' && line[i + 1] == 'E') || (line[i] == 'E' && line[i + 1] == 'A'))
-        {
-            // printf("there is an id--------------------->%c%c\n", line[i] , line[i + 1]);
             return 0;
-        }
         else if(line[i] == 'F' || line[i] == 'C')
-        {
-            // printf("there is an id--------------------->%c\n", line[i]);
             return 0;
-        }
         i++;
     }
     return 1;
@@ -238,10 +232,7 @@ void init_ciel(t_map **map)
     (*map)->ciel_rgb[1] = -1;
     (*map)->ciel_rgb[2] = -1;
 }
-// int check_clors(char *color)
-// {
 
-// }
 int valide_color(char **fc)
 {
     int i = 0;
@@ -461,7 +452,7 @@ int map_lines(int fd)
         {
             printf("empty lines inside map\n");
             free(line);
-            return -1;
+            exit(EXIT_FAILURE);
         }
 
         if (is_map(trimmed_line) == 0)
@@ -475,7 +466,7 @@ int map_lines(int fd)
         {
             printf("Error: Invalid line inside the map\n");
             free(line);
-            return -1;
+            exit(EXIT_FAILURE);
         }
 
         free(line);
@@ -596,7 +587,7 @@ void fre_maplines(char **map)
         free(map[i]);
         i++;
     }
-    // free(map);
+     free(map);
 }
 void free_map(t_map *map)
 {
@@ -604,7 +595,6 @@ void free_map(t_map *map)
     free(map->EA);
     free(map->SO);
     free(map->WE);
-    free(map->map);
     free(map->floor_rgb);
     free(map->ciel_rgb);
     fre_maplines(map->map);
@@ -617,7 +607,6 @@ void null_init(t_map *map)
     map->SO = NULL;
     map->WE = NULL;
     map->EA = NULL;
-    map->map = NULL;
     map->player_x = 0;
     map->player_y = 0;
     init_ciel(&map);
