@@ -264,22 +264,28 @@ void store_FC(char **fc, int flag, t_map **map){
                 if((*map)->floor_rgb[i] == -1)
                     (*map)->floor_rgb[i] = ft_atoi(fc[i]);
                 else if((*map)->floor_rgb[i] != -1)
+                {
                     printf("floor color already exist\n");
+//                    exit(EXIT_FAILURE);
+                }
                 i++;
             }
-            print_fc(fc);
+//            print_fc(fc);
             i = 0;
         }
         else{
             i = 0;
             while(fc[i])
             {
-                printf("filling ciel\n");
+//                printf("filling ciel\n");
                 if((*map)->ciel_rgb[i] == -1){
                     (*map)->ciel_rgb[i] = ft_atoi(fc[i]);
                 }
                 else if((*map)->ciel_rgb[i] != -1)
+                {
                     printf("ciel color already exist\n");
+//                    exit(EXIT_FAILURE);
+                }
                 i++;
             }
             i = 0;
@@ -303,7 +309,11 @@ void fill_colors(char *line, t_map **map, int flag)
     if(valide_color(fc) == 0)
         store_FC(fc, flag, map);
     else
+    {
         printf("alwan ghayr la2i9a\n");
+//        free_fc(fc);
+//        exit(EXIT_FAILURE);
+    }
     free_fc(fc);
 }
 
@@ -449,7 +459,7 @@ int lines_count(int fd)
         }
         else if (*trimmed_line == '\0' && map_started == 1)
         {
-            printf("empty lines inside map\n");
+//            printf("empty lines inside map\n");
             free(line);
             continue ;
 //            exit(EXIT_FAILURE);
@@ -471,7 +481,6 @@ int lines_count(int fd)
 
         free(line);
     }
-     printf("\n\n ---map lines : %d----\n\n", count);
     return count;
 }
 int map_lines(int fd)
@@ -494,7 +503,6 @@ int map_lines(int fd)
                 if(inside == 1)
                 {
                     printf("empty line inside the map\n");
-                    printf("line: %s\n", line);
                     free(line);
                     return  -1;
                 }
@@ -518,26 +526,24 @@ char *substring2(char *line)
         end--;
     while(end >= 0 && line[end] && (line[end] == ' ' || line[end] == '\t'))
             end--;
-    printf("%d\n", end);
+//    printf("%d\n", end);
     char *dup = ft_substr(line, 0, end + 1);
     return dup;
 }
 void fill_mapline(int map_line, int fd, t_map **map)
 {
-    printf("map line: %d\n", map_line);
     if(map_line < 0)
     {
         printf("there is no map\n");
         return ;
     }
     (*map)->map = malloc(sizeof(char *) * (map_line + 1));
-    printf("map line + 1 == %d\n", map_line + 1);
+//    printf("map line + 1 == %d\n", map_line + 1);
     if(!(*map)->map)
     {
         printf("allocation failed\n");
         return ;
     }
-    printf("%d\n", fd);
     char *line = NULL;
     int map_started = 0;
     int i = 0;
@@ -598,7 +604,12 @@ void fill_map(int fd, char *file_namp, t_map **map)
         close(fd);
         fd = open(file_namp, O_RDONLY);
         int map_line = lines_count(fd);
-        printf("map lines ---> : %d\n", map_line);
+        if(map_line <= 0)
+        {
+            printf("there is no map\n");
+            close(fd);
+            exit(EXIT_FAILURE);
+        }
         close(fd);
         fd = open(file_namp, O_RDONLY);
         fill_mapline(map_line, fd, map);
@@ -710,6 +721,41 @@ void leak()
     system("leaks cub3");
 }
 
+
+int wall(char *map)
+{
+    int i = 0;
+    while(map[i])
+    {
+        if(map[i] == ' ' || map[i] == '\t')
+            i++;
+        if(map[i] == '1')
+        {
+            printf("'%c'\n", map[i]);
+            return 1;
+        }
+        else
+            return 0;
+        i++;
+    }
+    return 0;
+}
+int check_map_walls(char **map)
+{
+    int i = 0;
+//    int j = 0;
+    while(map[i])
+    {
+        if(wall(map[i]) == 1)
+        {
+//            printf("'%c'\n);
+        }
+        else
+            printf("Invalid map\n");
+        i++;
+    }
+    return 0;
+}
 int main(int ac, char **av){
 
     if(ac == 2)
@@ -723,11 +769,14 @@ int main(int ac, char **av){
         {
             // printf("correct");
             read_map(av[1], &map);
+            if(map->map) {
+//               check_map_walls(map->map);
+               }
+//            print_map(map);
+            free_map(map);
         }
         else
-            printf("uncorrect");
-        print_map(map);
-       free_map(map);
+            printf("Uncorrect filename\n");
     //    atexit(leak);
     }
     return 0;
