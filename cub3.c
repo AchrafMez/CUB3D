@@ -506,6 +506,22 @@ int map_lines(int fd)
     return 0;
 }
 
+char *substring2(char *line)
+{
+    if(!line || *line == '\0')
+    {
+//        return NULL;
+        return ft_strdup("");
+    }
+    int end = strlen(line);
+    if(line[end] == '\0')
+        end--;
+    while(end >= 0 && line[end] && (line[end] == ' ' || line[end] == '\t'))
+            end--;
+    printf("%d\n", end);
+    char *dup = ft_substr(line, 0, end + 1);
+    return dup;
+}
 void fill_mapline(int map_line, int fd, t_map **map)
 {
     printf("map line: %d\n", map_line);
@@ -527,26 +543,31 @@ void fill_mapline(int map_line, int fd, t_map **map)
     int i = 0;
     while ((line = get_next_line(fd)) != NULL)
     {
-        char *trimmed_line = skip_whiespaces(line);
-        if (*trimmed_line == '\0' && map_started == 0)
+        char *end = substring2(line);
+        if (*end == '\0' && map_started == 0)
         {
             // printf("here\n");
             free(line);
+            free(end);
             continue;
         }
-        else if(*trimmed_line == '\0' && map_started == 1)
+        else if(*end == '\0' && map_started == 1)
         {
             free(line);
+            free(end);
             continue;
         }
-        if (is_map(trimmed_line) == 0)
+        if (is_map(end) == 0)
         {
             // printf("heere\n");
             map_started = 1;
-            (*map)->map[i] = ft_strdup(trimmed_line);
+            (*map)->map[i] = ft_strdup(end);
             // printf("map[%d]: %s\n", i,(*map)->map[i]);
             i++; 
         }
+//        free(trimmed_line);
+//        free(dup2);
+        free(end);
         free(line);
     }
     // printf("i:   %d\n", i);
@@ -567,7 +588,7 @@ void fill_map(int fd, char *file_namp, t_map **map)
     fd = open(file_namp, O_RDONLY);
     if(fd  < 0)
     {
-        perror("Errro");
+        perror("Errror");
         return ;
     }
     close(fd);
