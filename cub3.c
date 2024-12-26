@@ -328,8 +328,6 @@ void parse_colors(char *line, t_map **map)
         free(floor);
     }
 }
-//i need to parse colors and store them in the map
-//then go to parse the map lines
 
 int check_fc_prototype(char *line)
 {
@@ -434,7 +432,8 @@ char *skip_whiespaces(char *line)
 }
 
 
-int map_lines(int fd)
+
+int lines_count(int fd)
 {
     char *line;
     int map_started = 0;
@@ -452,10 +451,11 @@ int map_lines(int fd)
         {
             printf("empty lines inside map\n");
             free(line);
-            exit(EXIT_FAILURE);
+            continue ;
+//            exit(EXIT_FAILURE);
         }
 
-        if (is_map(trimmed_line) == 0)
+        else if (is_map(trimmed_line) == 0)
         {
             // printf("line in map lines: %s\n", trimmed_line);
             map_started = 1;
@@ -471,9 +471,41 @@ int map_lines(int fd)
 
         free(line);
     }
-    // printf("\n\n ---map lines : %d----\n\n", count);
+     printf("\n\n ---map lines : %d----\n\n", count);
     return count;
 }
+int map_lines(int fd)
+{
+    char *line;
+    int map_started = 0;
+    int inside = 0;
+
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        char *trimmed_line = skip_whiespaces(line);
+        if(is_map(trimmed_line) == 0)
+        {
+            if (*trimmed_line == '\0')
+            {
+                if(map_started == 1)
+                        inside = 1;
+            }
+            else{
+                if(inside == 1)
+                {
+                    printf("empty line inside the map\n");
+                    printf("line: %s\n", line);
+                    free(line);
+                    return  -1;
+                }
+                map_started = 1;
+            }
+        }
+        free(line);
+    }
+    return 0;
+}
+
 void fill_mapline(int map_line, int fd, t_map **map)
 {
     printf("map line: %d\n", map_line);
@@ -499,6 +531,11 @@ void fill_mapline(int map_line, int fd, t_map **map)
         if (*trimmed_line == '\0' && map_started == 0)
         {
             // printf("here\n");
+            free(line);
+            continue;
+        }
+        else if(*trimmed_line == '\0' && map_started == 1)
+        {
             free(line);
             continue;
         }
@@ -533,11 +570,23 @@ void fill_map(int fd, char *file_namp, t_map **map)
         perror("Errro");
         return ;
     }
-    int map_line = map_lines(fd);
     close(fd);
     fd = open(file_namp, O_RDONLY);
-    fill_mapline(map_line, fd, map);
-    close(fd);
+    if(map_lines(fd) == 0)
+    {
+        close(fd);
+        fd = open(file_namp, O_RDONLY);
+        int map_line = lines_count(fd);
+        printf("map lines ---> : %d\n", map_line);
+        close(fd);
+        fd = open(file_namp, O_RDONLY);
+        fill_mapline(map_line, fd, map);
+        close(fd);
+    } else
+    {
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
     // printf("map lines: %d\n", map_line);
 }
 
