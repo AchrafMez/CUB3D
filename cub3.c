@@ -54,6 +54,45 @@ char *substring(char *line)
     return substring;
 }
 
+
+void free_fc(char **fc)
+{
+    int i = 0;
+    while(fc[i])
+    {
+        free(fc[i]);
+        i++;
+    }
+    free(fc);
+}
+
+void fre_maplines(char **map)
+{
+    int i = 0;
+    if(!map)
+        return ;
+    while(map[i] != NULL)
+    {
+        free(map[i]);
+        i++;
+    }
+    free(map);
+}
+void free_map(t_map *map)
+{
+    free(map->NO);
+    free(map->EA);
+    free(map->SO);
+    free(map->WE);
+    free(map->floor_rgb);
+    free(map->ciel_rgb);
+    fre_maplines(map->map);
+    free(map);
+}
+
+
+
+
 int check_texture_perm(char *path)
 {
     int fd = open(path, O_RDONLY);
@@ -66,49 +105,51 @@ int check_texture_perm(char *path)
     return 0;
 }
 
+
+void	ft_putstr(char *s, int fd)
+{
+    int	i;
+
+    i = 0;
+    while (s[i] != '\0')
+    {
+        write(fd, &s[i], 1);
+        i++;
+    }
+}
+
+void ft_exit(char *str ,t_map *map)
+{
+    ft_putstr(str ,2);
+    free_map(map);
+    exit(EXIT_FAILURE);
+}
+
 void store_textures(char index, char *line, t_map **map)
 {
     if(index == 'E')
     {
         if((*map)->EA)
-        {
-            printf("Error: EA texture already exist\n");
-            //here i should freeing and exit
-            return ;
-        }
+            ft_exit("Error: EA texture already exist\n", *map);
         (*map)->EA = ft_strdup(line);
     }
     else if(index == 'N')
     {
         if((*map)->NO)
-        {
-            printf("Error: NO texture already exist\n");
-            return ;
-        }
+            ft_exit("Error: NO texture already exist\n", *map);
         (*map)->NO = ft_strdup(line);
-        // printf("map NO: %s\n", (*map)->NO);
-        
     }
     else if(index == 'W')
     {
         if((*map)->WE)
-        {
-            printf("Error: WE texture already exist\n");
-            return ;
-        }
+            ft_exit("Error: WE texture already exist\n", *map);
         (*map)->WE = ft_strdup(line);
     }
     else if(index == 'S')
     {
         if((*map)->SO)
-        {
-            printf("Error: SO texture already exist\n");
-            return ;
-        }
-       (*map)->SO = ft_strdup(line);
-    }
-    else{
-        printf("no position given\n");
+            ft_exit("Error: SO texture already exist\n", *map);
+        (*map)->SO = ft_strdup(line);
     }
 }
 
@@ -125,17 +166,10 @@ int check_positions(char *line, char f, char s, t_map **map)
             while(line[i] == ' ' || line[i] == '\t' || line[i] == '\v')
                 i++;
             char *path = substring(line + i);
-            // printf("PATH: '%s'\n", path);
-            // printf("'%c%c': '%s'\n", f, s, path);
             if(check_texture_perm(path) == 0)
-            {
-                // printf("texture exist\n");
                 store_textures(f, path, map);
-            }
             else
             {
-                // printf("PATH: '%s'\n", path);
-                printf("texture doesn't exist\n");
                 free(line);
                 free(path);
                 exit(EXIT_FAILURE);
@@ -162,37 +196,7 @@ int check_identif(char *line)
     return 1;
 }
 
-// int check(char *line, t_map **map)
-// {
-//     int i = 0;
-//     while(line[i])
-//     {
-//         if(line[i] == 'N' && line[i + 1] == 'O')
-//             check_positions(line, 'N', 'O', map);
-//         else if(line[i] == 'S' && line[i + 1] == 'O')
-//             check_positions(line, 'S', 'O', map);
-//         else if(line[i] == 'W' && line[i + 1] == 'E')
-//             check_positions(line, 'W', 'E', map);
-//         else if(line[i] == 'E' && line[i + 1] == 'A')
-//             check_positions(line, 'E', 'A', map);
-//         else if(line[i] == 'F')
-//         {
-//             printf("fff here]n\n");
-//             check_positions(line, 'F', ' ', map);
-//         }
-//         else if(line[i] == 'C')
-//         {
-//             printf("c here]n\n");
-//             check_positions(line, 'C', ' ', map);
-//         }
-//         else{
-//             printf("no edentifiers\n");
-//             return 1;
-//         }
-//         i++;
-//     }
-//     return 0;
-// }
+
 
 int valid_color(char *line)
 {
@@ -233,17 +237,61 @@ void init_ciel(t_map **map)
     (*map)->ciel_rgb[2] = -1;
 }
 
-int valide_color(char **fc)
+
+int check_color(char *fc)
+{
+
+//    int digit = 0;
+        while((*fc ==' ' || *fc =='\t'))
+        {
+            printf("char in spaces: '%c'\n",*fc);
+            fc++;
+        }
+        if(*fc == '\0')
+        {
+            printf("emprty string color\n");
+            return  0;
+        }
+        while(isdigit(*fc) != 0)
+        {
+            printf("char in digit: '%c'\n",*fc);
+            fc++;
+        }
+        while((*fc ==' ' || *fc =='\t'))
+        {
+            printf("char in spaces: '%c'\n",*fc);
+            fc++;
+        }
+        if(*fc != '\0')
+        {
+            printf("uncorrect color format\n");
+            exit(EXIT_FAILURE);
+        }
+        return 0;
+}
+int valide_color(char **fc, t_map *map)
 {
     int i = 0;
     while(fc[i])
     {
-        if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
-            return 1;
+        printf("color: '%s'\n", fc[i]);
+        if(check_color(fc[i]) == 0)
+        {
+            printf("%d\n", ft_atoi(fc[i]));
+            if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
+                return 1;
+        } else
+        {
+            ft_exit("Error: Not a valid color\n", map);
+        }
+
         i++;
     }
     if(i != 3)
-        return 1;
+    {
+        printf("i in valide coloe %d\n", i);
+        ft_exit("Error: Not a valid color\n", map);
+    }
     return 0;
 }
 
@@ -256,7 +304,7 @@ void print_color(t_map *map)
 }
 void store_FC(char **fc, int flag, t_map **map){
     int i = 0;
-       
+
     if(flag == 0)
         {
             while(fc[i])
@@ -264,27 +312,22 @@ void store_FC(char **fc, int flag, t_map **map){
                 if((*map)->floor_rgb[i] == -1)
                     (*map)->floor_rgb[i] = ft_atoi(fc[i]);
                 else if((*map)->floor_rgb[i] != -1)
-                {
-                    printf("floor color already exist\n");
-//                    exit(EXIT_FAILURE);
-                }
+                    ft_exit("Error : Floor color already exist\n", *map);
                 i++;
             }
-//            print_fc(fc);
             i = 0;
         }
-        else{
+        else if(flag == 1){
             i = 0;
             while(fc[i])
             {
-//                printf("filling ciel\n");
                 if((*map)->ciel_rgb[i] == -1){
                     (*map)->ciel_rgb[i] = ft_atoi(fc[i]);
                 }
                 else if((*map)->ciel_rgb[i] != -1)
                 {
-                    printf("ciel color already exist\n");
-//                    exit(EXIT_FAILURE);
+                    printf("ciel color %d\n", (*map)->ciel_rgb[i]);
+                    ft_exit("Error : Ciel color already exist\n", *map);
                 }
                 i++;
             }
@@ -292,27 +335,19 @@ void store_FC(char **fc, int flag, t_map **map){
         }
 }
 
-void free_fc(char **fc)
-{
-    int i = 0;
-    while(fc[i])
-    {
-        free(fc[i]);
-        i++;
-    }
-    free(fc);
-}
 void fill_colors(char *line, t_map **map, int flag)
 {
-    // (void)map;
     char **fc = ft_split(line, ',');
-    if(valide_color(fc) == 0)
+    printf("flag in fill color = %d\n", flag);
+    if(valide_color(fc, *map) == 0)
+    {
+        printf("hnaa\n");
         store_FC(fc, flag, map);
+    }
     else
     {
-        printf("alwan ghayr la2i9a\n");
-//        free_fc(fc);
-//        exit(EXIT_FAILURE);
+        free_fc(fc);
+        ft_exit("Error : Color not valid\n", *map);
     }
     free_fc(fc);
 }
@@ -327,7 +362,7 @@ void parse_colors(char *line, t_map **map)
     {
         line++;
         char *floor = substring(line);
-        fill_colors(floor, map, 0);
+            fill_colors(floor, map, 0);
         free(floor);
     }
     else if(*line == 'C')
@@ -339,7 +374,7 @@ void parse_colors(char *line, t_map **map)
     }
 }
 
-int check_fc_prototype(char *line)
+int check_fc_prototype(char *line, t_map *map)
 {
     unsigned long i = 0;
     while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
@@ -360,17 +395,19 @@ int check_fc_prototype(char *line)
             return 1;
         }
         i++;
-        if(i == (strlen(line)))
-        {
-            // printf("correct colors\n");
-            return 0;
-        }
+    }
+    if(comma != 2)
+        ft_exit("Error: Invalid color format\n", map);
+    if(i == (strlen(line)))
+    {
+        // printf("correct colors\n");
+        return 0;
     }
     // printf("not correct colors");
     return 1;
 }
 
-int check_FC(char *line)
+int check_FC(char *line, t_map *map)
 {
     int i = 0;
     while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
@@ -378,7 +415,7 @@ int check_FC(char *line)
     if(line[i] == 'F' || line[i] == 'C')
     {
         i++;
-        if(check_fc_prototype(line + i) == 0)
+        if(check_fc_prototype(line + i, map) == 0)
         {
             // printf("colors is good\n");
             return 0;
@@ -443,7 +480,7 @@ char *skip_whiespaces(char *line)
 
 
 
-int lines_count(int fd)
+int lines_count(int fd, t_map *map)
 {
     char *line;
     int map_started = 0;
@@ -474,16 +511,15 @@ int lines_count(int fd)
         }
         else if (map_started == 1)
         {
-            printf("Error: Invalid line inside the map\n");
             free(line);
-            exit(EXIT_FAILURE);
+            ft_exit("Error: Invalid line inside the map\n", map);
         }
 
         free(line);
     }
     return count;
 }
-int map_lines(int fd)
+int map_lines(int fd, t_map *map)
 {
     char *line;
     int map_started = 0;
@@ -502,9 +538,8 @@ int map_lines(int fd)
             else{
                 if(inside == 1)
                 {
-                    printf("empty line inside the map\n");
                     free(line);
-                    return  -1;
+                    ft_exit("Error: Invalid line inside the map\n", map);
                 }
                 map_started = 1;
             }
@@ -530,6 +565,8 @@ char *substring2(char *line)
     char *dup = ft_substr(line, 0, end + 1);
     return dup;
 }
+
+
 void fill_mapline(int map_line, int fd, t_map **map)
 {
     if(map_line < 0)
@@ -583,7 +620,7 @@ void fill_mapline(int map_line, int fd, t_map **map)
 void fill_map(int fd, char *file_namp, t_map **map)
 {
     // char *line;
-    (void)map;
+//    (void)map;
     fd = open(file_namp, O_RDONLY);
     if(fd < 0)
     {
@@ -599,16 +636,15 @@ void fill_map(int fd, char *file_namp, t_map **map)
     }
     close(fd);
     fd = open(file_namp, O_RDONLY);
-    if(map_lines(fd) == 0)
+    if(map_lines(fd, *map) == 0)
     {
         close(fd);
         fd = open(file_namp, O_RDONLY);
-        int map_line = lines_count(fd);
+        int map_line = lines_count(fd, *map);
         if(map_line <= 0)
         {
-            printf("there is no map\n");
             close(fd);
-            exit(EXIT_FAILURE);
+            ft_exit("Error: There is no map!\n", *map);
         }
         close(fd);
         fd = open(file_namp, O_RDONLY);
@@ -622,9 +658,38 @@ void fill_map(int fd, char *file_namp, t_map **map)
     // printf("map lines: %d\n", map_line);
 }
 
+
+int check(char *line, t_map **map)
+{
+    int i = 0;
+    while(line[i])
+    {
+        if(line[i] == 'N' && line[i + 1] == 'O')
+            check_positions(line, 'N', 'O', map);
+        else if(line[i] == 'S' && line[i + 1] == 'O')
+            check_positions(line, 'S', 'O', map);
+        else if(line[i] == 'W' && line[i + 1] == 'E')
+            check_positions(line, 'W', 'E', map);
+        else if(line[i] == 'E' && line[i + 1] == 'A')
+            check_positions(line, 'E', 'A', map);
+        else if(line[i] == 'F' || line[i] == 'C')
+        {
+            if(check_FC(line, *map) == 0)
+                parse_colors(line, map);
+        }
+        else{
+            printf("%s:  no edentifiers\n", line);
+            // exit(1);
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+
 void read_map(char *file_name, t_map **map)
 {
-    (void)map;
+    (void)map;  
     char *line = NULL;
     // printf("%s\n", file_name);
     int fd = open(file_name, O_RDONLY);
@@ -643,8 +708,9 @@ void read_map(char *file_name, t_map **map)
             check_positions(line, 'W', 'E', map);
             check_positions(line, 'E', 'A', map);
         }
-        if(check_FC(line) == 0)
+        if(check_FC(line, *map) == 0)
         {
+            // count++;
             // printf("check fc true\n");
             parse_colors(line, map);
         }
@@ -660,27 +726,7 @@ void read_map(char *file_name, t_map **map)
     fill_map(fd, file_name, map);
 }
 
-void fre_maplines(char **map)
-{
-    int i = 0;
-    while(map[i] != NULL)
-    {
-        free(map[i]);
-        i++;
-    }
-     free(map);
-}
-void free_map(t_map *map)
-{
-    free(map->NO);
-    free(map->EA);
-    free(map->SO);
-    free(map->WE);
-    free(map->floor_rgb);
-    free(map->ciel_rgb);
-    fre_maplines(map->map);
-    free(map);
-}
+
 
 void null_init(t_map *map)
 {
@@ -688,6 +734,7 @@ void null_init(t_map *map)
     map->SO = NULL;
     map->WE = NULL;
     map->EA = NULL;
+    map->map = NULL;
     map->player_x = 0;
     map->player_y = 0;
     init_ciel(&map);
@@ -740,6 +787,7 @@ int wall(char *map)
     }
     return 0;
 }
+
 int check_map_walls(char **map)
 {
     int i = 0;
@@ -751,10 +799,16 @@ int check_map_walls(char **map)
 //            printf("'%c'\n);
         }
         else
-            printf("Invalid map\n");
+            // printf("Invalid map\n");
         i++;
     }
     return 0;
+}
+
+void check_filled_map(t_map *map)
+{
+    if(!map->map || map->ciel_rgb[0] == -1 || map->floor_rgb[0] == -1 || !map->EA || !map->NO || !map->SO || !map->WE)
+        ft_exit("Error: Map not filled correctly!\n", map);
 }
 int main(int ac, char **av){
 
@@ -765,14 +819,16 @@ int main(int ac, char **av){
             return 1;
         null_init(map);
         // check_positions(av[1], 'N', 'O', &map);
+        // check_positions(av[1], 'N', 'O', &map);
         if(check_extension(av[1]))
         {
             // printf("correct");
             read_map(av[1], &map);
-            if(map->map) {
+            check_filled_map(map);
+            // if(map->map) {
 //               check_map_walls(map->map);
-               }
-//            print_map(map);
+            //    }
+            print_map(map);
             free_map(map);
         }
         else

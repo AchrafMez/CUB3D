@@ -17,13 +17,10 @@ int	ft_atoi(const char *str)
 			countminus = 1;
 		str++;
 	}
-	while ((*str >= '0' && *str <= '9') || *str == ' ')
+	while ((*str >= '0' && *str <= '9'))
 	{
-		if(*str == ' ')
-		{
-			str++;
-			continue;
-		}
+//		if(*str == ' ' || *str == '\t')
+//		    return -1;
 		number = number * 10 + (*str - '0');
 		str++;
 	}
