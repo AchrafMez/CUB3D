@@ -244,27 +244,27 @@ int check_color(char *fc)
 //    int digit = 0;
         while((*fc ==' ' || *fc =='\t'))
         {
-            printf("char in spaces: '%c'\n",*fc);
+            // printf("char in spaces: '%c'\n",*fc);
             fc++;
         }
         if(*fc == '\0')
         {
-            printf("emprty string color\n");
+            // printf("emprty string color\n");
             return  0;
         }
         while(isdigit(*fc) != 0)
         {
-            printf("char in digit: '%c'\n",*fc);
+            // printf("char in digit: '%c'\n",*fc);
             fc++;
         }
         while((*fc ==' ' || *fc =='\t'))
         {
-            printf("char in spaces: '%c'\n",*fc);
+            // printf("char in spaces: '%c'\n",*fc);
             fc++;
         }
         if(*fc != '\0')
         {
-            printf("uncorrect color format\n");
+            // printf("uncorrect color format\n");
             exit(EXIT_FAILURE);
         }
         return 0;
@@ -274,10 +274,10 @@ int valide_color(char **fc, t_map *map)
     int i = 0;
     while(fc[i])
     {
-        printf("color: '%s'\n", fc[i]);
+        // printf("color: '%s'\n", fc[i]);
         if(check_color(fc[i]) == 0)
         {
-            printf("%d\n", ft_atoi(fc[i]));
+            // printf("%d\n", ft_atoi(fc[i]));
             if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
                 return 1;
         } else
@@ -289,7 +289,7 @@ int valide_color(char **fc, t_map *map)
     }
     if(i != 3)
     {
-        printf("i in valide coloe %d\n", i);
+        // printf("i in valide coloe %d\n", i);
         ft_exit("Error: Not a valid color\n", map);
     }
     return 0;
@@ -326,7 +326,7 @@ void store_FC(char **fc, int flag, t_map **map){
                 }
                 else if((*map)->ciel_rgb[i] != -1)
                 {
-                    printf("ciel color %d\n", (*map)->ciel_rgb[i]);
+                    // printf("ciel color %d\n", (*map)->ciel_rgb[i]);
                     ft_exit("Error : Ciel color already exist\n", *map);
                 }
                 i++;
@@ -338,10 +338,10 @@ void store_FC(char **fc, int flag, t_map **map){
 void fill_colors(char *line, t_map **map, int flag)
 {
     char **fc = ft_split(line, ',');
-    printf("flag in fill color = %d\n", flag);
+    // printf("flag in fill color = %d\n", flag);
     if(valide_color(fc, *map) == 0)
     {
-        printf("hnaa\n");
+        // printf("hnaa\n");
         store_FC(fc, flag, map);
     }
     else
@@ -519,6 +519,24 @@ int lines_count(int fd, t_map *map)
     }
     return count;
 }
+
+int valid_map(char *line) {
+    while (*line == ' ' || *line == '\t' || *line == '\v')
+        line++;
+    if (*line == '\0' || *line == ' ' || *line == '\t' || *line == '\v' ||
+        *line == '1' ||
+        (*line == 'S' && *(line+1) == 'O') ||
+        (*line == 'W' && *(line + 1) == 'E') ||
+        (*line == 'N' && *(line+ 1) == 'O') ||
+        (*line == 'E' && *(line+1) == 'A') ||
+        *line == 'F' || *line == 'C') {
+        // printf("line: '%c'\n ", *line);
+        return 0;
+    }
+    // printf("line: '%c' string: %s\n ", *line, line);
+    return 1;
+}
+
 int map_lines(int fd, t_map *map)
 {
     char *line;
@@ -528,6 +546,11 @@ int map_lines(int fd, t_map *map)
     while ((line = get_next_line(fd)) != NULL)
     {
         char *trimmed_line = skip_whiespaces(line);
+        if (valid_map(trimmed_line) == 1) {
+            printf("trimmed line: '%s'\n", trimmed_line);
+            free(line);
+            ft_exit("Error: Invalid map\n", map);
+        }
         if(is_map(trimmed_line) == 0)
         {
             if (*trimmed_line == '\0')
@@ -587,6 +610,7 @@ void fill_mapline(int map_line, int fd, t_map **map)
     while ((line = get_next_line(fd)) != NULL)
     {
         char *end = substring2(line);
+        printf("end: %s\n", end);
         if (*end == '\0' && map_started == 0)
         {
             // printf("here\n");
@@ -608,6 +632,12 @@ void fill_mapline(int map_line, int fd, t_map **map)
             // printf("map[%d]: %s\n", i,(*map)->map[i]);
             i++; 
         }
+        // else if(is_map(end) == 1 && map_started == 1)
+        // {
+        //     printf("end: %s\n", end);
+        //     printf("there is a problem inside the map\n");
+        //     exit(1);
+        // }
 //        free(trimmed_line);
 //        free(dup2);
         free(end);
@@ -802,7 +832,7 @@ int check_map_walls(char **map)
             // printf("Invalid map\n");
         i++;
     }
-    return 0;
+    return 0;   
 }
 
 void check_filled_map(t_map *map)
@@ -810,6 +840,41 @@ void check_filled_map(t_map *map)
     if(!map->map || map->ciel_rgb[0] == -1 || map->floor_rgb[0] == -1 || !map->EA || !map->NO || !map->SO || !map->WE)
         ft_exit("Error: Map not filled correctly!\n", map);
 }
+
+int check_map_chars(char **map){
+    int i = 0;
+    int j = 0;
+    int player_count = 0;
+    // int end = 0;
+    while (map[i]) {
+        printf("%s\n", map[i]);
+        // end = strlen(map[i]);
+        // if(map[i][end] != '1')
+        // {
+        //     printf("map should closed by ones '1, %c", map[i][end]);
+        //     exit(1);
+        // }
+        while (map[i][j]) {
+            if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != ' ' && map[i][j] != 'N' && map[i][j] != 'S' && map[i][j] != 'W' && map[i][j] != 'E') {
+                printf("Error: %c", map[i][j]);
+                exit(1);
+                // ft_exit("Unexpected character in the map!\n", data);
+            }
+            if(map[i][j] == 'S' ||  map[i][j] == 'N' || map[i][j] == 'E' || map[i][j] == 'W')
+                player_count++;
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+    if(player_count != 1)
+    {
+        printf("the map need one player\n");
+        exit(1);
+    }
+    return 0;
+}
+
 int main(int ac, char **av){
 
     if(ac == 2)
@@ -825,6 +890,7 @@ int main(int ac, char **av){
             // printf("correct");
             read_map(av[1], &map);
             check_filled_map(map);
+            check_map_chars(map->map);
             // if(map->map) {
 //               check_map_walls(map->map);
             //    }
