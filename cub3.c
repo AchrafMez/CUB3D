@@ -415,9 +415,12 @@ int check_FC(char *line, t_map *map)
 //    printf("line in FC %s\n", line);
 //    if(line[i] == '\0')
 //            return 0;
-    if((line[i] == 'F' && line[i+1] != ' ') || (line[i] == 'C' && line[i + 1] != ' '))
+    if(((line[i] == 'F' && line[i+1] != '\t') && (line[i] == 'F' && line[i+1] != ' ')) || ((line[i] == 'C' && line[i+1] != '\t') && (line[i] == 'C' && line[i+1] != ' ')))
+    {
+        printf("check FC: %s\n", line);
         ft_exit("Error: F or C Not filled as expected\n", map);
-    if((line[i] == 'F' && line[i+1] == ' ') || (line[i] == 'C' && line[i + 1] == ' '))
+    }
+    if((line[i] == 'F' && line[i+1] == ' ') || (line[i] == 'F' && line[i+1] == '\t') ||  (line[i] == 'C' && line[i + 1] == ' ') || (line[i] == 'C' && line[i+1] == '\t'))
     {
         i++;
         if(check_fc_prototype(line + i, map) == 0)
@@ -916,6 +919,7 @@ int main(int ac, char **av){
             read_map(av[1], &map);
             check_filled_map(map);
             check_map_chars(map->map);
+
             // if(map->map) {
 //               check_map_walls(map->map);
             //    }
