@@ -403,7 +403,7 @@ int check_fc_prototype(char *line, t_map *map)
         // printf("correct colors\n");
         return 0;
     }
-    // printf("not correct colors");
+//     printf("not correct colors");
     return 1;
 }
 
@@ -412,15 +412,23 @@ int check_FC(char *line, t_map *map)
     int i = 0;
     while(line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
         i++;
-    if(line[i] == 'F' || line[i] == 'C')
+//    printf("line in FC %s\n", line);
+//    if(line[i] == '\0')
+//            return 0;
+    if((line[i] == 'F' && line[i+1] != ' ') || (line[i] == 'C' && line[i + 1] != ' '))
+        ft_exit("Error: F or C Not filled as expected\n", map);
+    if((line[i] == 'F' && line[i+1] == ' ') || (line[i] == 'C' && line[i + 1] == ' '))
     {
         i++;
         if(check_fc_prototype(line + i, map) == 0)
         {
-            // printf("colors is good\n");
+
             return 0;
         }
+//        else if(check_fc_prototype(line + i, map) == 1)
+//            printf("something wrong with colors\n");
     }
+//    printf("FC characters Error: %s\n", line);
     return 1;
 }
 
@@ -718,7 +726,7 @@ int check(char *line, t_map **map)
             check_positions(line, 'W', 'E', map);
         else if(line[i] == 'E' && line[i + 1] == 'A')
             check_positions(line, 'E', 'A', map);
-        else if(line[i] == 'F' || line[i] == 'C')
+        else if((line[i] == 'F' && line[i+1] == ' ') || (line[i] == 'C' && line[i + 1] == ' '))
         {
             if(check_FC(line, *map) == 0)
                 parse_colors(line, map);
@@ -758,6 +766,7 @@ void read_map(char *file_name, t_map **map)
         {
             // count++;
             // printf("check fc true\n");
+//            printf("color line: %s\n", line);
             parse_colors(line, map);
         }
         // if(is_map(line) == 0)
