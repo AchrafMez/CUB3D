@@ -520,22 +520,38 @@ int lines_count(int fd, t_map *map)
     return count;
 }
 
-int valid_map(char *line) {
+#include <stdio.h>
+#include <ctype.h>
+
+int valid_map(char *line)
+{
     while (*line == ' ' || *line == '\t' || *line == '\v')
         line++;
-    if (*line == '\0' || *line == ' ' || *line == '\t' || *line == '\v' ||
-        *line == '1' ||
-        (*line == 'S' && *(line+1) == 'O') ||
+
+    if ((*line == 'S' && *(line + 1) == 'O') ||
         (*line == 'W' && *(line + 1) == 'E') ||
-        (*line == 'N' && *(line+ 1) == 'O') ||
-        (*line == 'E' && *(line+1) == 'A') ||
-        *line == 'F' || *line == 'C') {
-        // printf("line: '%c'\n ", *line);
-        return 0;
+        (*line == 'N' && *(line + 1) == 'O') ||
+        (*line == 'E' && *(line + 1) == 'A')) {
+        return 1;
     }
-    // printf("line: '%c' string: %s\n ", *line, line);
+
+    if (*line == 'F' || *line == 'C') {
+        return 1;
+    }
+
+    while (*line)
+    {
+        if (*line != ' ' && *line != '1' && *line != '0' && *line != 'N' &&
+            *line != 'S' && *line != 'E' && *line != 'W'){
+//            ft_exit("Error: Invalid character inside the map\n", map);
+            return 0;
+        }
+        line++;
+    }
+
     return 1;
 }
+
 
 int map_lines(int fd, t_map *map)
 {
@@ -546,10 +562,10 @@ int map_lines(int fd, t_map *map)
     while ((line = get_next_line(fd)) != NULL)
     {
         char *trimmed_line = skip_whiespaces(line);
-        if (valid_map(trimmed_line) == 1) {
-            printf("trimmed line: '%s'\n", trimmed_line);
+//        printf("trimmed: '%s'\n", trimmed_line);
+        if (valid_map(trimmed_line) == 0) {
             free(line);
-            ft_exit("Error: Invalid map\n", map);
+            ft_exit("Error: Invalid character inside the map\n", map);
         }
         if(is_map(trimmed_line) == 0)
         {
@@ -610,7 +626,7 @@ void fill_mapline(int map_line, int fd, t_map **map)
     while ((line = get_next_line(fd)) != NULL)
     {
         char *end = substring2(line);
-        printf("end: %s\n", end);
+//        printf("end: %s\n", end);
         if (*end == '\0' && map_started == 0)
         {
             // printf("here\n");
