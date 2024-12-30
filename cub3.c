@@ -172,6 +172,7 @@ int check_positions(char *line, char f, char s, t_map **map)
             {
                 free(line);
                 free(path);
+                printf("some error here\n");
                 exit(EXIT_FAILURE);
             }
             free(path);
@@ -238,7 +239,7 @@ void init_ciel(t_map **map)
 }
 
 
-int check_color(char *fc)
+int check_color(char *fc, t_map *map)
 {
 
 //    int digit = 0;
@@ -248,10 +249,7 @@ int check_color(char *fc)
             fc++;
         }
         if(*fc == '\0')
-        {
-            // printf("emprty string color\n");
-            return  0;
-        }
+            ft_exit("Error: empty RGB part\n", map);
         while(isdigit(*fc) != 0)
         {
             // printf("char in digit: '%c'\n",*fc);
@@ -263,10 +261,7 @@ int check_color(char *fc)
             fc++;
         }
         if(*fc != '\0')
-        {
-            // printf("uncorrect color format\n");
-            exit(EXIT_FAILURE);
-        }
+            ft_exit("Error: Invalid Color format\n", map);
         return 0;
 }
 int valide_color(char **fc, t_map *map)
@@ -274,8 +269,8 @@ int valide_color(char **fc, t_map *map)
     int i = 0;
     while(fc[i])
     {
-        // printf("color: '%s'\n", fc[i]);
-        if(check_color(fc[i]) == 0)
+//         printf("color: '%s'\n", fc[i]);
+        if(check_color(fc[i], map) == 0)
         {
             // printf("%d\n", ft_atoi(fc[i]));
             if(ft_atoi(fc[i]) < 0 || ft_atoi(fc[i]) > 255)
@@ -442,7 +437,7 @@ int is_map(char *line)
         return 0;
     while(line[i])
     {
-        if(line[i] != ' ' && line[i] != '1' && line[i] != '0' && line[i] != 'W' && line[i] != 'E' && line[i] != 'S' && line[i] != 'N')
+        if(line[i] != ' ' && line[i] != '\t' && line[i] != '1' && line[i] != '0' && line[i] != 'W' && line[i] != 'E' && line[i] != 'S' && line[i] != 'N')
             return 1;
         i++;
     }
@@ -654,6 +649,7 @@ void fill_mapline(int map_line, int fd, t_map **map)
         if (is_map(end) == 0)
         {
             // printf("heere\n");
+            printf("end in is map true: %s\n", end);
             map_started = 1;
             (*map)->map[i] = ft_strdup(end);
             // printf("map[%d]: %s\n", i,(*map)->map[i]);
@@ -815,6 +811,8 @@ void print_map(t_map *map)
     printf("EA: %s\n", map->EA);
     printf("player_x: %d\n", map->player_x);
     printf("player_y: %d\n", map->player_y);
+    printf("WIDTH: %d\n", map->WIDHT);
+    printf("HEIGHT: %d\n", map->HEIGHT);
     print_color(map);
     print_maplines(map->map);
     printf("---------------map--------------\n");
@@ -876,7 +874,7 @@ void check_ones(char *line)
     {
         if(*line != '1' && *line != ' ')
         {
-            printf("Error: first or second line '%c'\n", *line);
+            printf("Error: first or second line '%c', %s\n", *line, line);
             exit(1);
         }
         line++;
@@ -889,6 +887,7 @@ int check_map_chars(char **map){
     int player_count = 0;
     int index = 0;
      int end = 0;
+//     printf("first line %s\n", map[0]);
      check_ones(map[0]);
     while (map[i]) {
 //        printf("%s\n", map[i]);
@@ -898,7 +897,6 @@ int check_map_chars(char **map){
             printf("Error: Last character in the map\n");
             exit(1);
         }
-        printf("end: %c\n", map[i][end]);
         while(map[i][j] == ' ' || map[i][j] == '\t')
         {
 //                printf("char: %d: '%c'", map[i][j], j);
@@ -928,10 +926,38 @@ int check_map_chars(char **map){
         printf("the map need one player\n");
         exit(1);
     }
+         printf("last line %s\n", map[i - 1]);
     check_ones(map[i - 1]);
     return 0;
 }
 
+
+void WHXY(t_map **map)
+{
+    int i = 0;
+    int j = 0;
+    int w = 0;
+    while((*map)->map[i]){
+        w = ft_strlen((*map)->map[i]);
+        if ((*map)->map[i + 1] && w < ft_strlen((*map)->map[i + 1]))
+        {
+//            printf("w: %lu i+1 : %lu\n", w, ft_strlen((*map)->map[i+1]));
+            w = ft_strlen((*map)->map[i + 1]);
+        }
+        while((*map)->map[i][j]){
+            if((*map)->map[i][j] == 'S' || (*map)->map[i][j] == 'W' || (*map)->map[i][j] == 'E' || (*map)->map[i][j] == 'N')
+            {
+                (*map)->player_y = i;
+                (*map)->player_x = j ;
+            }
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+    (*map)->WIDHT = w;
+    (*map)->HEIGHT = i - 1;
+}
 int main(int ac, char **av){
 
     if(ac == 2)
@@ -948,15 +974,16 @@ int main(int ac, char **av){
             read_map(av[1], &map);
             check_filled_map(map);
             check_map_chars(map->map);
+            WHXY(&map);
 
             // if(map->map) {
 //               check_map_walls(map->map);
             //    }
-            print_map(map);
-            free_map(map);
         }
         else
             printf("Uncorrect filename\n");
+        print_map(map);
+        free_map(map);
     //    atexit(leak);
     }
     return 0;
