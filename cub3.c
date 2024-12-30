@@ -869,20 +869,48 @@ void check_filled_map(t_map *map)
         ft_exit("Error: Map not filled correctly!\n", map);
 }
 
+
+void check_ones(char *line)
+{
+    while(*line)
+    {
+        if(*line != '1' && *line != ' ')
+        {
+            printf("Error: first or second line '%c'\n", *line);
+            exit(1);
+        }
+        line++;
+    }
+}
+
 int check_map_chars(char **map){
     int i = 0;
     int j = 0;
     int player_count = 0;
-    // int end = 0;
+    int index = 0;
+     int end = 0;
+     check_ones(map[0]);
     while (map[i]) {
-        printf("%s\n", map[i]);
-        // end = strlen(map[i]);
-        // if(map[i][end] != '1')
-        // {
-        //     printf("map should closed by ones '1, %c", map[i][end]);
-        //     exit(1);
-        // }
+//        printf("%s\n", map[i]);
+        end = strlen(map[i])- 1;
+        if(map[i][end] != '1' && map[i][end] != ' ')
+        {
+            printf("Error: Last character in the map\n");
+            exit(1);
+        }
+        printf("end: %c\n", map[i][end]);
+        while(map[i][j] == ' ' || map[i][j] == '\t')
+        {
+//                printf("char: %d: '%c'", map[i][j], j);
+                j++;
+        }
+        index = j;
+        if(map[i][index] != '1'){
+            printf("\nError: first character in the map '%c'\n", map[i][index]);
+            exit(1);
+        }
         while (map[i][j]) {
+//            printf("char in while %c", map[i][j]);
             if (map[i][j] != '1' && map[i][j] != '0' && map[i][j] != ' ' && map[i][j] != 'N' && map[i][j] != 'S' && map[i][j] != 'W' && map[i][j] != 'E') {
                 printf("Error: %c", map[i][j]);
                 exit(1);
@@ -900,6 +928,7 @@ int check_map_chars(char **map){
         printf("the map need one player\n");
         exit(1);
     }
+    check_ones(map[i - 1]);
     return 0;
 }
 
