@@ -411,10 +411,7 @@ int check_FC(char *line, t_map *map)
 //    if(line[i] == '\0')
 //            return 0;
     if(((line[i] == 'F' && line[i+1] != '\t') && (line[i] == 'F' && line[i+1] != ' ')) || ((line[i] == 'C' && line[i+1] != '\t') && (line[i] == 'C' && line[i+1] != ' ')))
-    {
-        printf("check FC: %s\n", line);
         ft_exit("Error: F or C Not filled as expected\n", map);
-    }
     if((line[i] == 'F' && line[i+1] == ' ') || (line[i] == 'F' && line[i+1] == '\t') ||  (line[i] == 'C' && line[i + 1] == ' ') || (line[i] == 'C' && line[i+1] == '\t'))
     {
         i++;
@@ -649,7 +646,7 @@ void fill_mapline(int map_line, int fd, t_map **map)
         if (is_map(end) == 0)
         {
             // printf("heere\n");
-            printf("end in is map true: %s\n", end);
+//            printf("end in is map true: %s\n", end);
             map_started = 1;
             (*map)->map[i] = ft_strdup(end);
             // printf("map[%d]: %s\n", i,(*map)->map[i]);
@@ -926,7 +923,7 @@ int check_map_chars(char **map){
         printf("the map need one player\n");
         exit(1);
     }
-         printf("last line %s\n", map[i - 1]);
+//         printf("last line %s\n", map[i - 1]);
     check_ones(map[i - 1]);
     return 0;
 }
@@ -958,32 +955,83 @@ void WHXY(t_map **map)
     (*map)->WIDHT = w;
     (*map)->HEIGHT = i - 1;
 }
+
+
+int is_WESN(char c)
+{
+    if(c != 'N' && c != 'E' && c != 'S' && c != 'W')
+        return 1;
+    return 0;
+}
+//void check_zeros(char **map, int i, int j)
+//{
+//    if((map[i][j+1] != '1' && map[i][j + 1] != '0' && is_WESN(map[i][j + 1]) == 1) || (map[i][j-1] != '1' && map[i][j - 1] != '0' && is_WESN(map[i][j - 1]) == 1))
+//    {
+//        printf("map j path error\n");
+//        exit(1);
+//    }
+//    if((map[i + 1][j] != '1' && map[i + 1][j] != '0' && is_WESN(map[i - 1][j]) == 1) || (map[i - 1][j] != '1' && map[i][j] != '0' && is_WESN(map[i - 1][j]) == 1))
+//    {
+//        printf("map i path error %s\n", map[i]);
+//        exit(1);
+//    }
+//
+//}
+
+void check_zeros(t_map *map, int i, int j)
+{
+    if(map->map[i][j + 1] == ' ' ||  map->map[i][j - 1] == ' ' )
+        ft_exit("Error: an area must be closed\n", map);
+    if(ft_strlen(map->map[i - 1]) <= j || ft_strlen(map->map[i + 1]) <= j || map->map[i - 1][j] == ' ' || map->map[i + 1][j] == ' ' )
+            ft_exit("Error: an area must be closed\n", map);
+}
+
+void check_map_spaces(t_map *map){
+    int i = 1;
+    int j = 0;
+    while(map->map[i])
+    {
+        while(map->map[i][j])
+        {
+            if(map->map[i][j] == '0' || map->map[i][j] == 'N' || map->map[i][j] == 'S' || map->map[i][j] == 'E' || map->map[i][j] == 'W')
+            {
+                check_zeros(map, i, j);
+            }
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+}
+
+
 int main(int ac, char **av){
 
     if(ac == 2)
     {
-        t_map *map = malloc(sizeof(t_map));
-        if(!map)
-            return 1;
-        null_init(map);
         // check_positions(av[1], 'N', 'O', &map);
         // check_positions(av[1], 'N', 'O', &map);
         if(check_extension(av[1]))
         {
+            t_map *map = malloc(sizeof(t_map));
+            if(!map)
+                return 1;
+            null_init(map);
             // printf("correct");
             read_map(av[1], &map);
             check_filled_map(map);
             check_map_chars(map->map);
             WHXY(&map);
-
+            check_map_spaces(map);
             // if(map->map) {
 //               check_map_walls(map->map);
             //    }
+            print_map(map);
+            free_map(map);
         }
         else
             printf("Uncorrect filename\n");
-        print_map(map);
-        free_map(map);
+
     //    atexit(leak);
     }
     return 0;
