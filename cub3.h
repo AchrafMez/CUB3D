@@ -4,11 +4,12 @@
 #include <stdio.h>
 #include "./lib/lib.h"
 #include "./getnextline/get_next_line.h"
-#include "unistd.h"
+#include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
-#include "stdlib.h"
+#include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 
 
