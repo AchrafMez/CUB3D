@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/04 19:43:04 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/05 16:35:20 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,14 @@ typedef struct	s_player {
 	float	x;
 	float	y;
 	float	radius;
-	int		turn_direction; // -1 for left, +1 for right
-	int		walk_direction; // -1 for backward, +1 for forward
+	int		turn_direction;
+	int		walk_direction;
 	float	rotation_angle;
 	float	move_speed;
 	float	rotation_speed;
 	double	FOV;
 	mlx_image_t	*pl;
+	mlx_image_t	*line;
 }				t_player;
 
 typedef struct	s_cub
@@ -78,37 +79,63 @@ int	is_WALL(t_cub *game, int x, int y)
 	return (0);
 }
 
+int	is_collision(t_cub *game, float new_X, float new_Y)
+{
+	if (is_WALL(game, new_X - 8, new_Y - 8) ||
+		is_WALL(game, new_X + 8, new_Y - 8) ||
+		is_WALL(game, new_X - 8, new_Y + 8) ||
+		is_WALL(game, new_X + 8, new_Y + 8))
+		return (1);
+	return (0);
+}
+
+void draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color) {
+    int dx = abs(x1 - x0);
+    int dy = abs(y1 - y0);
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+    int err = dx - dy;
+
+    while (1) {
+        mlx_put_pixel(image, x0, y0, color);
+        if (x0 == x1 && y0 == y1) break;
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
 void	update_player(t_cub *game) {
 	t_player *player = game->player;
-	int32_t	new_X;
-	int32_t	new_Y;
+	int32_t new_X;
+	int32_t new_Y;
 
 	player->rotation_angle += player->turn_direction * player->rotation_speed;
 
 	float move_step = player->walk_direction * player->move_speed;
 	new_X = player->pl->instances->x + round((cos(player->rotation_angle) * move_step) * 3);
 	new_Y = player->pl->instances->y + round((sin(player->rotation_angle) * move_step) * 3);
-	if (!is_WALL(game, new_X, new_Y))
-	{
+	if (!is_collision(game, new_X, new_Y)) {
 		player->pl->instances->x = new_X;
 		player->pl->instances->y = new_Y;
 	}
-}
 
-void	cast_all_rays(t_cub *game)
-{
-	int		column;
-	float	ray_Angle;
-	int		i;
+	// Clear the previous line
+	mlx_delete_image(game->mlx, player->line);
+	player->line = mlx_new_image(game->mlx, game->win_width * TILE_SIZE, game->win_height * TILE_SIZE);
 
-	column = 0;
-	i = 0;
-	ray_Angle = game->player->rotation_angle - (game->player->FOV / 2);
-	while (i < game->win_width)
-	{
-		
-	}
+	int length_l = 30;
+	int line_end_x = player->pl->instances->x + cos(player->rotation_angle) * length_l;
+	int line_end_y = player->pl->instances->y + sin(player->rotation_angle) * length_l;
 	
+	draw_line(player->line, player->pl->instances->x, player->pl->instances->y, line_end_x, line_end_y, COLOR_YELLOW);
+	mlx_image_to_window(game->mlx, player->line, 0, 0);
 }
 
 void handle_key(mlx_key_data_t keydata, void *param) {
@@ -174,12 +201,12 @@ int	main(void)
 
 	game.map = (char *[]) {
 		"111111111111111",
-		"1N0000000000101",
+		"100000000000101",
 		"100001000000101",
 		"111100000010101",
 		"100000000010101",
 		"100000001111101",
-		"100000000000001",
+		"10000N000000001",
 		"100000000000001",
 		"111111000111101",
 		"100000000000001",
@@ -201,6 +228,12 @@ int	main(void)
 
 	game.image = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
 	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
+	pl.line = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
+	if (!pl.line)
+	{
+		fprintf(stderr, "Failed to create line image\n");
+		return 1;
+	}
 	game.player = &pl;
 	render_map(&game);
 	mlx_image_to_window(game.mlx, game.image, 0, 0);
@@ -215,6 +248,7 @@ int	main(void)
 	// mlx_loop_hook(game.mlx, render, &game);
 	mlx_loop(game.mlx);
 	mlx_delete_image(game.mlx, game.image);
+	// mlx_delete_image(game.mlx, pl.line);
 	mlx_terminate(game.mlx);
 	return EXIT_SUCCESS;
 }
