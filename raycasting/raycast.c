@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/05 16:35:20 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/07 13:23:14 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #define COLOR_YELLOW 0xFFFFFF00
 #define	WALL_STRIP_WIDTH 1
 #define PI 3.14159265358979323846
+#define LINE_LENGTH 20
 
 typedef struct	s_player {
 	float	x;
@@ -51,20 +52,77 @@ int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 
 void render_map(t_cub *game)
 {
-	for (int y = 0; game->map[y] != NULL; y++) {
-		for (int x = 0; game->map[y][x] != '\0'; x++) {
-			uint32_t color = ft_pixel(0,0,0,255); // Default to wall
+	int	y;
+	int	x;
+	int	py;
+	int	px;
+
+	y = -1;
+	while (game->map[++y] != NULL)
+	{
+		x = -1;
+		while (game->map[y][++x])
+		{
+			uint32_t color = ft_pixel(100,100,105,155); // Default to wall
 			if (game->map[y][x] == '1')
-				color = ft_pixel(255,255,255,255);
+				color = ft_pixel(55,55,55,55);
 			else if (game->map[y][x] == ' ')
 				color = ft_pixel(0,0,0,0);
-			for (int py = 0; py < TILE_SIZE; py++) {
-				for (int px = 0; px < TILE_SIZE; px++) {
+			py = -1;
+			while (++py < TILE_SIZE)
+			{
+				px = -1;
+				while (++px < TILE_SIZE)
 					mlx_put_pixel(game->image, x * TILE_SIZE + px, y * TILE_SIZE + py, color);
-				}
 			}
 		}
 	}
+}
+
+void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color) {
+	int dx;
+	int dy;
+	int	i;
+
+	dx = x1- x0;
+	dy = y1 - y0;
+	i = -1;
+	int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+	float x_inc = dx / (float)steps;
+	float y_inc = dy / (float)steps;
+
+	float x = x0;
+	float y = y0;
+	while (++i <= steps)
+	{
+		if (x >= 0 && x < img->width && y >= 0 && y < img->height)
+			mlx_put_pixel(img, (int)round(x), (int)round(y), color);
+		x += x_inc;
+		y += y_inc;
+	}
+}
+
+void update_line(t_cub *game) {
+	int	y;
+	int	x;
+
+	y = 0;
+	mlx_image_t *line_img = game->player->line;
+	while ((uint32_t)y < line_img->height)
+	{
+		x = 0;
+		while ((uint32_t)x < line_img->width)
+		{
+			mlx_put_pixel(line_img, x, y, 0x00000000);
+			x++;
+		}
+		y++;
+	}
+
+	int x1 = game->player->pl->instances->x + cos(game->player->rotation_angle) * LINE_LENGTH;
+	int y1 = game->player->pl->instances->y + sin(game->player->rotation_angle) * LINE_LENGTH;
+
+	draw_line(line_img, game->player->pl->instances->x, game->player->pl->instances->y, x1, y1, 0xFF0000FF);
 }
 
 int	is_WALL(t_cub *game, int x, int y)
@@ -89,28 +147,6 @@ int	is_collision(t_cub *game, float new_X, float new_Y)
 	return (0);
 }
 
-void draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color) {
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx = (x0 < x1) ? 1 : -1;
-    int sy = (y0 < y1) ? 1 : -1;
-    int err = dx - dy;
-
-    while (1) {
-        mlx_put_pixel(image, x0, y0, color);
-        if (x0 == x1 && y0 == y1) break;
-        int e2 = 2 * err;
-        if (e2 > -dy) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dx) {
-            err += dx;
-            y0 += sy;
-        }
-    }
-}
-
 void	update_player(t_cub *game) {
 	t_player *player = game->player;
 	int32_t new_X;
@@ -119,44 +155,35 @@ void	update_player(t_cub *game) {
 	player->rotation_angle += player->turn_direction * player->rotation_speed;
 
 	float move_step = player->walk_direction * player->move_speed;
-	new_X = player->pl->instances->x + round((cos(player->rotation_angle) * move_step) * 3);
-	new_Y = player->pl->instances->y + round((sin(player->rotation_angle) * move_step) * 3);
+	new_X = player->pl->instances->x + round(cos(player->rotation_angle) * move_step);
+	new_Y = player->pl->instances->y + round(sin(player->rotation_angle) * move_step);
 	if (!is_collision(game, new_X, new_Y)) {
 		player->pl->instances->x = new_X;
 		player->pl->instances->y = new_Y;
 	}
-
-	// Clear the previous line
-	mlx_delete_image(game->mlx, player->line);
-	player->line = mlx_new_image(game->mlx, game->win_width * TILE_SIZE, game->win_height * TILE_SIZE);
-
-	int length_l = 30;
-	int line_end_x = player->pl->instances->x + cos(player->rotation_angle) * length_l;
-	int line_end_y = player->pl->instances->y + sin(player->rotation_angle) * length_l;
-	
-	draw_line(player->line, player->pl->instances->x, player->pl->instances->y, line_end_x, line_end_y, COLOR_YELLOW);
-	mlx_image_to_window(game->mlx, player->line, 0, 0);
+	update_line(game);
 }
 
-void handle_key(mlx_key_data_t keydata, void *param) {
-	t_cub *game = (t_cub *)param;
-	if (keydata.key == MLX_KEY_ESCAPE)
+void	render(void *param)
+{
+	t_cub	*game;
+
+	game = (t_cub *)param;
+	
+	if (mlx_is_key_down(game->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(game->mlx);
-	if (keydata.action == MLX_PRESS || keydata.action == MLX_REPEAT) {
-		if (keydata.key == MLX_KEY_UP)
-			game->player->walk_direction = 1;
-		else if (keydata.key == MLX_KEY_DOWN)
-			game->player->walk_direction = -1;
-		else if (keydata.key == MLX_KEY_RIGHT)
-			game->player->turn_direction = 1;
-		else if (keydata.key == MLX_KEY_LEFT)
-			game->player->turn_direction = -1;
-	} else if (keydata.action == MLX_RELEASE) {
-		if (keydata.key == MLX_KEY_UP || keydata.key == MLX_KEY_DOWN)
-			game->player->walk_direction = 0;
-		else if (keydata.key == MLX_KEY_RIGHT || keydata.key == MLX_KEY_LEFT)
-			game->player->turn_direction = 0;
-	}
+	if (mlx_is_key_down(game->mlx, MLX_KEY_UP))
+		game->player->walk_direction = 1;
+	else if (mlx_is_key_down(game->mlx, MLX_KEY_DOWN))
+		game->player->walk_direction = -1;
+	else
+		game->player->walk_direction = 0;
+	if (mlx_is_key_down(game->mlx, MLX_KEY_RIGHT))
+		game->player->turn_direction = 1;
+	else if (mlx_is_key_down(game->mlx, MLX_KEY_LEFT))
+		game->player->turn_direction = -1;
+	else
+		game->player->turn_direction = 0;
 	update_player(game);
 }
 
@@ -228,27 +255,22 @@ int	main(void)
 
 	game.image = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
 	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
-	pl.line = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
-	if (!pl.line)
-	{
-		fprintf(stderr, "Failed to create line image\n");
-		return 1;
-	}
 	game.player = &pl;
-	render_map(&game);
 	mlx_image_to_window(game.mlx, game.image, 0, 0);
+	render_map(&game);
 	mlx_image_to_window(game.mlx, pl.pl, pl.x + TILE_SIZE / 3, pl.y + TILE_SIZE / 3);
-
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
-			mlx_put_pixel(pl.pl, x, y, ft_pixel(255, 255, 0, 255));
+			mlx_put_pixel(pl.pl, x, y, ft_pixel(255, 0, 0, 255));
 		}
 	}
-	mlx_key_hook(game.mlx, handle_key, &game);
-	// mlx_loop_hook(game.mlx, render, &game);
+	pl.line = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
+	mlx_image_to_window(game.mlx, pl.line, 0, 0);
+
+	mlx_loop_hook(game.mlx, render, &game);
 	mlx_loop(game.mlx);
 	mlx_delete_image(game.mlx, game.image);
-	// mlx_delete_image(game.mlx, pl.line);
+	mlx_delete_image(game.mlx, pl.line);
 	mlx_terminate(game.mlx);
 	return EXIT_SUCCESS;
 }
