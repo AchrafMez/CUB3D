@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:23:14 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/08 21:37:50 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #define COLOR_YELLOW 0xFFFFFF00
 #define	WALL_STRIP_WIDTH 1
 #define PI 3.14159265358979323846
-#define LINE_LENGTH 20
+#define LINE_LENGTH 30
 
 typedef struct	s_player {
 	float	x;
@@ -44,6 +44,14 @@ typedef struct	s_cub
 	char		**map;
 	t_player	*player;
 }				t_cub;
+
+typedef struct	s_ray
+{
+	int	wall_hit_X;
+	int	wall_hit_Y;
+	int	distance;
+}				t_ray;
+
 
 int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 {
@@ -77,6 +85,31 @@ void render_map(t_cub *game)
 			}
 		}
 	}
+}
+
+void	init_rays(t_ray *rays)
+{
+	rays->wall_hit_X = 0;
+	rays->wall_hit_Y = 0;
+	rays->distance = 0;
+}
+
+void	cast_rays(t_cub *game)
+{
+	t_ray	rays;
+	double	ray_angle;
+	int		x_intercept;
+	int		y_intercept;
+	int		x_step;
+	int		y_step;
+
+	init_rays(&rays);
+	ray_angle = game->player->rotation_angle - (game->player->FOV / 2);
+
+	// find the Y coordinate of the closest horizontal grid intersection
+	y_intercept = floor(game->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
+	// find the X coordinate of the closest horizontal grid intersection
+	x_intercept = game->player->pl->instances->x + ((y_intercept - game->player->pl->instances->y) / tan(ray_angle));
 }
 
 void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color) {
