@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/08 21:37:50 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/10 17:55:50 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,15 @@
 #include "/Users/abmahfou/MLX42/include/MLX42/MLX42.h"
 
 #define TILE_SIZE 32
-#define COLOR_BLACK 0x00000000
-#define COLOR_WHITE 0xFFFFFFFF
-#define COLOR_YELLOW 0xFFFFFF00
-#define	WALL_STRIP_WIDTH 1
+#define COLOR_RED 0xFF0000FF
+#define COLOR_WALL 0x6468699B
+#define COLOR_SPACE 0x37373737
 #define PI 3.14159265358979323846
 #define LINE_LENGTH 30
 
 typedef struct	s_player {
 	float	x;
 	float	y;
-	float	radius;
 	int		turn_direction;
 	int		walk_direction;
 	float	rotation_angle;
@@ -33,7 +31,20 @@ typedef struct	s_player {
 	double	FOV;
 	mlx_image_t	*pl;
 	mlx_image_t	*line;
+	mlx_image_t	*ray;
 }				t_player;
+
+typedef struct	s_ray
+{
+	float	wall_hit_X;
+	float	wall_hit_Y;
+	float	distance;
+	float	ray_angle;
+	int		ray_facing_down;
+	int		ray_facing_up;
+	int		ray_facing_right;
+	int		ray_facing_left;
+}				t_ray;
 
 typedef struct	s_cub
 {
@@ -43,20 +54,8 @@ typedef struct	s_cub
 	int			win_height;
 	char		**map;
 	t_player	*player;
+	t_ray		*rays;
 }				t_cub;
-
-typedef struct	s_ray
-{
-	int	wall_hit_X;
-	int	wall_hit_Y;
-	int	distance;
-}				t_ray;
-
-
-int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
-{
-	return (r << 24 | g << 16 | b << 8 | a);
-}
 
 void render_map(t_cub *game)
 {
@@ -71,11 +70,11 @@ void render_map(t_cub *game)
 		x = -1;
 		while (game->map[y][++x])
 		{
-			uint32_t color = ft_pixel(100,100,105,155); // Default to wall
+			uint32_t color = COLOR_WALL; // Default to wall
 			if (game->map[y][x] == '1')
-				color = ft_pixel(55,55,55,55);
+				color = COLOR_SPACE;
 			else if (game->map[y][x] == ' ')
-				color = ft_pixel(0,0,0,0);
+				color = 0x00000000;
 			py = -1;
 			while (++py < TILE_SIZE)
 			{
@@ -87,29 +86,16 @@ void render_map(t_cub *game)
 	}
 }
 
-void	init_rays(t_ray *rays)
+int	is_WALL(t_cub *game, int x, int y)
 {
-	rays->wall_hit_X = 0;
-	rays->wall_hit_Y = 0;
-	rays->distance = 0;
-}
+	int	X_index;
+	int	Y_index;
 
-void	cast_rays(t_cub *game)
-{
-	t_ray	rays;
-	double	ray_angle;
-	int		x_intercept;
-	int		y_intercept;
-	int		x_step;
-	int		y_step;
-
-	init_rays(&rays);
-	ray_angle = game->player->rotation_angle - (game->player->FOV / 2);
-
-	// find the Y coordinate of the closest horizontal grid intersection
-	y_intercept = floor(game->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
-	// find the X coordinate of the closest horizontal grid intersection
-	x_intercept = game->player->pl->instances->x + ((y_intercept - game->player->pl->instances->y) / tan(ray_angle));
+	Y_index = floor(y / TILE_SIZE);
+	X_index = floor(x / TILE_SIZE);
+	if (game->map[Y_index][X_index] == '1')
+		return (1);
+	return (0);
 }
 
 void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color) {
@@ -135,39 +121,232 @@ void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color)
 	}
 }
 
-void update_line(t_cub *game) {
+float	normalize_angle(float angle)
+{
+	float	ret;
+
+	ret = remainder(angle, (2 * PI));
+	if (ret < 0)
+		ret += (2 * PI);
+	return (ret);
+}
+
+void	clear_image(mlx_image_t *img)
+{
 	int	y;
 	int	x;
 
 	y = 0;
-	mlx_image_t *line_img = game->player->line;
-	while ((uint32_t)y < line_img->height)
+	while ((uint32_t)y < img->height)
 	{
 		x = 0;
-		while ((uint32_t)x < line_img->width)
+		while ((uint32_t)x < img->width)
 		{
-			mlx_put_pixel(line_img, x, y, 0x00000000);
+			mlx_put_pixel(img, x, y, 0x00000000);
 			x++;
 		}
 		y++;
 	}
+}
+
+void	render_rays(t_cub *game, float x1, float y1)
+{
+	draw_line(game->player->ray, game->player->pl->instances->x + 4, game->player->pl->instances->y + 4, x1, y1, 0xFF0000FF);
+}
+
+double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2)
+{
+	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
+void	cast_rays(t_ray *ray, t_cub *game)
+{
+	float	x_intercept;
+	float	y_intercept;
+	float	x_step;
+	float	y_step;
+	float	next_horz_X;
+	float	next_horz_Y;
+	bool	found_horz_hit;
+	float	horz_wall_hit_X;
+	float	horz_wall_hit_Y;
+
+	//////////////////////////////////////////////
+	/// HORIZONTAL RAY-GRID INTERSECTION CODE  ///   
+	//////////////////////////////////////////////
+
+	found_horz_hit = false;
+	horz_wall_hit_X = 0;
+	horz_wall_hit_Y = 0;
+
+	// find the Y coordinate of the closest horizontal grid intersection
+	y_intercept = floor(game->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
+	if (ray->ray_facing_down)
+		y_intercept += TILE_SIZE;
+	// find the X coordinate of the closest horizontal grid intersection
+	x_intercept = game->player->pl->instances->x + ((y_intercept - game->player->pl->instances->y) / tan(ray->ray_angle));
+
+	// Calculate the Ystep
+	y_step = TILE_SIZE;
+	if (ray->ray_facing_up)
+		y_step *= -1;
+	// Calculate the Xstep
+	x_step = y_step / tan(ray->ray_angle);
+	if (ray->ray_facing_right && x_step < 0)
+		x_step *= -1;
+	if (ray->ray_facing_left && x_step > 0)
+		x_step *= -1;
+
+	next_horz_X = x_intercept;
+	next_horz_Y = y_intercept;
+
+	if (ray->ray_facing_up)
+		next_horz_Y--;
+
+	while (next_horz_X >= 0 && next_horz_X <= game->win_width * TILE_SIZE
+		&& next_horz_Y >= 0 && next_horz_Y <= game->win_height * TILE_SIZE)
+	{
+		if (is_WALL(game, next_horz_X, next_horz_Y))
+		{
+			found_horz_hit = true;
+			horz_wall_hit_X = next_horz_X;
+			horz_wall_hit_Y = next_horz_Y;
+			break ;
+		}
+		else
+		{
+			next_horz_X += x_step;
+			next_horz_Y += y_step;
+		}
+	}
+	//////////////////////////////////////////////
+	///  VERTICAL RAY-GRID INTERSECTION CODE   ///   
+	//////////////////////////////////////////////
+	
+	float	next_vert_X;
+	float	next_vert_Y;
+	bool	found_vert_hit;
+	float	vert_wall_hit_X;
+	float	vert_wall_hit_Y;
+	
+	found_vert_hit = false;
+	vert_wall_hit_X = 0;
+	vert_wall_hit_Y = 0;
+
+	// find the X coordinate of the closest vertical grid intersection
+	x_intercept = floor(game->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
+	if (ray->ray_facing_right)
+		x_intercept += TILE_SIZE;
+	// find the Y coordinate of the closest vertical grid intersection
+	y_intercept = game->player->pl->instances->y + ((x_intercept - game->player->pl->instances->x) * tan(ray->ray_angle));
+
+	// Calculate the Ystep
+	x_step = TILE_SIZE;
+	if (ray->ray_facing_left)
+		x_step *= -1;
+	// Calculate the Xstep
+	y_step = x_step * tan(ray->ray_angle);
+	if (ray->ray_facing_up && y_step > 0)
+		y_step *= -1;
+	if (ray->ray_facing_down && y_step < 0)
+		y_step *= -1;
+
+	next_vert_X = x_intercept;
+	next_vert_Y = y_intercept;
+
+	if (ray->ray_facing_left)
+		next_vert_X--;
+
+	while (next_vert_X >= 0 && next_vert_X <= game->win_width * TILE_SIZE && next_vert_Y >= 0 && next_vert_Y <= game->win_height * TILE_SIZE)
+	{
+		if (is_WALL(game, next_vert_X, next_vert_Y))
+		{
+			found_vert_hit = true;
+			vert_wall_hit_X = next_vert_X;
+			vert_wall_hit_Y = next_vert_Y;
+			break ;
+		}
+		else
+		{
+			next_vert_X += x_step;
+			next_vert_Y += y_step;
+		}
+	}
+
+	// Calculate the distance to get the smallest point
+	double	horz_hit_distance = 2342342342.0;
+	double	vert_hit_distance = 2342342342.0;
+	if (found_horz_hit == true)
+		horz_hit_distance = distance_between_2_points(game->player->pl->instances->x, game->player->pl->instances->y, horz_wall_hit_X, horz_wall_hit_Y);
+	if (found_vert_hit == true)
+		vert_hit_distance = distance_between_2_points(game->player->pl->instances->x, game->player->pl->instances->y, vert_wall_hit_X, vert_wall_hit_Y);
+	if (horz_hit_distance < vert_hit_distance)
+	{
+		ray->wall_hit_X = horz_wall_hit_X;
+		ray->wall_hit_Y = horz_wall_hit_Y;
+		ray->distance = horz_hit_distance;
+	}
+	else
+	{
+		ray->wall_hit_X = vert_wall_hit_X;
+		ray->wall_hit_Y = vert_wall_hit_Y;
+		ray->distance = vert_hit_distance;
+	}
+	render_rays(game, ray->wall_hit_X, ray->wall_hit_Y);
+}
+
+t_ray	*create_Ray(float angle)
+{
+	t_ray	*ray;
+
+	ray = malloc(sizeof(t_ray));
+	ray->ray_angle = normalize_angle(angle);
+	ray->distance = 0;
+	ray->wall_hit_X = 0;
+	ray->wall_hit_Y = 0;
+	ray->ray_facing_down = ray->ray_angle > 0 && ray->ray_angle < PI;
+	ray->ray_facing_up = !ray->ray_facing_down;
+
+	ray->ray_facing_right = ray->ray_angle < 0.5 * PI || ray->ray_angle > (1.5 * PI);
+	ray->ray_facing_left = !ray->ray_facing_right;
+
+	return (ray);
+}
+
+void	cast_all_rays(t_cub *game)
+{
+	int		columnId;
+	float	ray_angle;
+	int		i;
+	int		rays_num;
+
+	rays_num = (game->win_width * TILE_SIZE);
+	t_ray	*rays[rays_num];
+
+	clear_image(game->player->ray);
+	columnId = 0;
+	ray_angle = game->player->rotation_angle - (game->player->FOV / 2);
+	i = -1;
+	while (++i < rays_num)
+	{
+		t_ray	*ray;
+
+		ray = create_Ray(ray_angle);
+		cast_rays(ray, game);
+		rays[i] = ray;
+		ray_angle += game->player->FOV / rays_num;
+		columnId++;
+	}
+}
+
+void update_line(t_cub *game) {
+	mlx_image_t *line_img = game->player->line;
+	clear_image(line_img);
 
 	int x1 = game->player->pl->instances->x + cos(game->player->rotation_angle) * LINE_LENGTH;
 	int y1 = game->player->pl->instances->y + sin(game->player->rotation_angle) * LINE_LENGTH;
 
-	draw_line(line_img, game->player->pl->instances->x, game->player->pl->instances->y, x1, y1, 0xFF0000FF);
-}
-
-int	is_WALL(t_cub *game, int x, int y)
-{
-	int	X_index;
-	int	Y_index;
-
-	Y_index = floor(y / TILE_SIZE);
-	X_index = floor(x / TILE_SIZE);
-	if (game->map[Y_index][X_index] == '1')
-		return (1);
-	return (0);
+	draw_line(line_img, game->player->pl->instances->x + 4, game->player->pl->instances->y + 4, x1, y1, COLOR_RED);
 }
 
 int	is_collision(t_cub *game, float new_X, float new_Y)
@@ -194,7 +373,7 @@ void	update_player(t_cub *game) {
 		player->pl->instances->x = new_X;
 		player->pl->instances->y = new_Y;
 	}
-	update_line(game);
+	// update_line(game);
 }
 
 void	render(void *param)
@@ -218,6 +397,7 @@ void	render(void *param)
 	else
 		game->player->turn_direction = 0;
 	update_player(game);
+	cast_all_rays(game);
 }
 
 void	player_pos(t_player *player, char **map)
@@ -294,11 +474,13 @@ int	main(void)
 	mlx_image_to_window(game.mlx, pl.pl, pl.x + TILE_SIZE / 3, pl.y + TILE_SIZE / 3);
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
-			mlx_put_pixel(pl.pl, x, y, ft_pixel(255, 0, 0, 255));
+			mlx_put_pixel(pl.pl, x, y, COLOR_RED);
 		}
 	}
 	pl.line = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
 	mlx_image_to_window(game.mlx, pl.line, 0, 0);
+	pl.ray = mlx_new_image(game.mlx, game.win_width * TILE_SIZE, game.win_height * TILE_SIZE);
+	mlx_image_to_window(game.mlx, pl.ray, 0, 0);
 
 	mlx_loop_hook(game.mlx, render, &game);
 	mlx_loop(game.mlx);
