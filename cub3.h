@@ -32,7 +32,6 @@ typedef struct	s_player {
 	float	rotation_speed;
 	double	FOV;
 	mlx_image_t	*pl;
-	mlx_image_t	*line;
 	mlx_image_t	*ray;
 }				t_player;
 

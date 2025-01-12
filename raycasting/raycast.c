@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 13:59:25 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/12 15:41:36 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,8 @@ int	is_WALL(t_data *data, int x, int y)
 	int	X_index;
 	int	Y_index;
 
-	if (x > data->map->WIDHT)
-		x--;
-	if (y > data->map->HEIGHT)
-		y--;
+	if (x < 0 || x >= data->map->WIDHT || y < 0 || y >= data->map->HEIGHT)
+		return (1);
 	Y_index = round(y / TILE_SIZE);
 	X_index = round(x / TILE_SIZE);
 	if (data->map->map[Y_index][X_index] == '1')
@@ -110,7 +108,8 @@ void	clear_image(mlx_image_t *img)
 
 void	render_rays(t_data *data, float x1, float y1)
 {
-	draw_line(data->player->ray, data->player->pl->instances->x * MINIMAP_SCALE_FACTOR, data->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
+	draw_line(data->player->ray, data->player->pl->instances->x * MINIMAP_SCALE_FACTOR,
+		data->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
 		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, MAIN_COLOR);
 }
 
@@ -159,9 +158,6 @@ void	cast_rays(t_ray *ray, t_data *data)
 
 	next_horz_X = x_intercept;
 	next_horz_Y = y_intercept;
-
-	// if (ray->ray_facing_up)
-	// 	next_horz_Y--;
 
 	while (next_horz_X >= 0 && next_horz_X <= data->map->WIDHT
 		&& next_horz_Y >= 0 && next_horz_Y <= data->map->HEIGHT)
@@ -213,9 +209,6 @@ void	cast_rays(t_ray *ray, t_data *data)
 
 	next_vert_X = x_intercept;
 	next_vert_Y = y_intercept;
-
-	// if (ray->ray_facing_left)
-	// 	next_vert_X--;
 
 	while (next_vert_X >= 0 && next_vert_X <= data->map->WIDHT && next_vert_Y >= 0 && next_vert_Y <= data->map->HEIGHT)
 	{
@@ -440,16 +433,12 @@ int	raycast(t_data *data)
 	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
 	render_map(data->map);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
-	pl->line = mlx_new_image(data->map->mlx, data->map->WIDHT * MINIMAP_SCALE_FACTOR, data->map->HEIGHT * MINIMAP_SCALE_FACTOR);
-	mlx_image_to_window(data->map->mlx, pl->line, 0, 0);
-	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT * MINIMAP_SCALE_FACTOR, data->map->HEIGHT * MINIMAP_SCALE_FACTOR);
+	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
 
 	mlx_loop_hook(data->map->mlx, render, data);
 	mlx_loop(data->map->mlx);
 	mlx_delete_image(data->map->mlx, data->map->mini_map);
-	mlx_delete_image(data->map->mlx, pl->line);
 	mlx_terminate(data->map->mlx);
 	return EXIT_SUCCESS;
 }
-
