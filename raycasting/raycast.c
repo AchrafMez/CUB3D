@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 09:26:33 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/12 10:03:07 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,7 +379,7 @@ void	render_3d_projection_walls(t_ray **rays, t_cub *game)
 	int		rays_num;
 	t_ray	*ray;
 	int		wall_strip_height;
-	float	ray_distance;
+	float	correct_ray_dist;
 	float	distance_projection_plane;
 
 	i = -1;
@@ -388,9 +388,9 @@ void	render_3d_projection_walls(t_ray **rays, t_cub *game)
 	while (++i < rays_num)
 	{
 		ray = rays[i];
-		ray_distance = ray->distance;
+		correct_ray_dist = ray->distance * cos(ray->ray_angle - game->player->rotation_angle);
 		distance_projection_plane = (game->win_width / 2) / tan(game->player->FOV / 2);
-		wall_strip_height = (TILE_SIZE / ray_distance) * distance_projection_plane;
+		wall_strip_height = (TILE_SIZE / correct_ray_dist) * distance_projection_plane;
 		draw_rectangle(game->img, i * WALL_STRIP_WIDTH,
 						(game->win_height / 2) - (wall_strip_height / 2),
 						WALL_STRIP_WIDTH,
