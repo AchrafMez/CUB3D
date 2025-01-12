@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 12:00:41 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:50:11 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
 
-void render_map(t_cub *game)
+void render_map(t_map *map)
 {
 	int	y;
 	int	x;
@@ -20,39 +20,39 @@ void render_map(t_cub *game)
 	int	px;
 
 	y = -1;
-	while (game->map[++y] != NULL)
+	while (map->map[++y] != NULL)
 	{
 		x = -1;
-		while (game->map[y][++x])
+		while (map->map[y][++x])
 		{
 			uint32_t color = COLOR_WALL; // Default to wall
-			if (game->map[y][x] == '1')
+			if (map->map[y][x] == '1')
 				color = COLOR_SPACE;
-			else if (game->map[y][x] == ' ')
+			else if (map->map[y][x] == ' ')
 				color = 0x00000000;
 			py = -1;
 			while (++py < TILE_SIZE)
 			{
 				px = -1;
 				while (++px < TILE_SIZE)
-					mlx_put_pixel(game->mini_map, (x * TILE_SIZE + px) * MINIMAP_SCALE_FACTOR, (y * TILE_SIZE + py) * MINIMAP_SCALE_FACTOR, color);
+					mlx_put_pixel(map->mini_map, (x * TILE_SIZE + px) * MINIMAP_SCALE_FACTOR, (y * TILE_SIZE + py) * MINIMAP_SCALE_FACTOR, color);
 			}
 		}
 	}
 }
 
-int	is_WALL(t_cub *game, int x, int y)
+int	is_WALL(t_data *data, int x, int y)
 {
 	int	X_index;
 	int	Y_index;
 
-	if (x > game->win_width)
+	if (x > data->map->WIDHT)
 		x--;
-	if (y > game->win_height)
+	if (y > data->map->HEIGHT)
 		y--;
 	Y_index = round(y / TILE_SIZE);
 	X_index = round(x / TILE_SIZE);
-	if (game->map[Y_index][X_index] == '1')
+	if (data->map->map[Y_index][X_index] == '1')
 		return (1);
 	return (0);
 }
@@ -108,9 +108,9 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
-void	render_rays(t_cub *game, float x1, float y1)
+void	render_rays(t_data *data, float x1, float y1)
 {
-	draw_line(game->player->ray, game->player->pl->instances->x * MINIMAP_SCALE_FACTOR, game->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
+	draw_line(data->player->ray, data->player->pl->instances->x * MINIMAP_SCALE_FACTOR, data->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
 		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, MAIN_COLOR);
 }
 
@@ -119,7 +119,7 @@ double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2)
 	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
-void	cast_rays(t_ray *ray, t_cub *game)
+void	cast_rays(t_ray *ray, t_data *data)
 {
 	float	x_intercept;
 	float	y_intercept;
@@ -140,11 +140,11 @@ void	cast_rays(t_ray *ray, t_cub *game)
 	horz_wall_hit_Y = 0;
 
 	// find the Y coordinate of the closest horizontal grid intersection
-	y_intercept = floor(game->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
+	y_intercept = floor(data->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_down)
 		y_intercept += TILE_SIZE;
 	// find the X coordinate of the closest horizontal grid intersection
-	x_intercept = game->player->pl->instances->x + ((y_intercept - game->player->pl->instances->y) / tan(ray->ray_angle));
+	x_intercept = data->player->pl->instances->x + ((y_intercept - data->player->pl->instances->y) / tan(ray->ray_angle));
 
 	// Calculate the Ystep
 	y_step = TILE_SIZE;
@@ -163,10 +163,10 @@ void	cast_rays(t_ray *ray, t_cub *game)
 	// if (ray->ray_facing_up)
 	// 	next_horz_Y--;
 
-	while (next_horz_X >= 0 && next_horz_X <= game->win_width
-		&& next_horz_Y >= 0 && next_horz_Y <= game->win_height)
+	while (next_horz_X >= 0 && next_horz_X <= data->map->WIDHT
+		&& next_horz_Y >= 0 && next_horz_Y <= data->map->HEIGHT)
 	{
-		if (is_WALL(game, next_horz_X, next_horz_Y - (ray->ray_facing_up ? 1 : 0)))
+		if (is_WALL(data, next_horz_X, next_horz_Y - (ray->ray_facing_up ? 1 : 0)))
 		{
 			found_horz_hit = true;
 			horz_wall_hit_X = next_horz_X;
@@ -194,11 +194,11 @@ void	cast_rays(t_ray *ray, t_cub *game)
 	vert_wall_hit_Y = 0;
 
 	// find the X coordinate of the closest vertical grid intersection
-	x_intercept = floor(game->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
+	x_intercept = floor(data->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_right)
 		x_intercept += TILE_SIZE;
 	// find the Y coordinate of the closest vertical grid intersection
-	y_intercept = game->player->pl->instances->y + ((x_intercept - game->player->pl->instances->x) * tan(ray->ray_angle));
+	y_intercept = data->player->pl->instances->y + ((x_intercept - data->player->pl->instances->x) * tan(ray->ray_angle));
 
 	// Calculate the Ystep
 	x_step = TILE_SIZE;
@@ -217,9 +217,9 @@ void	cast_rays(t_ray *ray, t_cub *game)
 	// if (ray->ray_facing_left)
 	// 	next_vert_X--;
 
-	while (next_vert_X >= 0 && next_vert_X <= game->win_width && next_vert_Y >= 0 && next_vert_Y <= game->win_height)
+	while (next_vert_X >= 0 && next_vert_X <= data->map->WIDHT && next_vert_Y >= 0 && next_vert_Y <= data->map->HEIGHT)
 	{
-		if (is_WALL(game, next_vert_X - (ray->ray_facing_left ? 1 : 0), next_vert_Y))
+		if (is_WALL(data, next_vert_X - (ray->ray_facing_left ? 1 : 0), next_vert_Y))
 		{
 			found_vert_hit = true;
 			vert_wall_hit_X = next_vert_X;
@@ -237,11 +237,11 @@ void	cast_rays(t_ray *ray, t_cub *game)
 	double	horz_hit_distance = DBL_MAX;
 	double	vert_hit_distance = DBL_MAX;
 	if (found_horz_hit == true)
-		horz_hit_distance = distance_between_2_points(game->player->pl->instances->x,
-			game->player->pl->instances->y, horz_wall_hit_X, horz_wall_hit_Y);
+		horz_hit_distance = distance_between_2_points(data->player->pl->instances->x,
+			data->player->pl->instances->y, horz_wall_hit_X, horz_wall_hit_Y);
 	if (found_vert_hit == true)
-		vert_hit_distance = distance_between_2_points(game->player->pl->instances->x,
-			game->player->pl->instances->y, vert_wall_hit_X, vert_wall_hit_Y);
+		vert_hit_distance = distance_between_2_points(data->player->pl->instances->x,
+			data->player->pl->instances->y, vert_wall_hit_X, vert_wall_hit_Y);
 	if (horz_hit_distance < vert_hit_distance)
 	{
 		ray->wall_hit_X = horz_wall_hit_X;
@@ -254,7 +254,7 @@ void	cast_rays(t_ray *ray, t_cub *game)
 		ray->wall_hit_Y = vert_wall_hit_Y;
 		ray->distance = vert_hit_distance;
 	}
-	render_rays(game, ray->wall_hit_X, ray->wall_hit_Y);
+	render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
 }
 
 t_ray	*create_Ray(float angle)
@@ -275,29 +275,31 @@ t_ray	*create_Ray(float angle)
 	return (ray);
 }
 
-t_ray	**cast_all_rays(t_cub *game)
+t_ray	**cast_all_rays(t_data *data)
 {
 	int		columnId;
 	float	ray_angle;
 	int		i;
 	int		rays_num;
+	t_map	*game;
 
-	rays_num = game->win_width;
+	game = data->map;
+	rays_num = game->WIDHT;
 	t_ray	**rays;
 
-	clear_image(game->player->ray);
+	clear_image(data->player->ray);
 	rays = malloc(sizeof(t_ray *) * rays_num);
 	columnId = 0;
-	ray_angle = game->player->rotation_angle - (game->player->FOV / 2);
+	ray_angle = data->player->rotation_angle - (data->player->FOV / 2);
 	i = -1;
 	while (++i < rays_num)
 	{
 		t_ray	*ray;
 
 		ray = create_Ray(ray_angle);
-		cast_rays(ray, game);
+		cast_rays(ray, data);
 		rays[i] = ray;
-		ray_angle += game->player->FOV / rays_num;
+		ray_angle += data->player->FOV / rays_num;
 		columnId++;
 	}
 	return (rays);
@@ -324,7 +326,7 @@ void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint3
 	}
 }
 
-void	render_3d_projection_walls(t_ray **rays, t_cub *game)
+void	render_3d_projection_walls(t_ray **rays, t_data *data)
 {
 	int		i;
 	int		rays_num;
@@ -334,44 +336,36 @@ void	render_3d_projection_walls(t_ray **rays, t_cub *game)
 	float	distance_projection_plane;
 
 	i = -1;
-	clear_image(game->img);
-	rays_num = game->win_width;
+	clear_image(data->map->img);
+	rays_num = data->map->WIDHT;
 	while (++i < rays_num)
 	{
 		ray = rays[i];
-		correct_ray_dist = ray->distance * cos(ray->ray_angle - game->player->rotation_angle);
-		distance_projection_plane = (game->win_width / 2) / tan(game->player->FOV / 2);
+		correct_ray_dist = ray->distance * cos(ray->ray_angle - data->player->rotation_angle);
+		distance_projection_plane = (data->map->WIDHT / 2) / tan(data->player->FOV / 2);
 		wall_strip_height = (TILE_SIZE / correct_ray_dist) * distance_projection_plane;
-		draw_rectangle(game->img, i * WALL_STRIP_WIDTH,
-						(game->win_height / 2) - (wall_strip_height / 2),
+		draw_rectangle(data->map->img, i * WALL_STRIP_WIDTH,
+						(data->map->HEIGHT / 2) - (wall_strip_height / 2),
 						WALL_STRIP_WIDTH,
 						wall_strip_height,
 						MAIN_COLOR);
 	}
 }
 
-void update_line(t_cub *game) {
-	mlx_image_t *line_img = game->player->line;
-	clear_image(line_img);
-
-	int x1 = game->player->pl->instances->x + cos(game->player->rotation_angle) * LINE_LENGTH;
-	int y1 = game->player->pl->instances->y + sin(game->player->rotation_angle) * LINE_LENGTH;
-
-	draw_line(line_img, game->player->pl->instances->x + 4, game->player->pl->instances->y + 4, x1, y1, MAIN_COLOR);
-}
-
-int	is_collision(t_cub *game, float new_X, float new_Y)
+int	is_collision(t_data *data, float new_X, float new_Y)
 {
-	if (is_WALL(game, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(game, new_X + TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(game, new_X - TILE_SIZE / 4, new_Y + TILE_SIZE / 4) ||
-		is_WALL(game, new_X + TILE_SIZE / 4, new_Y + TILE_SIZE / 4))
+	if (is_WALL(data, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
+		is_WALL(data, new_X + TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
+		is_WALL(data, new_X - TILE_SIZE / 4, new_Y + TILE_SIZE / 4) ||
+		is_WALL(data, new_X + TILE_SIZE / 4, new_Y + TILE_SIZE / 4))
 		return (1);
 	return (0);
 }
 
-void	update_player(t_cub *game) {
-	t_player *player = game->player;
+void	update_player(t_data *data) {
+	t_player	*player;
+
+	player = data->player;
 	int32_t new_X;
 	int32_t new_Y;
 
@@ -380,129 +374,81 @@ void	update_player(t_cub *game) {
 	float move_step = player->walk_direction * player->move_speed;
 	new_X = player->pl->instances->x + round(cos(player->rotation_angle) * move_step);
 	new_Y = player->pl->instances->y + round(sin(player->rotation_angle) * move_step);
-	if (!is_collision(game, new_X, new_Y)) {
+	if (!is_collision(data, new_X, new_Y)) {
 		player->pl->instances->x = new_X;
 		player->pl->instances->y = new_Y;
 	}
-	// update_line(game);
 }
 
 void	render(void *param)
 {
-	t_cub	*game;
+	t_data	*data;
 	t_ray	**rays;
 
-	game = (t_cub *)param;
+	data = (t_data *)param;
 	
-	if (mlx_is_key_down(game->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(game->mlx);
-	if (mlx_is_key_down(game->mlx, MLX_KEY_UP))
-		game->player->walk_direction = 1;
-	else if (mlx_is_key_down(game->mlx, MLX_KEY_DOWN))
-		game->player->walk_direction = -1;
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(data->map->mlx);
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_UP))
+		data->player->walk_direction = 1;
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_DOWN))
+		data->player->walk_direction = -1;
 	else
-		game->player->walk_direction = 0;
-	if (mlx_is_key_down(game->mlx, MLX_KEY_RIGHT))
-		game->player->turn_direction = 1;
-	else if (mlx_is_key_down(game->mlx, MLX_KEY_LEFT))
-		game->player->turn_direction = -1;
+		data->player->walk_direction = 0;
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
+		data->player->turn_direction = 1;
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
+		data->player->turn_direction = -1;
 	else
-		game->player->turn_direction = 0;
-	update_player(game);
-	rays = cast_all_rays(game);
-	render_3d_projection_walls(rays, game);
+		data->player->turn_direction = 0;
+	update_player(data);
+	rays = cast_all_rays(data);
+	render_3d_projection_walls(rays, data);
 }
 
-void	player_pos(t_player *player, char **map)
+void	player_init(t_player *pl, t_data *data)
 {
-	int	i;
-	int	j;
-
-	i = 0;
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			if (map[i][j] == 'N')
-			{
-				player->x = j * TILE_SIZE;
-				player->y = i * TILE_SIZE;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-void	vars_init(t_cub *game, t_player *pl)
-{
-	game->win_width = 0;
-	game->win_height = 0;
 	pl->walk_direction = 0;
 	pl->turn_direction = 0;
 	pl->rotation_angle = PI / 2;
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (PI / 180);
 	pl->FOV = 60 * (PI / 180);
+	pl->x = data->map->player_x * TILE_SIZE;
+	pl->y = data->map->player_y * TILE_SIZE;
 }
 
-int	main(void)
+int	raycast(t_data *data)
 {
-	t_cub		game;
-	t_player	pl;
+	t_player	*pl;
 
-	game.map = (char *[]) {
-		"111111111111111",
-		"100000000000101",
-		"100001000000101",
-		"111100000010101",
-		"100000000010101",
-		"100000001111101",
-		"10000N000000001",
-		"100000000000001",
-		"111111000111101",
-		"100000000000001",
-		"111111111111111",
-		NULL
-	};
-	vars_init(&game, &pl);
-	player_pos(&pl, game.map);
-	while (game.map[0][game.win_width])
-		game.win_width++;
-	while (game.map[game.win_height])
-		game.win_height++;
-
-	game.win_width *= TILE_SIZE;
-	game.win_height *= TILE_SIZE;
-	game.mlx = mlx_init(game.win_width, game.win_height, "cub3D", true);
-	if (!game.mlx) {
+	pl = (t_player *)malloc(sizeof(t_player));
+	player_init(pl, data);
+	data->player = pl;
+	data->map->WIDHT *= TILE_SIZE;
+	data->map->HEIGHT *= TILE_SIZE;
+	data->map->mlx = mlx_init(data->map->WIDHT, data->map->HEIGHT, "cub3D", true);
+	if (!data->map->mlx) {
 		fprintf(stderr, "Failed to initialize MLX\n");
 		return EXIT_FAILURE;
 	}
 
-	game.mini_map = mlx_new_image(game.mlx, game.win_width * WALL_STRIP_WIDTH, game.win_height * WALL_STRIP_WIDTH);
-	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
-	game.img = mlx_new_image(game.mlx, game.win_width, game.win_height);
-	game.player = &pl;
-	mlx_image_to_window(game.mlx, game.mini_map, 0, 0);
-	mlx_image_to_window(game.mlx, game.img, 0, 0);
-	render_map(&game);
-	mlx_image_to_window(game.mlx, pl.pl, (pl.x + TILE_SIZE / 3), (pl.y + TILE_SIZE / 3));
-	 /* for (int y = 0; y < (TILE_SIZE / 4); y++) {
-		for (int x = 0; x < (TILE_SIZE / 4); x++) {
-			mlx_put_pixel(pl.pl, x, y, MAIN_COLOR);
-		}
-	}  */
-	pl.line = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
-	mlx_image_to_window(game.mlx, pl.line, 0, 0);
-	pl.ray = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
-	mlx_image_to_window(game.mlx, pl.ray, 0, 0);
+	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT * WALL_STRIP_WIDTH, data->map->HEIGHT * WALL_STRIP_WIDTH);
+	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
+	data->map->img = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
+	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
+	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
+	render_map(data->map);
+	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
+	pl->line = mlx_new_image(data->map->mlx, data->map->WIDHT * MINIMAP_SCALE_FACTOR, data->map->HEIGHT * MINIMAP_SCALE_FACTOR);
+	mlx_image_to_window(data->map->mlx, pl->line, 0, 0);
+	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT * MINIMAP_SCALE_FACTOR, data->map->HEIGHT * MINIMAP_SCALE_FACTOR);
+	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
 
-	mlx_loop_hook(game.mlx, render, &game);
-	mlx_loop(game.mlx);
-	mlx_delete_image(game.mlx, game.mini_map);
-	mlx_delete_image(game.mlx, pl.line);
-	mlx_terminate(game.mlx);
+	mlx_loop_hook(data->map->mlx, render, data);
+	mlx_loop(data->map->mlx);
+	mlx_delete_image(data->map->mlx, data->map->mini_map);
+	mlx_delete_image(data->map->mlx, pl->line);
+	mlx_terminate(data->map->mlx);
 	return EXIT_SUCCESS;
 }
