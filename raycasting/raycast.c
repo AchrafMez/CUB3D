@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 13:50:11 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:59:25 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -452,3 +452,4 @@ int	raycast(t_data *data)
 	mlx_terminate(data->map->mlx);
 	return EXIT_SUCCESS;
 }
+

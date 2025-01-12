@@ -10,13 +10,30 @@ NC=\033[0m
 HEADERS	= -I ./include -I $(MLX)/include
 LIBS	= $(MLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 
-SRC = $(wildcard *.c) \
+SRC = cub3.c \
+	./config/check_map.c \
+	./config/check.c\
+	./config/FC.c\
+	./config/fill_map.c\
+	./config/free.c\
+	./config/init.c\
+	./config/is_valid.c\
+	./config/map_lines.c\
+	./config/parse.c\
+	./config/print.c\
+	./config/read_map.c\
+	./config/textures.c\
 	raycasting/raycast.c \
     ./getnextline/get_next_line.c \
     ./getnextline/get_next_line_utils.c \
     ./lib/ft_split.c \
     ./lib/ft_substr.c \
-    ./lib/ft_atoi.c
+    ./lib/ft_atoi.c \
+    ./lib/skip_space.c \
+    ./lib/ft_putstr.c \
+    ./lib/substring.c \
+	./lib/subtring2.c\
+	./lib/trime.c \
 
 OBJ_DIR = objs/
 
