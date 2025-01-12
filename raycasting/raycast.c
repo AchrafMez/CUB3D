@@ -3,63 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 10:03:07 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/12 12:00:41 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
-#include "/Users/abmahfou/MLX42/include/MLX42/MLX42.h"
-
-#define TILE_SIZE 64
-#define COLOR_GREEN 0x0F000FF
-#define MAIN_COLOR 0x98FF98
-#define COLOR_WALL 0x6468699B
-#define COLOR_SPACE 0x37373737
-#define PI 3.14159265358979323846
-#define WALL_STRIP_WIDTH 1
-#define LINE_LENGTH 30
-#define MINIMAP_SCALE_FACTOR 0.2
-
-typedef struct	s_player {
-	float	x;
-	float	y;
-	int		turn_direction;
-	int		walk_direction;
-	float	rotation_angle;
-	float	move_speed;
-	float	rotation_speed;
-	double	FOV;
-	mlx_image_t	*pl;
-	mlx_image_t	*line;
-	mlx_image_t	*ray;
-}				t_player;
-
-typedef struct	s_ray
-{
-	float	wall_hit_X;
-	float	wall_hit_Y;
-	float	distance;
-	float	ray_angle;
-	int		ray_facing_down;
-	int		ray_facing_up;
-	int		ray_facing_right;
-	int		ray_facing_left;
-}				t_ray;
-
-typedef struct	s_cub
-{
-	mlx_t		*mlx;
-	mlx_image_t	*mini_map;
-	mlx_image_t	*img;
-	int			win_width;
-	int			win_height;
-	char		**map;
-	t_player	*player;
-	t_ray		*rays;
-}				t_cub;
 
 void render_map(t_cub *game)
 {
