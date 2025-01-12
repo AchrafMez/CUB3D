@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/11 20:52:34 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/12 09:26:33 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #define TILE_SIZE 64
 #define COLOR_GREEN 0x0F000FF
-#define COLOR_RED 0x7FFFFFF0
+#define MAIN_COLOR 0x98FF98
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
 #define PI 3.14159265358979323846
@@ -160,7 +160,7 @@ void	clear_image(mlx_image_t *img)
 void	render_rays(t_cub *game, float x1, float y1)
 {
 	draw_line(game->player->ray, game->player->pl->instances->x * MINIMAP_SCALE_FACTOR, game->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
-		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, COLOR_RED);
+		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, MAIN_COLOR);
 }
 
 double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2)
@@ -395,7 +395,7 @@ void	render_3d_projection_walls(t_ray **rays, t_cub *game)
 						(game->win_height / 2) - (wall_strip_height / 2),
 						WALL_STRIP_WIDTH,
 						wall_strip_height,
-						COLOR_RED);
+						MAIN_COLOR);
 	}
 }
 
@@ -406,7 +406,7 @@ void update_line(t_cub *game) {
 	int x1 = game->player->pl->instances->x + cos(game->player->rotation_angle) * LINE_LENGTH;
 	int y1 = game->player->pl->instances->y + sin(game->player->rotation_angle) * LINE_LENGTH;
 
-	draw_line(line_img, game->player->pl->instances->x + 4, game->player->pl->instances->y + 4, x1, y1, COLOR_RED);
+	draw_line(line_img, game->player->pl->instances->x + 4, game->player->pl->instances->y + 4, x1, y1, MAIN_COLOR);
 }
 
 int	is_collision(t_cub *game, float new_X, float new_Y)
@@ -530,7 +530,7 @@ int	main(void)
 		return EXIT_FAILURE;
 	}
 
-	game.mini_map = mlx_new_image(game.mlx, game.win_width, game.win_height);
+	game.mini_map = mlx_new_image(game.mlx, game.win_width * WALL_STRIP_WIDTH, game.win_height * WALL_STRIP_WIDTH);
 	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
 	game.img = mlx_new_image(game.mlx, game.win_width, game.win_height);
 	game.player = &pl;
@@ -540,7 +540,7 @@ int	main(void)
 	mlx_image_to_window(game.mlx, pl.pl, (pl.x + TILE_SIZE / 3), (pl.y + TILE_SIZE / 3));
 	 /* for (int y = 0; y < (TILE_SIZE / 4); y++) {
 		for (int x = 0; x < (TILE_SIZE / 4); x++) {
-			mlx_put_pixel(pl.pl, x, y, COLOR_RED);
+			mlx_put_pixel(pl.pl, x, y, MAIN_COLOR);
 		}
 	}  */
 	pl.line = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
