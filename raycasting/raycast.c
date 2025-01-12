@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 12:00:41 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/12 13:12:42 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -447,62 +447,62 @@ void	vars_init(t_cub *game, t_player *pl)
 	pl->FOV = 60 * (PI / 180);
 }
 
-int	main(void)
-{
-	t_cub		game;
-	t_player	pl;
+// int	main(void)
+// {
+// 	t_cub		game;
+// 	t_player	pl;
 
-	game.map = (char *[]) {
-		"111111111111111",
-		"100000000000101",
-		"100001000000101",
-		"111100000010101",
-		"100000000010101",
-		"100000001111101",
-		"10000N000000001",
-		"100000000000001",
-		"111111000111101",
-		"100000000000001",
-		"111111111111111",
-		NULL
-	};
-	vars_init(&game, &pl);
-	player_pos(&pl, game.map);
-	while (game.map[0][game.win_width])
-		game.win_width++;
-	while (game.map[game.win_height])
-		game.win_height++;
+// 	game.map = (char *[]) {
+// 		"111111111111111",
+// 		"100000000000101",
+// 		"100001000000101",
+// 		"111100000010101",
+// 		"100000000010101",
+// 		"100000001111101",
+// 		"10000N000000001",
+// 		"100000000000001",
+// 		"111111000111101",
+// 		"100000000000001",
+// 		"111111111111111",
+// 		NULL
+// 	};
+// 	vars_init(&game, &pl);
+// 	player_pos(&pl, game.map);
+// 	while (game.map[0][game.win_width])
+// 		game.win_width++;
+// 	while (game.map[game.win_height])
+// 		game.win_height++;
 
-	game.win_width *= TILE_SIZE;
-	game.win_height *= TILE_SIZE;
-	game.mlx = mlx_init(game.win_width, game.win_height, "cub3D", true);
-	if (!game.mlx) {
-		fprintf(stderr, "Failed to initialize MLX\n");
-		return EXIT_FAILURE;
-	}
+// 	game.win_width *= TILE_SIZE;
+// 	game.win_height *= TILE_SIZE;
+// 	game.mlx = mlx_init(game.win_width, game.win_height, "cub3D", true);
+// 	if (!game.mlx) {
+// 		fprintf(stderr, "Failed to initialize MLX\n");
+// 		return EXIT_FAILURE;
+// 	}
 
-	game.mini_map = mlx_new_image(game.mlx, game.win_width * WALL_STRIP_WIDTH, game.win_height * WALL_STRIP_WIDTH);
-	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
-	game.img = mlx_new_image(game.mlx, game.win_width, game.win_height);
-	game.player = &pl;
-	mlx_image_to_window(game.mlx, game.mini_map, 0, 0);
-	mlx_image_to_window(game.mlx, game.img, 0, 0);
-	render_map(&game);
-	mlx_image_to_window(game.mlx, pl.pl, (pl.x + TILE_SIZE / 3), (pl.y + TILE_SIZE / 3));
-	 /* for (int y = 0; y < (TILE_SIZE / 4); y++) {
-		for (int x = 0; x < (TILE_SIZE / 4); x++) {
-			mlx_put_pixel(pl.pl, x, y, MAIN_COLOR);
-		}
-	}  */
-	pl.line = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
-	mlx_image_to_window(game.mlx, pl.line, 0, 0);
-	pl.ray = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
-	mlx_image_to_window(game.mlx, pl.ray, 0, 0);
+// 	game.mini_map = mlx_new_image(game.mlx, game.win_width * WALL_STRIP_WIDTH, game.win_height * WALL_STRIP_WIDTH);
+// 	pl.pl = mlx_new_image(game.mlx, TILE_SIZE, TILE_SIZE);
+// 	game.img = mlx_new_image(game.mlx, game.win_width, game.win_height);
+// 	game.player = &pl;
+// 	mlx_image_to_window(game.mlx, game.mini_map, 0, 0);
+// 	mlx_image_to_window(game.mlx, game.img, 0, 0);
+// 	render_map(&game);
+// 	mlx_image_to_window(game.mlx, pl.pl, (pl.x + TILE_SIZE / 3), (pl.y + TILE_SIZE / 3));
+// 	 /* for (int y = 0; y < (TILE_SIZE / 4); y++) {
+// 		for (int x = 0; x < (TILE_SIZE / 4); x++) {
+// 			mlx_put_pixel(pl.pl, x, y, MAIN_COLOR);
+// 		}
+// 	}  */
+// 	pl.line = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
+// 	mlx_image_to_window(game.mlx, pl.line, 0, 0);
+// 	pl.ray = mlx_new_image(game.mlx, game.win_width * MINIMAP_SCALE_FACTOR, game.win_height * MINIMAP_SCALE_FACTOR);
+// 	mlx_image_to_window(game.mlx, pl.ray, 0, 0);
 
-	mlx_loop_hook(game.mlx, render, &game);
-	mlx_loop(game.mlx);
-	mlx_delete_image(game.mlx, game.mini_map);
-	mlx_delete_image(game.mlx, pl.line);
-	mlx_terminate(game.mlx);
-	return EXIT_SUCCESS;
-}
+// 	mlx_loop_hook(game.mlx, render, &game);
+// 	mlx_loop(game.mlx);
+// 	mlx_delete_image(game.mlx, game.mini_map);
+// 	mlx_delete_image(game.mlx, pl.line);
+// 	mlx_terminate(game.mlx);
+// 	return EXIT_SUCCESS;
+// }

@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.15)
+project(CUB3D)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(.)
+include_directories(getnextline)
+include_directories(lib)
+include_directories(MLX42/include)
+include_directories(MLX42/include/glad)
+include_directories(MLX42/include/KHR)
+include_directories(MLX42/include/lodepng)
+include_directories(MLX42/include/MLX42)
+include_directories(MLX42/src/font)
+include_directories(MLX42/tests)
+
+add_executable(CUB3D
+        config/free.c
+        getnextline/get_next_line.c
+        getnextline/get_next_line.h
+        getnextline/get_next_line_utils.c
+        lib/ft_atoi.c
+        lib/ft_split.c
+        lib/ft_strdup.c
+        lib/ft_strlen.c
+        lib/ft_substr.c
+        lib/lib.h
+        MLX42/build/mlx_frag_shader.c
+        MLX42/build/mlx_vert_shader.c
+        MLX42/include/glad/glad.h
+        MLX42/include/KHR/khrplatform.h
+        MLX42/include/lodepng/lodepng.h
+        MLX42/include/MLX42/MLX42.h
+        MLX42/include/MLX42/MLX42_Int.h
+        MLX42/lib/glad/glad.c
+        MLX42/lib/png/lodepng.c
+        MLX42/src/font/font.h
+        MLX42/src/font/mlx_font.c
+        MLX42/src/textures/mlx_png.c
+        MLX42/src/textures/mlx_texture.c
+        MLX42/src/textures/mlx_xpm42.c
+        MLX42/src/utils/mlx_compare.c
+        MLX42/src/utils/mlx_error.c
+        MLX42/src/utils/mlx_list.c
+        MLX42/src/utils/mlx_utils.c
+        MLX42/src/mlx_cursor.c
+        MLX42/src/mlx_exit.c
+        MLX42/src/mlx_images.c
+        MLX42/src/mlx_init.c
+        MLX42/src/mlx_keys.c
+        MLX42/src/mlx_loop.c
+        MLX42/src/mlx_monitor.c
+        MLX42/src/mlx_mouse.c
+        MLX42/src/mlx_put_pixel.c
+        MLX42/src/mlx_window.c
+        MLX42/tests/tests.cpp
+        MLX42/tests/WindowFixture.hpp
+        raycasting/raycast.c
+        cub3.c
+        cub3.h)

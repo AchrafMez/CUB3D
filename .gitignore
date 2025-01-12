@@ -1,0 +1,5 @@
+./CMakeLists.txt
+./CUB3D/cmake-build-debug
+./CUB3D/.idea
+/.vscode/
+/.idea/

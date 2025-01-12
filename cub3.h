@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <math.h>
+#include <math.h>   
 #include <float.h>
 #include "./MLX42/include/MLX42/MLX42.h"
 #define TILE_SIZE 64
@@ -76,6 +76,71 @@ typedef struct s_map
     
 } t_map;
 
+
+
+//config
+void free_fc(char **fc);
+void fre_maplines(char **map);
+void free_map(t_map *map);
+void ft_exit(char *str ,t_map *map);
+
+
+void store_textures(char index, char *line, t_map **map);
+int check_texture_perm(char *path);
+
+
+void store_FC(char **fc, int flag, t_map **map);
+int check_fc_prototype(char *line, t_map *map);
+int check_FC(char *line, t_map *map);
+void fill_colors(char *line, t_map **map, int flag);
+
+void print_map(t_map *map);
+void print_maplines(char **map);
+
+
+
+int check_extension(char *file_name);
+int check_positions(char *line, char f, char s, t_map **map);
+int check_identif(char *line);
+int check_color(char *fc, t_map *map);
+
+//init
+void null_init(t_map *map);
+void init_floor(t_map **map);
+void init_ciel(t_map **map);
+
+//is_valid
+int valide_color(char **fc, t_map *map);
+int valid_color(char *line);
+int valid_map(char *line);
+
+
+//check_map
+int check_map_walls(char **map);
+void check_filled_map(t_map *map);
+void check_ones(char *line);
+int check_map_chars(char **map);
+void check_zeros(t_map *map, int i, int j);
+void check_map_spaces(t_map *map);
+
+
+//read map
+void read_map(char *file_name, t_map **map);
+
+//parse
+void parse_colors(char *line, t_map **map);
+int is_map(char *line);
+int empty_line(char *line);
+int wall(char *map);
+void WHXY(t_map **map);
+
+//fill map
+void fill_mapline(int map_line, int fd, t_map **map);
+void fill_map(int fd, char *file_namp, t_map **map);
+
+//map line
+int lines_count(int fd, t_map *map);
+int map_lines(int fd, t_map *map);
 
 
 
