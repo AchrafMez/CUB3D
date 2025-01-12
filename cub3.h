@@ -48,18 +48,6 @@ typedef struct	s_ray
 	int		ray_facing_left;
 }				t_ray;
 
-typedef struct	s_cub
-{
-	mlx_t		*mlx;
-	mlx_image_t	*mini_map;
-	mlx_image_t	*img;
-	int			win_width;
-	int			win_height;
-	char		**map;
-	t_player	*player;
-	t_ray		*rays;
-}				t_cub;
-
 typedef struct s_map
 {
     char *NO;
@@ -73,24 +61,32 @@ typedef struct s_map
     int player_y;
     int HEIGHT;
     int WIDHT;
-    
+	mlx_t	*mlx;
+	mlx_image_t	*mini_map;
+	mlx_image_t	*img;
 } t_map;
 
+typedef struct	s_data
+{
+	t_map		*map;
+	t_player	*player;
+	t_ray		*rays;
+}				t_data;
 
 
+void	player_init(t_player *pl, t_data *data);
+int		is_collision(t_data *data, float new_X, float new_Y);
+void	render_3d_projection_walls(t_ray **rays, t_data *data);
+void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
+t_ray	**cast_all_rays(t_data *data);
+t_ray	*create_Ray(float angle);
+void	cast_rays(t_ray *ray, t_data *data);
+double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2);
+void	render_rays(t_data *data, float x1, float y1);
+void	clear_image(mlx_image_t *img);
+float	normalize_angle(float angle);
+int		is_WALL(t_data *data, int x, int y);
+void	render_map(t_map *map);
+int		raycast(t_data *data);
 
 #endif
-
-//1111111111111111111111111
-//1000000000110000000000001
-//1011000001110000000000001
-//01001000000000000000000001
-//11111111101100000111000000000001
-//10000000001100000111011111111111
-//11000000110101011100000010001
-//10000000000000001100000010001
-//11110111111111011100000010001
-//10000000000000001101010010001
-//11000001110101011111011110N0111
-//11110111 1110101 101111010001
-//11111111 1111111 111111111111
