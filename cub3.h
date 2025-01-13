@@ -65,10 +65,11 @@ typedef struct	s_ray
 
 typedef struct s_map
 {
-    char *NO;
-    char *SO;
-    char *WE;
-    char *EA;
+    char player;
+    const char *NO;
+    const char *SO;
+    const char *WE;
+    const char *EA;
     int *floor_rgb;
     int *ciel_rgb;
     char **map;
@@ -79,6 +80,7 @@ typedef struct s_map
 	mlx_t	*mlx;
 	mlx_image_t	*mini_map;
 	mlx_image_t	*img;
+	mlx_image_t *textures[4];
 } t_map;
 
 typedef struct	s_data

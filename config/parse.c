@@ -91,6 +91,7 @@ void WHXY(t_map **map)
         while((*map)->map[i][j]){
             if((*map)->map[i][j] == 'S' || (*map)->map[i][j] == 'W' || (*map)->map[i][j] == 'E' || (*map)->map[i][j] == 'N')
             {
+                (*map)->player = (*map)->map[i][j];
                 (*map)->player_y = i;
                 (*map)->player_x = j ;
             }
