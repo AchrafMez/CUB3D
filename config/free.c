@@ -25,10 +25,10 @@ void fre_maplines(char **map)
 }
 void free_map(t_map *map)
 {
-    free(map->NO);
-    free(map->EA);
-    free(map->SO);
-    free(map->WE);
+    free((void *)map->NO);
+    free((void *)map->EA);
+    free((void *)map->SO);
+    free((void *)map->WE);
     free(map->floor_rgb);
     free(map->ciel_rgb);
     fre_maplines(map->map);
