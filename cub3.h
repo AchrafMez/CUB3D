@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
+/*   Updated: 2025/01/13 12:12:46 by abmahfou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3_H
 # define CUB3_H
 
@@ -12,14 +24,15 @@
 #include <math.h>   
 #include <float.h>
 #include "./MLX42/include/MLX42/MLX42.h"
+
 #define TILE_SIZE 64
 #define COLOR_GREEN 0x0F000FF
-#define MAIN_COLOR 0x98FF98
+#define MAIN_COLOR 0x0098FF98
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
 #define PI 3.14159265358979323846
 #define WALL_STRIP_WIDTH 1
-#define LINE_LENGTH 30
+// #define LINE_LENGTH 30
 #define MINIMAP_SCALE_FACTOR 0.2
 
 typedef struct	s_player {
@@ -27,9 +40,11 @@ typedef struct	s_player {
 	float	y;
 	int		turn_direction;
 	int		walk_direction;
+	bool	walk;
 	float	rotation_angle;
 	float	move_speed;
 	float	rotation_speed;
+	float	side_angle;
 	double	FOV;
 	mlx_image_t	*pl;
 	mlx_image_t	*ray;
@@ -45,6 +60,7 @@ typedef struct	s_ray
 	int		ray_facing_up;
 	int		ray_facing_right;
 	int		ray_facing_left;
+	bool	was_vert;
 }				t_ray;
 
 typedef struct s_map

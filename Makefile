@@ -9,6 +9,7 @@ NC=\033[0m
 
 HEADERS	= -I ./include -I $(MLX)/include
 LIBS	= $(MLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
+HEADER = cub3.h
 
 SRC = cub3.c \
 	./config/check_map.c \
@@ -23,7 +24,7 @@ SRC = cub3.c \
 	./config/print.c\
 	./config/read_map.c\
 	./config/textures.c\
-	raycasting/raycast.c \
+	./raycasting/raycast.c \
     ./getnextline/get_next_line.c \
     ./getnextline/get_next_line_utils.c \
     ./lib/ft_split.c \
@@ -44,13 +45,13 @@ all: libmlx $(NAME)
 libmlx:
 	@cmake $(MLX) -B $(MLX)/build && make -C $(MLX)/build -j4
 
-$(OBJ_DIR)%.o: %.c
+$(OBJ_DIR)%.o: %.c $(HEADER)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
 
 
 $(NAME): $(OBJ)
-	@echo "$(GREEN)Compiling C objects...$(RESET)"
+	@echo "$(GREEN)Compiling C objects...$(NC)"
 	@$(CC) $(CFLAGS) $(LIBS) $(OBJ) $(HEADERS) -o $(NAME)
 
 clean: 

@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/12 15:41:36 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/13 12:33:10 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,7 @@ void	cast_rays(t_ray *ray, t_data *data)
 		ray->wall_hit_X = vert_wall_hit_X;
 		ray->wall_hit_Y = vert_wall_hit_Y;
 		ray->distance = vert_hit_distance;
+		ray->was_vert = true;
 	}
 	render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
 }
@@ -259,6 +260,7 @@ t_ray	*create_Ray(float angle)
 	ray->distance = 0;
 	ray->wall_hit_X = 0;
 	ray->wall_hit_Y = 0;
+	ray->was_vert = false;
 	ray->ray_facing_down = ray->ray_angle > 0 && ray->ray_angle < PI;
 	ray->ray_facing_up = !ray->ray_facing_down;
 
@@ -270,7 +272,6 @@ t_ray	*create_Ray(float angle)
 
 t_ray	**cast_all_rays(t_data *data)
 {
-	int		columnId;
 	float	ray_angle;
 	int		i;
 	int		rays_num;
@@ -282,7 +283,6 @@ t_ray	**cast_all_rays(t_data *data)
 
 	clear_image(data->player->ray);
 	rays = malloc(sizeof(t_ray *) * rays_num);
-	columnId = 0;
 	ray_angle = data->player->rotation_angle - (data->player->FOV / 2);
 	i = -1;
 	while (++i < rays_num)
@@ -293,7 +293,6 @@ t_ray	**cast_all_rays(t_data *data)
 		cast_rays(ray, data);
 		rays[i] = ray;
 		ray_angle += data->player->FOV / rays_num;
-		columnId++;
 	}
 	return (rays);
 }
@@ -341,7 +340,7 @@ void	render_3d_projection_walls(t_ray **rays, t_data *data)
 						(data->map->HEIGHT / 2) - (wall_strip_height / 2),
 						WALL_STRIP_WIDTH,
 						wall_strip_height,
-						MAIN_COLOR);
+						ray->was_vert ? MAIN_COLOR : 0x0079CC79);
 	}
 }
 
@@ -365,8 +364,17 @@ void	update_player(t_data *data) {
 	player->rotation_angle += player->turn_direction * player->rotation_speed;
 
 	float move_step = player->walk_direction * player->move_speed;
-	new_X = player->pl->instances->x + round(cos(player->rotation_angle) * move_step);
-	new_Y = player->pl->instances->y + round(sin(player->rotation_angle) * move_step);
+	if (player->walk)
+	{
+		player->side_angle = player->rotation_angle + (PI / 2);
+		new_X = player->pl->instances->x + round(cos(player->side_angle) * move_step);
+		new_Y = player->pl->instances->y + round(sin(player->side_angle) * move_step);
+		player->walk = false;
+	} else
+	{
+		new_X = player->pl->instances->x + round(cos(player->rotation_angle) * move_step);
+		new_Y = player->pl->instances->y + round(sin(player->rotation_angle) * move_step);
+	}
 	if (!is_collision(data, new_X, new_Y)) {
 		player->pl->instances->x = new_X;
 		player->pl->instances->y = new_Y;
@@ -382,10 +390,20 @@ void	render(void *param)
 	
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(data->map->mlx);
-	if (mlx_is_key_down(data->map->mlx, MLX_KEY_UP))
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
 		data->player->walk_direction = 1;
-	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_DOWN))
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_S))
 		data->player->walk_direction = -1;
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_A))
+	{
+		data->player->walk = true;
+		data->player->walk_direction = -1;
+	}
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_D))
+	{
+		data->player->walk = true;
+		data->player->walk_direction = 1;
+	}
 	else
 		data->player->walk_direction = 0;
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
@@ -403,10 +421,12 @@ void	player_init(t_player *pl, t_data *data)
 {
 	pl->walk_direction = 0;
 	pl->turn_direction = 0;
+	pl->walk = false;
 	pl->rotation_angle = PI / 2;
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (PI / 180);
 	pl->FOV = 60 * (PI / 180);
+	pl->side_angle = 0.0;
 	pl->x = data->map->player_x * TILE_SIZE;
 	pl->y = data->map->player_y * TILE_SIZE;
 }
@@ -423,16 +443,16 @@ int	raycast(t_data *data)
 	data->map->mlx = mlx_init(data->map->WIDHT, data->map->HEIGHT, "cub3D", true);
 	if (!data->map->mlx) {
 		fprintf(stderr, "Failed to initialize MLX\n");
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 
-	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT * WALL_STRIP_WIDTH, data->map->HEIGHT * WALL_STRIP_WIDTH);
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
-	data->map->img = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
-	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
-	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
-	render_map(data->map);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
+	data->map->img = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
+	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
+	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT * WALL_STRIP_WIDTH, data->map->HEIGHT * WALL_STRIP_WIDTH);
+	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
+	render_map(data->map);
 	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
 
@@ -440,5 +460,5 @@ int	raycast(t_data *data)
 	mlx_loop(data->map->mlx);
 	mlx_delete_image(data->map->mlx, data->map->mini_map);
 	mlx_terminate(data->map->mlx);
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }
