@@ -6,6 +6,8 @@ char	*ft_strdup(char *s1)
 	int		strlen;
 	char	*str;
 
+	if (!s1)
+		return (NULL);
 	i = 0;
 	strlen = ft_strlen(s1);
 	str = (char *)malloc(sizeof(char) * (strlen + 1));

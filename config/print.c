@@ -30,8 +30,8 @@ void print_map(t_map *map)
     printf("EA: %s\n", map->EA);
     printf("player_x: %d\n", map->player_x);
     printf("player_y: %d\n", map->player_y);
-    printf("WIDTH: %d\n", map->WIDHT);
-    printf("HEIGHT: %d\n", map->HEIGHT);
+    // printf("WIDTH: %d\n", map->WIDHT);
+    // printf("HEIGHT: %d\n", map->HEIGHT);
     print_color(map);
     print_maplines(map->map);
     printf("---------------map--------------\n");

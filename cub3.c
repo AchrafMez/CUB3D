@@ -17,12 +17,13 @@
              check_map_chars(map->map);
              WHXY(&map);
              check_map_spaces(map);
+			//  print_map(map);
 			 data.map = map;
              // if(map->map) {
  //               check_map_walls(map->map);
              //    }
 			 raycast(&data);
-             print_map(map);
+            //  print_map(map);
              free_map(map);
          }
          else

@@ -101,7 +101,7 @@ void WHXY(t_map **map)
         i++;
     }
     (*map)->WIDHT = w;
-    (*map)->HEIGHT = i - 1;
+    (*map)->HEIGHT = i;
 }
 
 

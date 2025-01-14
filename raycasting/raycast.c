@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/13 12:33:10 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/14 13:20:32 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,19 @@ int	is_WALL(t_data *data, int x, int y)
 	int	X_index;
 	int	Y_index;
 
-	if (x < 0 || x >= data->map->WIDHT || y < 0 || y >= data->map->HEIGHT)
+	if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
 		return (1);
 	Y_index = round(y / TILE_SIZE);
 	X_index = round(x / TILE_SIZE);
-	if (data->map->map[Y_index][X_index] == '1')
+	if (Y_index >= data->map->HEIGHT || X_index >= data->map->WIDHT)
+		return (1);
+	if ( data->map->map[Y_index][X_index] == '1')
 		return (1);
 	return (0);
 }
 
-void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color) {
+void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color)
+{
 	int dx;
 	int dy;
 	int	i;
@@ -159,10 +162,13 @@ void	cast_rays(t_ray *ray, t_data *data)
 	next_horz_X = x_intercept;
 	next_horz_Y = y_intercept;
 
-	while (next_horz_X >= 0 && next_horz_X <= data->map->WIDHT
-		&& next_horz_Y >= 0 && next_horz_Y <= data->map->HEIGHT)
+	if (ray->ray_facing_up)
+		next_horz_Y -=0.0001 ;
+
+	while (next_horz_X >= 0 && next_horz_X <= WIN_WIDTH
+		&& next_horz_Y >= 0 && next_horz_Y <= WIN_HEIGHT)
 	{
-		if (is_WALL(data, next_horz_X, next_horz_Y - (ray->ray_facing_up ? 1 : 0)))
+		if (is_WALL(data, next_horz_X, next_horz_Y))
 		{
 			found_horz_hit = true;
 			horz_wall_hit_X = next_horz_X;
@@ -210,9 +216,12 @@ void	cast_rays(t_ray *ray, t_data *data)
 	next_vert_X = x_intercept;
 	next_vert_Y = y_intercept;
 
-	while (next_vert_X >= 0 && next_vert_X <= data->map->WIDHT && next_vert_Y >= 0 && next_vert_Y <= data->map->HEIGHT)
+	if (ray->ray_facing_left)
+		next_vert_X -= 0.001;
+
+	while (next_vert_X >= 0 && next_vert_X <= WIN_WIDTH && next_vert_Y >= 0 && next_vert_Y <= WIN_HEIGHT)
 	{
-		if (is_WALL(data, next_vert_X - (ray->ray_facing_left ? 1 : 0), next_vert_Y))
+		if (is_WALL(data, next_vert_X, next_vert_Y))
 		{
 			found_vert_hit = true;
 			vert_wall_hit_X = next_vert_X;
@@ -278,7 +287,7 @@ t_ray	**cast_all_rays(t_data *data)
 	t_map	*game;
 
 	game = data->map;
-	rays_num = game->WIDHT;
+	rays_num = WIN_WIDTH;
 	t_ray	**rays;
 
 	clear_image(data->player->ray);
@@ -329,18 +338,18 @@ void	render_3d_projection_walls(t_ray **rays, t_data *data)
 
 	i = -1;
 	clear_image(data->map->img);
-	rays_num = data->map->WIDHT;
+	rays_num = WIN_WIDTH;
 	while (++i < rays_num)
 	{
 		ray = rays[i];
 		correct_ray_dist = ray->distance * cos(ray->ray_angle - data->player->rotation_angle);
-		distance_projection_plane = (data->map->WIDHT / 2) / tan(data->player->FOV / 2);
+		distance_projection_plane = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
 		wall_strip_height = (TILE_SIZE / correct_ray_dist) * distance_projection_plane;
 		draw_rectangle(data->map->img, i * WALL_STRIP_WIDTH,
-						(data->map->HEIGHT / 2) - (wall_strip_height / 2),
+						(WIN_HEIGHT / 2) - (wall_strip_height / 2),
 						WALL_STRIP_WIDTH,
 						wall_strip_height,
-						ray->was_vert ? MAIN_COLOR : 0x0079CC79);
+						ray->was_vert ? MAIN_COLOR : 0xf5f3f4FF);
 	}
 }
 
@@ -422,7 +431,14 @@ void	player_init(t_player *pl, t_data *data)
 	pl->walk_direction = 0;
 	pl->turn_direction = 0;
 	pl->walk = false;
-	pl->rotation_angle = PI / 2;
+	if (data->map->player == 'N')
+		pl->rotation_angle = (3 * PI) / 2;
+	if (data->map->player == 'W')
+		pl->rotation_angle = PI;
+	if (data->map->player == 'E')
+		pl->rotation_angle = 0;
+	if (data->map->player == 'S')
+		pl->rotation_angle = PI / 2;
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (PI / 180);
 	pl->FOV = 60 * (PI / 180);
@@ -438,22 +454,44 @@ int	raycast(t_data *data)
 	pl = (t_player *)malloc(sizeof(t_player));
 	player_init(pl, data);
 	data->player = pl;
-	data->map->WIDHT *= TILE_SIZE;
-	data->map->HEIGHT *= TILE_SIZE;
-	data->map->mlx = mlx_init(data->map->WIDHT, data->map->HEIGHT, "cub3D", true);
+	data->map->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3D", true);
 	if (!data->map->mlx) {
 		fprintf(stderr, "Failed to initialize MLX\n");
 		return (EXIT_FAILURE);
 	}
+	data->map->background = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
+	int	y = -1;
+	int	x;
+	while ((uint32_t)(++y) < data->map->background->height / 2)
+	{
+		x = -1;
+		while ((uint32_t)++x < data->map->background->width)
+		{
+			mlx_put_pixel(data->map->background, x, y, 0x00CAF0F8);
+		}
+	}
+	y = data->map->background->height / 2;
+	while ((uint32_t)++y < data->map->background->height)
+	{
+		x = -1;
+		while ((uint32_t)++x < data->map->background->width)
+		{
+			mlx_put_pixel(data->map->background, x, y, 0xFFD4A373);
+		}
+	}
 
+	mlx_image_to_window(data->map->mlx, data->map->background, 0, 0);
+	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
+	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
+
+	data->map->mini_map = mlx_new_image(data->map->mlx, WIN_WIDTH * WALL_STRIP_WIDTH, WIN_HEIGHT * WALL_STRIP_WIDTH);
+	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
+	
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
-	data->map->img = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
-	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
-	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT * WALL_STRIP_WIDTH, data->map->HEIGHT * WALL_STRIP_WIDTH);
-	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
+	
 	render_map(data->map);
-	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
+	pl->ray = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
 
 	mlx_loop_hook(data->map->mlx, render, data);
