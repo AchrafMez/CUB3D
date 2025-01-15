@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/14 11:56:12 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/15 10:15:09 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,36 +25,6 @@
 #include <float.h>
 #include "./MLX42/include/MLX42/MLX42.h"
 
-//         1111111111111111111111111        1111111111111111111111111         
-//         1000000000110000000000001        1000000011000001000000001 
-//         1111000001110000000000S01        100000001110000010000001 
-//         1001000000000000000000001        1000000000000000000000001
-// 111111111011000001010000010000001111111111011000111110000010000001
-// 1000000000110000011111011111111111  100000000011000001111111111111111
-// 11110111111111111100000010001111101111010111110000000100011
-// 1111011111111101110101000000111110111111111011001010000001
-// 1100000011010101111000001000010000000110101011110000010001
-// 100000001000000011000001000111100000001000000010000001000111
-// 1000000000000000110101001000110000000000000001101010010001
-// 110000011101010111111111100111000001110101011111011110011
-// 11111111 101000000000001111111111111 1011111000000011111
-// 1111111111111111111111111           1111111111111111101111111  
-// 1000000000000000000000001          1000000000110000010000001    
-// 1011000001110000000000001         1011000001110000010000001   
-// 10010000000000000000000011111111   100100000010000000000001111111
-// 111111111111000001010000000000001111111111011100001010000010000001
-// 100000000011000001111101111111111100000000011000001111101111111111
-// 11110111111111111100000010001111100111111111011100000010001
-// 1111011111111101110101000000111110111111111011101010000001
-// 1100000011010101111000001000111000000110101011110000010001
-// 10000000100000001100001000000100000001000000011000001000111
-// 1000000000000000110101001000110000000000000001101010010001
-// 110000011101010111110111100111000001110101011111011110011
-// 11111111 101111111111111111111111111 1011111111111111111
-//           1                           1
-
-
-
 #define TILE_SIZE 32
 #define COLOR_GREEN 0x0F000FF
 #define WIN_WIDTH 2545
@@ -62,21 +32,19 @@
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
-#define PI 3.14159265358979323846
 #define WALL_STRIP_WIDTH 1
-// #define LINE_LENGTH 30
 #define MINIMAP_SCALE_FACTOR 0.3
 
 typedef struct	s_player {
-	float	x;
-	float	y;
+	double	x;
+	double	y;
 	int		turn_direction;
 	int		walk_direction;
 	bool	walk;
-	float	rotation_angle;
-	float	move_speed;
-	float	rotation_speed;
-	float	side_angle;
+	double	rotation_angle;
+	double	move_speed;
+	double	rotation_speed;
+	double	side_angle;
 	double	FOV;
 	mlx_image_t	*pl;
 	mlx_image_t	*ray;
@@ -84,10 +52,10 @@ typedef struct	s_player {
 
 typedef struct	s_ray
 {
-	float	wall_hit_X;
-	float	wall_hit_Y;
-	float	distance;
-	float	ray_angle;
+	double	wall_hit_X;
+	double	wall_hit_Y;
+	double	distance;
+	double	ray_angle;
 	int		ray_facing_down;
 	int		ray_facing_up;
 	int		ray_facing_right;
@@ -191,16 +159,16 @@ int map_lines(int fd, t_map *map);
 
 
 void	player_init(t_player *pl, t_data *data);
-int		is_collision(t_data *data, float new_X, float new_Y);
+int		is_collision(t_data *data, double new_X, double new_Y);
 void	render_3d_projection_walls(t_ray **rays, t_data *data);
 void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
 t_ray	**cast_all_rays(t_data *data);
-t_ray	*create_Ray(float angle);
+t_ray	*create_Ray(double angle);
 void	cast_rays(t_ray *ray, t_data *data);
-double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2);
-void	render_rays(t_data *data, float x1, float y1);
+double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
+void	render_rays(t_data *data, double x1, double y1);
 void	clear_image(mlx_image_t *img);
-float	normalize_angle(float angle);
+double	normalize_angle(double angle);
 int		is_WALL(t_data *data, int x, int y);
 void	render_map(t_map *map);
 int		raycast(t_data *data);

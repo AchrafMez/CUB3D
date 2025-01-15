@@ -81,11 +81,13 @@ void WHXY(t_map **map)
     int i = 0;
     int j = 0;
     int w = 0;
-    while((*map)->map[i]){
         w = ft_strlen((*map)->map[i]);
+    while((*map)->map[i]){
+		if(ft_strlen((*map)->map[i]) >= w)
+			(*map)->WIDHT = ft_strlen((*map)->map[i]);
         if ((*map)->map[i + 1] && w < ft_strlen((*map)->map[i + 1]))
         {
-//            printf("w: %lu i+1 : %lu\n", w, ft_strlen((*map)->map[i+1]));
+        //    printf("w: %lu i+1 : %lu\n", w, ft_strlen((*map)->map[i+1]));
             w = ft_strlen((*map)->map[i + 1]);
         }
         while((*map)->map[i][j]){
@@ -100,7 +102,6 @@ void WHXY(t_map **map)
         j = 0;
         i++;
     }
-    (*map)->WIDHT = w;
     (*map)->HEIGHT = i;
 }
 

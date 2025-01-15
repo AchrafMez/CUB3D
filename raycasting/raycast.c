@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/14 13:20:32 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/15 10:12:22 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,15 @@ int	is_WALL(t_data *data, int x, int y)
 	int	X_index;
 	int	Y_index;
 
-	if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
+	if (x < 0 || x >= data->map->WIDHT || y < 0 || y >= data->map->HEIGHT)
 		return (1);
-	Y_index = round(y / TILE_SIZE);
-	X_index = round(x / TILE_SIZE);
-	if (Y_index >= data->map->HEIGHT || X_index >= data->map->WIDHT)
+	Y_index = floor(y / TILE_SIZE);
+	X_index = floor(x / TILE_SIZE);
+	if (Y_index >= data->map->HEIGHT / TILE_SIZE || X_index >= data->map->WIDHT / TILE_SIZE)
 		return (1);
-	if ( data->map->map[Y_index][X_index] == '1')
+	if (X_index >= ft_strlen(data->map->map[Y_index]))
+		return (1);
+	if (data->map->map[Y_index][X_index] == '1')
 		return (1);
 	return (0);
 }
@@ -67,11 +69,11 @@ void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color)
 	dy = y1 - y0;
 	i = -1;
 	int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
-	float x_inc = dx / (float)steps;
-	float y_inc = dy / (float)steps;
+	double x_inc = dx / (double)steps;
+	double y_inc = dy / (double)steps;
 
-	float x = x0;
-	float y = y0;
+	double x = x0;
+	double y = y0;
 	while (++i <= steps)
 	{
 		if (x >= 0 && x < img->width && y >= 0 && y < img->height)
@@ -81,13 +83,13 @@ void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color)
 	}
 }
 
-float	normalize_angle(float angle)
+double	normalize_angle(double angle)
 {
-	float	ret;
+	double	ret;
 
-	ret = remainder(angle, (2 * PI));
+	ret = remainder(angle, (2 * M_PI));
 	if (ret < 0)
-		ret += (2 * PI);
+		ret += (2 * M_PI);
 	return (ret);
 }
 
@@ -109,29 +111,29 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
-void	render_rays(t_data *data, float x1, float y1)
+void	render_rays(t_data *data, double x1, double y1)
 {
 	draw_line(data->player->ray, data->player->pl->instances->x * MINIMAP_SCALE_FACTOR,
 		data->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
 		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, MAIN_COLOR);
 }
 
-double	distance_between_2_points(int32_t x1, int32_t y1, float x2, float y2)
+double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2)
 {
 	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
 
 void	cast_rays(t_ray *ray, t_data *data)
 {
-	float	x_intercept;
-	float	y_intercept;
-	float	x_step;
-	float	y_step;
-	float	next_horz_X;
-	float	next_horz_Y;
+	double	x_intercept;
+	double	y_intercept;
+	double	x_step;
+	double	y_step;
+	double	next_horz_X;
+	double	next_horz_Y;
 	bool	found_horz_hit;
-	float	horz_wall_hit_X;
-	float	horz_wall_hit_Y;
+	double	horz_wall_hit_X;
+	double	horz_wall_hit_Y;
 
 	//////////////////////////////////////////////
 	/// HORIZONTAL RAY-GRID INTERSECTION CODE  ///   
@@ -163,7 +165,7 @@ void	cast_rays(t_ray *ray, t_data *data)
 	next_horz_Y = y_intercept;
 
 	if (ray->ray_facing_up)
-		next_horz_Y -=0.0001 ;
+		next_horz_Y -=0.0001;
 
 	while (next_horz_X >= 0 && next_horz_X <= WIN_WIDTH
 		&& next_horz_Y >= 0 && next_horz_Y <= WIN_HEIGHT)
@@ -185,11 +187,11 @@ void	cast_rays(t_ray *ray, t_data *data)
 	///  VERTICAL RAY-GRID INTERSECTION CODE   ///   
 	//////////////////////////////////////////////
 	
-	float	next_vert_X;
-	float	next_vert_Y;
+	double	next_vert_X;
+	double	next_vert_Y;
 	bool	found_vert_hit;
-	float	vert_wall_hit_X;
-	float	vert_wall_hit_Y;
+	double	vert_wall_hit_X;
+	double	vert_wall_hit_Y;
 	
 	found_vert_hit = false;
 	vert_wall_hit_X = 0;
@@ -260,7 +262,7 @@ void	cast_rays(t_ray *ray, t_data *data)
 	render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
 }
 
-t_ray	*create_Ray(float angle)
+t_ray	*create_Ray(double angle)
 {
 	t_ray	*ray;
 
@@ -270,10 +272,9 @@ t_ray	*create_Ray(float angle)
 	ray->wall_hit_X = 0;
 	ray->wall_hit_Y = 0;
 	ray->was_vert = false;
-	ray->ray_facing_down = ray->ray_angle > 0 && ray->ray_angle < PI;
+	ray->ray_facing_down = ray->ray_angle > 0 && ray->ray_angle < M_PI;
 	ray->ray_facing_up = !ray->ray_facing_down;
-
-	ray->ray_facing_right = ray->ray_angle < 0.5 * PI || ray->ray_angle > (1.5 * PI);
+	ray->ray_facing_right = ray->ray_angle < 0.5 * M_PI || ray->ray_angle > (1.5 * M_PI);
 	ray->ray_facing_left = !ray->ray_facing_right;
 
 	return (ray);
@@ -281,27 +282,27 @@ t_ray	*create_Ray(float angle)
 
 t_ray	**cast_all_rays(t_data *data)
 {
-	float	ray_angle;
-	int		i;
-	int		rays_num;
-	t_map	*game;
+	double		ray_angle;
+	int			i;
+	int			rays_num;
+	t_player	*player;
 
-	game = data->map;
+	player = data->player;
 	rays_num = WIN_WIDTH;
 	t_ray	**rays;
 
-	clear_image(data->player->ray);
+	clear_image(player->ray);
 	rays = malloc(sizeof(t_ray *) * rays_num);
-	ray_angle = data->player->rotation_angle - (data->player->FOV / 2);
+	ray_angle = player->rotation_angle - (player->FOV / 2);
 	i = -1;
 	while (++i < rays_num)
 	{
 		t_ray	*ray;
 
 		ray = create_Ray(ray_angle);
-		cast_rays(ray, data);
 		rays[i] = ray;
-		ray_angle += data->player->FOV / rays_num;
+		cast_rays(ray, data);
+		ray_angle += player->FOV / rays_num;
 	}
 	return (rays);
 }
@@ -317,10 +318,9 @@ void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint3
 		j = 0;
 		while (j < width)
 		{
-			if (x + j >= 0 && (uint32_t)(x + j) < img->width && (uint32_t)(y + i) >= 0 && (uint32_t)(y + i) < img->height)
-            {
+			if (x + j >= 0 && (uint32_t)(x + j) < img->width
+				&& (uint32_t)(y + i) >= 0 && (uint32_t)(y + i) < img->height)
                 mlx_put_pixel(img, x + j, y + i, color);
-            }
 			j++;
 		}
 		i++;
@@ -333,8 +333,8 @@ void	render_3d_projection_walls(t_ray **rays, t_data *data)
 	int		rays_num;
 	t_ray	*ray;
 	int		wall_strip_height;
-	float	correct_ray_dist;
-	float	distance_projection_plane;
+	double	correct_ray_dist;
+	double	distance_projection_plane;
 
 	i = -1;
 	clear_image(data->map->img);
@@ -353,7 +353,7 @@ void	render_3d_projection_walls(t_ray **rays, t_data *data)
 	}
 }
 
-int	is_collision(t_data *data, float new_X, float new_Y)
+int	is_collision(t_data *data, double new_X, double new_Y)
 {
 	if (is_WALL(data, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
 		is_WALL(data, new_X + TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
@@ -372,10 +372,10 @@ void	update_player(t_data *data) {
 
 	player->rotation_angle += player->turn_direction * player->rotation_speed;
 
-	float move_step = player->walk_direction * player->move_speed;
+	double	move_step = player->walk_direction * player->move_speed;
 	if (player->walk)
 	{
-		player->side_angle = player->rotation_angle + (PI / 2);
+		player->side_angle = player->rotation_angle + (M_PI / 2);
 		new_X = player->pl->instances->x + round(cos(player->side_angle) * move_step);
 		new_Y = player->pl->instances->y + round(sin(player->side_angle) * move_step);
 		player->walk = false;
@@ -432,19 +432,45 @@ void	player_init(t_player *pl, t_data *data)
 	pl->turn_direction = 0;
 	pl->walk = false;
 	if (data->map->player == 'N')
-		pl->rotation_angle = (3 * PI) / 2;
+		pl->rotation_angle = (3 * M_PI) / 2;
 	if (data->map->player == 'W')
-		pl->rotation_angle = PI;
+		pl->rotation_angle = M_PI;
 	if (data->map->player == 'E')
 		pl->rotation_angle = 0;
 	if (data->map->player == 'S')
-		pl->rotation_angle = PI / 2;
+		pl->rotation_angle = M_PI / 2;  
 	pl->move_speed = 2.0;
-	pl->rotation_speed = 2 * (PI / 180);
-	pl->FOV = 60 * (PI / 180);
+	pl->rotation_speed = 2 * (M_PI / 180);
+	pl->FOV = 60 * (M_PI / 180);
 	pl->side_angle = 0.0;
 	pl->x = data->map->player_x * TILE_SIZE;
 	pl->y = data->map->player_y * TILE_SIZE;
+}
+
+uint32_t	get_rgb(int r, int g, int b)
+{
+	return (r << 16 | g << 8 | b);
+}
+
+void	color_background(mlx_image_t *bg, t_map *map)
+{
+	int	y;
+	int	x;
+
+	y = -1;
+	while ((uint32_t)(++y) < bg->height / 2)
+	{
+		x = -1;
+		while ((uint32_t)++x < bg->width)
+			mlx_put_pixel(bg, x, y, get_rgb(map->ciel_rgb[0], map->ciel_rgb[1], map->ciel_rgb[2]));
+	}
+	y = bg->height / 2;
+	while ((uint32_t)++y < bg->height)
+	{
+		x = -1;
+		while ((uint32_t)++x < bg->width)
+			mlx_put_pixel(bg, x, y, get_rgb(map->floor_rgb[0], map->floor_rgb[1], map->floor_rgb[2]));
+	}
 }
 
 int	raycast(t_data *data)
@@ -459,44 +485,30 @@ int	raycast(t_data *data)
 		fprintf(stderr, "Failed to initialize MLX\n");
 		return (EXIT_FAILURE);
 	}
+	
+	data->map->WIDHT *= TILE_SIZE;
+	data->map->HEIGHT *= TILE_SIZE;
+
 	data->map->background = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
-	int	y = -1;
-	int	x;
-	while ((uint32_t)(++y) < data->map->background->height / 2)
-	{
-		x = -1;
-		while ((uint32_t)++x < data->map->background->width)
-		{
-			mlx_put_pixel(data->map->background, x, y, 0x00CAF0F8);
-		}
-	}
-	y = data->map->background->height / 2;
-	while ((uint32_t)++y < data->map->background->height)
-	{
-		x = -1;
-		while ((uint32_t)++x < data->map->background->width)
-		{
-			mlx_put_pixel(data->map->background, x, y, 0xFFD4A373);
-		}
-	}
+	color_background(data->map->background, data->map);
 
 	mlx_image_to_window(data->map->mlx, data->map->background, 0, 0);
 	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
 
-	data->map->mini_map = mlx_new_image(data->map->mlx, WIN_WIDTH * WALL_STRIP_WIDTH, WIN_HEIGHT * WALL_STRIP_WIDTH);
+	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
 	
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
 	
 	render_map(data->map);
-	pl->ray = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
+	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
 
 	mlx_loop_hook(data->map->mlx, render, data);
 	mlx_loop(data->map->mlx);
-	mlx_delete_image(data->map->mlx, data->map->mini_map);
+	// mlx_delete_image(data->map->mlx, data->map->mini_map);
 	mlx_terminate(data->map->mlx);
 	return (EXIT_SUCCESS);
 }
