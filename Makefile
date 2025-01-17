@@ -25,7 +25,7 @@ SRC = cub3.c \
 	./config/read_map.c\
 	./config/textures.c\
 	./raycasting/raycast.c \
-	./raycasting/v_h_hits.c \
+	./raycasting/cast_ray.c \
 	./raycasting/renders.c \
     ./getnextline/get_next_line.c \
     ./getnextline/get_next_line_utils.c \
