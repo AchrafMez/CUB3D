@@ -6,40 +6,11 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/15 10:12:22 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/16 18:14:41 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
-
-void render_map(t_map *map)
-{
-	int	y;
-	int	x;
-	int	py;
-	int	px;
-
-	y = -1;
-	while (map->map[++y] != NULL)
-	{
-		x = -1;
-		while (map->map[y][++x])
-		{
-			uint32_t color = COLOR_WALL; // Default to wall
-			if (map->map[y][x] == '1')
-				color = COLOR_SPACE;
-			else if (map->map[y][x] == ' ')
-				color = 0x00000000;
-			py = -1;
-			while (++py < TILE_SIZE)
-			{
-				px = -1;
-				while (++px < TILE_SIZE)
-					mlx_put_pixel(map->mini_map, (x * TILE_SIZE + px) * MINIMAP_SCALE_FACTOR, (y * TILE_SIZE + py) * MINIMAP_SCALE_FACTOR, color);
-			}
-		}
-	}
-}
 
 int	is_WALL(t_data *data, int x, int y)
 {
@@ -111,155 +82,9 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
-void	render_rays(t_data *data, double x1, double y1)
-{
-	draw_line(data->player->ray, data->player->pl->instances->x * MINIMAP_SCALE_FACTOR,
-		data->player->pl->instances->y * MINIMAP_SCALE_FACTOR,
-		x1 * MINIMAP_SCALE_FACTOR, y1 * MINIMAP_SCALE_FACTOR, MAIN_COLOR);
-}
-
 double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2)
 {
 	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
-}
-
-void	cast_rays(t_ray *ray, t_data *data)
-{
-	double	x_intercept;
-	double	y_intercept;
-	double	x_step;
-	double	y_step;
-	double	next_horz_X;
-	double	next_horz_Y;
-	bool	found_horz_hit;
-	double	horz_wall_hit_X;
-	double	horz_wall_hit_Y;
-
-	//////////////////////////////////////////////
-	/// HORIZONTAL RAY-GRID INTERSECTION CODE  ///   
-	//////////////////////////////////////////////
-
-	found_horz_hit = false;
-	horz_wall_hit_X = 0;
-	horz_wall_hit_Y = 0;
-
-	// find the Y coordinate of the closest horizontal grid intersection
-	y_intercept = floor(data->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
-	if (ray->ray_facing_down)
-		y_intercept += TILE_SIZE;
-	// find the X coordinate of the closest horizontal grid intersection
-	x_intercept = data->player->pl->instances->x + ((y_intercept - data->player->pl->instances->y) / tan(ray->ray_angle));
-
-	// Calculate the Ystep
-	y_step = TILE_SIZE;
-	if (ray->ray_facing_up)
-		y_step *= -1;
-	// Calculate the Xstep
-	x_step = y_step / tan(ray->ray_angle);
-	if (ray->ray_facing_right && x_step < 0)
-		x_step *= -1;
-	if (ray->ray_facing_left && x_step > 0)
-		x_step *= -1;
-
-	next_horz_X = x_intercept;
-	next_horz_Y = y_intercept;
-
-	if (ray->ray_facing_up)
-		next_horz_Y -=0.0001;
-
-	while (next_horz_X >= 0 && next_horz_X <= WIN_WIDTH
-		&& next_horz_Y >= 0 && next_horz_Y <= WIN_HEIGHT)
-	{
-		if (is_WALL(data, next_horz_X, next_horz_Y))
-		{
-			found_horz_hit = true;
-			horz_wall_hit_X = next_horz_X;
-			horz_wall_hit_Y = next_horz_Y;
-			break ;
-		}
-		else
-		{
-			next_horz_X += x_step;
-			next_horz_Y += y_step;
-		}
-	}
-	//////////////////////////////////////////////
-	///  VERTICAL RAY-GRID INTERSECTION CODE   ///   
-	//////////////////////////////////////////////
-	
-	double	next_vert_X;
-	double	next_vert_Y;
-	bool	found_vert_hit;
-	double	vert_wall_hit_X;
-	double	vert_wall_hit_Y;
-	
-	found_vert_hit = false;
-	vert_wall_hit_X = 0;
-	vert_wall_hit_Y = 0;
-
-	// find the X coordinate of the closest vertical grid intersection
-	x_intercept = floor(data->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
-	if (ray->ray_facing_right)
-		x_intercept += TILE_SIZE;
-	// find the Y coordinate of the closest vertical grid intersection
-	y_intercept = data->player->pl->instances->y + ((x_intercept - data->player->pl->instances->x) * tan(ray->ray_angle));
-
-	// Calculate the Ystep
-	x_step = TILE_SIZE;
-	if (ray->ray_facing_left)
-		x_step *= -1;
-	// Calculate the Xstep
-	y_step = x_step * tan(ray->ray_angle);
-	if (ray->ray_facing_up && y_step > 0)
-		y_step *= -1;
-	if (ray->ray_facing_down && y_step < 0)
-		y_step *= -1;
-
-	next_vert_X = x_intercept;
-	next_vert_Y = y_intercept;
-
-	if (ray->ray_facing_left)
-		next_vert_X -= 0.001;
-
-	while (next_vert_X >= 0 && next_vert_X <= WIN_WIDTH && next_vert_Y >= 0 && next_vert_Y <= WIN_HEIGHT)
-	{
-		if (is_WALL(data, next_vert_X, next_vert_Y))
-		{
-			found_vert_hit = true;
-			vert_wall_hit_X = next_vert_X;
-			vert_wall_hit_Y = next_vert_Y;
-			break ;
-		}
-		else
-		{
-			next_vert_X += x_step;
-			next_vert_Y += y_step;
-		}
-	}
-
-	// Calculate the distance to get the smallest point
-	double	horz_hit_distance = DBL_MAX;
-	double	vert_hit_distance = DBL_MAX;
-	if (found_horz_hit == true)
-		horz_hit_distance = distance_between_2_points(data->player->pl->instances->x,
-			data->player->pl->instances->y, horz_wall_hit_X, horz_wall_hit_Y);
-	if (found_vert_hit == true)
-		vert_hit_distance = distance_between_2_points(data->player->pl->instances->x,
-			data->player->pl->instances->y, vert_wall_hit_X, vert_wall_hit_Y);
-	if (horz_hit_distance < vert_hit_distance)
-	{
-		ray->wall_hit_X = horz_wall_hit_X;
-		ray->wall_hit_Y = horz_wall_hit_Y;
-		ray->distance = horz_hit_distance;
-	}
-	else
-	{
-		ray->wall_hit_X = vert_wall_hit_X;
-		ray->wall_hit_Y = vert_wall_hit_Y;
-		ray->distance = vert_hit_distance;
-		ray->was_vert = true;
-	}
-	render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
 }
 
 t_ray	*create_Ray(double angle)
@@ -276,6 +101,8 @@ t_ray	*create_Ray(double angle)
 	ray->ray_facing_up = !ray->ray_facing_down;
 	ray->ray_facing_right = ray->ray_angle < 0.5 * M_PI || ray->ray_angle > (1.5 * M_PI);
 	ray->ray_facing_left = !ray->ray_facing_right;
+	ray->found_horz_hit = false;
+	ray->found_vert_hit = false;
 
 	return (ray);
 }
@@ -284,25 +111,22 @@ t_ray	**cast_all_rays(t_data *data)
 {
 	double		ray_angle;
 	int			i;
-	int			rays_num;
 	t_player	*player;
-
-	player = data->player;
-	rays_num = WIN_WIDTH;
 	t_ray	**rays;
+	player = data->player;
 
 	clear_image(player->ray);
-	rays = malloc(sizeof(t_ray *) * rays_num);
+	rays = malloc(sizeof(t_ray *) * WIN_WIDTH);
 	ray_angle = player->rotation_angle - (player->FOV / 2);
 	i = -1;
-	while (++i < rays_num)
+	while (++i < WIN_WIDTH)
 	{
 		t_ray	*ray;
 
 		ray = create_Ray(ray_angle);
+		cast_ray(ray, data);
 		rays[i] = ray;
-		cast_rays(ray, data);
-		ray_angle += player->FOV / rays_num;
+		ray_angle += player->FOV / WIN_WIDTH;
 	}
 	return (rays);
 }
@@ -327,32 +151,6 @@ void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint3
 	}
 }
 
-void	render_3d_projection_walls(t_ray **rays, t_data *data)
-{
-	int		i;
-	int		rays_num;
-	t_ray	*ray;
-	int		wall_strip_height;
-	double	correct_ray_dist;
-	double	distance_projection_plane;
-
-	i = -1;
-	clear_image(data->map->img);
-	rays_num = WIN_WIDTH;
-	while (++i < rays_num)
-	{
-		ray = rays[i];
-		correct_ray_dist = ray->distance * cos(ray->ray_angle - data->player->rotation_angle);
-		distance_projection_plane = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
-		wall_strip_height = (TILE_SIZE / correct_ray_dist) * distance_projection_plane;
-		draw_rectangle(data->map->img, i * WALL_STRIP_WIDTH,
-						(WIN_HEIGHT / 2) - (wall_strip_height / 2),
-						WALL_STRIP_WIDTH,
-						wall_strip_height,
-						ray->was_vert ? MAIN_COLOR : 0xf5f3f4FF);
-	}
-}
-
 int	is_collision(t_data *data, double new_X, double new_Y)
 {
 	if (is_WALL(data, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
@@ -363,7 +161,7 @@ int	is_collision(t_data *data, double new_X, double new_Y)
 	return (0);
 }
 
-void	update_player(t_data *data) {
+void	update_player_pos(t_data *data) {
 	t_player	*player;
 
 	player = data->player;
@@ -390,13 +188,26 @@ void	update_player(t_data *data) {
 	}
 }
 
+void	mouse_handling(t_data *data)
+{
+	int32_t		x;
+	int32_t		y;
+	static int	pos;
+
+	x = 0;
+	y = 0;
+	mlx_get_mouse_pos(data->map->mlx, &x, &y);
+	if (pos != 0)
+		data->player->rotation_angle += (x - pos) * 0.001;
+	pos = x;
+}
+
 void	render(void *param)
 {
+	// static int	mouse_pos;
 	t_data	*data;
-	t_ray	**rays;
 
 	data = (t_data *)param;
-	
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(data->map->mlx);
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
@@ -421,9 +232,9 @@ void	render(void *param)
 		data->player->turn_direction = -1;
 	else
 		data->player->turn_direction = 0;
-	update_player(data);
-	rays = cast_all_rays(data);
-	render_3d_projection_walls(rays, data);
+	update_player_pos(data);
+	render_3d_projection_walls(cast_all_rays(data), data);
+	mouse_handling(data);
 }
 
 void	player_init(t_player *pl, t_data *data)
@@ -441,10 +252,12 @@ void	player_init(t_player *pl, t_data *data)
 		pl->rotation_angle = M_PI / 2;  
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (M_PI / 180);
-	pl->FOV = 60 * (M_PI / 180);
+	pl->FOV = 60.0 * (M_PI / 180.0);
 	pl->side_angle = 0.0;
 	pl->x = data->map->player_x * TILE_SIZE;
 	pl->y = data->map->player_y * TILE_SIZE;
+	data->map->WIDHT *= TILE_SIZE;
+	data->map->HEIGHT *= TILE_SIZE;
 }
 
 uint32_t	get_rgb(int r, int g, int b)
@@ -473,26 +286,12 @@ void	color_background(mlx_image_t *bg, t_map *map)
 	}
 }
 
-int	raycast(t_data *data)
+void	init_imgs(t_data *data, t_player *pl)
 {
-	t_player	*pl;
-
-	pl = (t_player *)malloc(sizeof(t_player));
-	player_init(pl, data);
-	data->player = pl;
-	data->map->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3D", true);
-	if (!data->map->mlx) {
-		fprintf(stderr, "Failed to initialize MLX\n");
-		return (EXIT_FAILURE);
-	}
-	
-	data->map->WIDHT *= TILE_SIZE;
-	data->map->HEIGHT *= TILE_SIZE;
-
 	data->map->background = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	color_background(data->map->background, data->map);
-
 	mlx_image_to_window(data->map->mlx, data->map->background, 0, 0);
+
 	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
 
@@ -501,7 +300,23 @@ int	raycast(t_data *data)
 	
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
-	
+	mlx_set_cursor_mode(data->map->mlx, MLX_MOUSE_DISABLED);
+}
+
+int	raycast(t_data *data)
+{
+	t_player	*pl;
+
+	pl = (t_player *)malloc(sizeof(t_player));
+	player_init(pl, data);
+	data->player = pl;
+
+	data->map->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3D", true);
+	if (!data->map->mlx) {
+		write(STDERR_FILENO, "Failed to initialize MLX\n", 35);
+		return (EXIT_FAILURE);
+	}
+	init_imgs(data, pl);
 	render_map(data->map);
 	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);

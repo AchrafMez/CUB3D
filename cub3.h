@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/15 10:15:09 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/17 09:40:37 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,12 @@
 #include "./MLX42/include/MLX42/MLX42.h"
 
 #define TILE_SIZE 32
-#define COLOR_GREEN 0x0F000FF
-#define WIN_WIDTH 2545
-#define	WIN_HEIGHT 1360
+#define WIN_WIDTH 2120
+#define	WIN_HEIGHT 1200
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
-#define WALL_STRIP_WIDTH 1
-#define MINIMAP_SCALE_FACTOR 0.3
+#define MINIMAP_SCALE_FACTOR 0.2
 
 typedef struct	s_player {
 	double	x;
@@ -61,6 +59,8 @@ typedef struct	s_ray
 	int		ray_facing_right;
 	int		ray_facing_left;
 	bool	was_vert;
+	bool	found_vert_hit;
+	bool	found_horz_hit;
 }				t_ray;
 
 typedef struct s_map
@@ -164,7 +164,7 @@ void	render_3d_projection_walls(t_ray **rays, t_data *data);
 void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
 t_ray	**cast_all_rays(t_data *data);
 t_ray	*create_Ray(double angle);
-void	cast_rays(t_ray *ray, t_data *data);
+void	cast_ray(t_ray *ray, t_data *data);
 double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
 void	render_rays(t_data *data, double x1, double y1);
 void	clear_image(mlx_image_t *img);
@@ -172,5 +172,6 @@ double	normalize_angle(double angle);
 int		is_WALL(t_data *data, int x, int y);
 void	render_map(t_map *map);
 int		raycast(t_data *data);
+void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
 
 #endif
