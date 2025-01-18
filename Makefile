@@ -27,6 +27,8 @@ SRC = cub3.c \
 	./raycasting/raycast.c \
 	./raycasting/cast_ray.c \
 	./raycasting/renders.c \
+	./raycasting/utils.c \
+	./raycasting/drawing.c \
     ./getnextline/get_next_line.c \
     ./getnextline/get_next_line_utils.c \
     ./lib/ft_split.c \
