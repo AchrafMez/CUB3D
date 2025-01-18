@@ -6,86 +6,11 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/16 18:14:41 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/18 19:35:03 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
-
-int	is_WALL(t_data *data, int x, int y)
-{
-	int	X_index;
-	int	Y_index;
-
-	if (x < 0 || x >= data->map->WIDHT || y < 0 || y >= data->map->HEIGHT)
-		return (1);
-	Y_index = floor(y / TILE_SIZE);
-	X_index = floor(x / TILE_SIZE);
-	if (Y_index >= data->map->HEIGHT / TILE_SIZE || X_index >= data->map->WIDHT / TILE_SIZE)
-		return (1);
-	if (X_index >= ft_strlen(data->map->map[Y_index]))
-		return (1);
-	if (data->map->map[Y_index][X_index] == '1')
-		return (1);
-	return (0);
-}
-
-void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color)
-{
-	int dx;
-	int dy;
-	int	i;
-
-	dx = x1- x0;
-	dy = y1 - y0;
-	i = -1;
-	int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
-	double x_inc = dx / (double)steps;
-	double y_inc = dy / (double)steps;
-
-	double x = x0;
-	double y = y0;
-	while (++i <= steps)
-	{
-		if (x >= 0 && x < img->width && y >= 0 && y < img->height)
-			mlx_put_pixel(img, (int)round(x), (int)round(y), color);
-		x += x_inc;
-		y += y_inc;
-	}
-}
-
-double	normalize_angle(double angle)
-{
-	double	ret;
-
-	ret = remainder(angle, (2 * M_PI));
-	if (ret < 0)
-		ret += (2 * M_PI);
-	return (ret);
-}
-
-void	clear_image(mlx_image_t *img)
-{
-	int	y;
-	int	x;
-
-	y = 0;
-	while ((uint32_t)y < img->height)
-	{
-		x = 0;
-		while ((uint32_t)x < img->width)
-		{
-			mlx_put_pixel(img, x, y, 0x00000000);
-			x++;
-		}
-		y++;
-	}
-}
-
-double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2)
-{
-	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
-}
 
 t_ray	*create_Ray(double angle)
 {
@@ -112,7 +37,7 @@ t_ray	**cast_all_rays(t_data *data)
 	double		ray_angle;
 	int			i;
 	t_player	*player;
-	t_ray	**rays;
+	t_ray		**rays;
 	player = data->player;
 
 	clear_image(player->ray);
@@ -129,36 +54,6 @@ t_ray	**cast_all_rays(t_data *data)
 		ray_angle += player->FOV / WIN_WIDTH;
 	}
 	return (rays);
-}
-
-void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < height)
-	{
-		j = 0;
-		while (j < width)
-		{
-			if (x + j >= 0 && (uint32_t)(x + j) < img->width
-				&& (uint32_t)(y + i) >= 0 && (uint32_t)(y + i) < img->height)
-                mlx_put_pixel(img, x + j, y + i, color);
-			j++;
-		}
-		i++;
-	}
-}
-
-int	is_collision(t_data *data, double new_X, double new_Y)
-{
-	if (is_WALL(data, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(data, new_X + TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(data, new_X - TILE_SIZE / 4, new_Y + TILE_SIZE / 4) ||
-		is_WALL(data, new_X + TILE_SIZE / 4, new_Y + TILE_SIZE / 4))
-		return (1);
-	return (0);
 }
 
 void	update_player_pos(t_data *data) {
@@ -202,12 +97,35 @@ void	mouse_handling(t_data *data)
 	pos = x;
 }
 
+void	clear_previous_sprites(t_data *data)
+{
+	(void)data;
+    if (data->player->tt1)
+        mlx_delete_image(data->map->mlx,data->player->tt1);
+    if (data->player->tt2)
+		mlx_delete_image(data->map->mlx,data->player->tt2);
+    if (data->player->tt3)
+		mlx_delete_image(data->map->mlx,data->player->tt3);
+}
+
+void	sprite_player(t_data *data)
+{
+	mlx_image_to_window(data->map->mlx, data->player->tt1, WIN_WIDTH / 2.5, WIN_HEIGHT - 300);
+	mlx_image_to_window(data->map->mlx, data->player->tt2, WIN_WIDTH / 2.5, WIN_HEIGHT - 300);
+	mlx_image_to_window(data->map->mlx, data->player->tt3, WIN_WIDTH / 2.5, WIN_HEIGHT - 300);
+
+	data->player->tt1 = mlx_new_image(data->map->mlx, 300, 300);
+	data->player->tt2 = mlx_new_image(data->map->mlx, 300, 300);
+	data->player->tt3 = mlx_new_image(data->map->mlx, 300, 300);
+}
+
 void	render(void *param)
 {
-	// static int	mouse_pos;
 	t_data	*data;
 
 	data = (t_data *)param;
+	// if (mlx_is_mouse_down(data->map->mlx, MLX_MOUSE_BUTTON_LEFT))
+	// 	sprite_player(data);
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(data->map->mlx);
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
@@ -232,6 +150,7 @@ void	render(void *param)
 		data->player->turn_direction = -1;
 	else
 		data->player->turn_direction = 0;
+	render_minimap(data);
 	update_player_pos(data);
 	render_3d_projection_walls(cast_all_rays(data), data);
 	mouse_handling(data);
@@ -252,38 +171,12 @@ void	player_init(t_player *pl, t_data *data)
 		pl->rotation_angle = M_PI / 2;  
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (M_PI / 180);
-	pl->FOV = 60.0 * (M_PI / 180.0);
+	pl->FOV = 60 * (M_PI / 180);
 	pl->side_angle = 0.0;
 	pl->x = data->map->player_x * TILE_SIZE;
 	pl->y = data->map->player_y * TILE_SIZE;
 	data->map->WIDHT *= TILE_SIZE;
 	data->map->HEIGHT *= TILE_SIZE;
-}
-
-uint32_t	get_rgb(int r, int g, int b)
-{
-	return (r << 16 | g << 8 | b);
-}
-
-void	color_background(mlx_image_t *bg, t_map *map)
-{
-	int	y;
-	int	x;
-
-	y = -1;
-	while ((uint32_t)(++y) < bg->height / 2)
-	{
-		x = -1;
-		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->ciel_rgb[0], map->ciel_rgb[1], map->ciel_rgb[2]));
-	}
-	y = bg->height / 2;
-	while ((uint32_t)++y < bg->height)
-	{
-		x = -1;
-		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->floor_rgb[0], map->floor_rgb[1], map->floor_rgb[2]));
-	}
 }
 
 void	init_imgs(t_data *data, t_player *pl)
@@ -295,11 +188,23 @@ void	init_imgs(t_data *data, t_player *pl)
 	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
 
-	data->map->mini_map = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
+	data->map->mini_map = mlx_new_image(data->map->mlx, 150, 150);
 	mlx_image_to_window(data->map->mlx, data->map->mini_map, 0, 0);
 	
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
+	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
+	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
+	data->player->txr = mlx_load_png("./gun_animation/1.png");
+	data->player->txr1 = mlx_load_png("./gun_animation/2.png");
+	data->player->txr2 = mlx_load_png("./gun_animation/3.png");
+	data->player->txr3 = mlx_load_png("./gun_animation/1.png");
+	data->player->tt = mlx_texture_to_image(data->map->mlx, data->player->txr);
+	data->player->tt1 = mlx_texture_to_image(data->map->mlx, data->player->txr1);
+	data->player->tt2 = mlx_texture_to_image(data->map->mlx, data->player->txr2);
+	data->player->tt3 = mlx_texture_to_image(data->map->mlx, data->player->txr3);
+	mlx_image_to_window(data->map->mlx, data->player->tt, WIN_WIDTH / 2.5, WIN_HEIGHT - 300);
+	mlx_resize_image(data->player->tt, 300, 300);
 	mlx_set_cursor_mode(data->map->mlx, MLX_MOUSE_DISABLED);
 }
 
@@ -317,13 +222,8 @@ int	raycast(t_data *data)
 		return (EXIT_FAILURE);
 	}
 	init_imgs(data, pl);
-	render_map(data->map);
-	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
-	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
-
 	mlx_loop_hook(data->map->mlx, render, data);
 	mlx_loop(data->map->mlx);
-	// mlx_delete_image(data->map->mlx, data->map->mini_map);
 	mlx_terminate(data->map->mlx);
 	return (EXIT_SUCCESS);
 }

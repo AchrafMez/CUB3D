@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/17 09:53:06 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/18 10:07:19 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,5 +143,5 @@ void	cast_ray(t_ray *ray, t_data *data)
 		ray->distance = vert_hit_distance;
 		ray->was_vert = true;
 	}
-	render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
+	// render_rays(data, ray->wall_hit_X, ray->wall_hit_Y);
 }

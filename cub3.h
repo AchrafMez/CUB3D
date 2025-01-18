@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/17 09:40:37 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/18 18:34:45 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,14 @@
 #include "./MLX42/include/MLX42/MLX42.h"
 
 #define TILE_SIZE 32
-#define WIN_WIDTH 2120
-#define	WIN_HEIGHT 1200
+#define WIN_WIDTH 1180
+#define	WIN_HEIGHT 820
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
 #define MINIMAP_SCALE_FACTOR 0.2
+#define MINIMAP_SIZE 150
+#define SCALE_FACTOR 0.3
 
 typedef struct	s_player {
 	double	x;
@@ -46,6 +48,14 @@ typedef struct	s_player {
 	double	FOV;
 	mlx_image_t	*pl;
 	mlx_image_t	*ray;
+	mlx_texture_t	*txr;
+	mlx_texture_t	*txr1;
+	mlx_texture_t	*txr2;
+	mlx_texture_t	*txr3;
+	mlx_image_t		*tt;
+	mlx_image_t		*tt1;
+	mlx_image_t		*tt2;
+	mlx_image_t		*tt3;;
 }				t_player;
 
 typedef struct	s_ray
@@ -158,20 +168,23 @@ int map_lines(int fd, t_map *map);
 
 
 
-void	player_init(t_player *pl, t_data *data);
-int		is_collision(t_data *data, double new_X, double new_Y);
-void	render_3d_projection_walls(t_ray **rays, t_data *data);
-void	draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
-t_ray	**cast_all_rays(t_data *data);
-t_ray	*create_Ray(double angle);
-void	cast_ray(t_ray *ray, t_data *data);
-double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
-void	render_rays(t_data *data, double x1, double y1);
-void	clear_image(mlx_image_t *img);
-double	normalize_angle(double angle);
-int		is_WALL(t_data *data, int x, int y);
-void	render_map(t_map *map);
-int		raycast(t_data *data);
-void	draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
+void		player_init(t_player *pl, t_data *data);
+int			is_collision(t_data *data, double new_X, double new_Y);
+void		render_3d_projection_walls(t_ray **rays, t_data *data);
+void		draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
+t_ray		**cast_all_rays(t_data *data);
+t_ray		*create_Ray(double angle);
+void		cast_ray(t_ray *ray, t_data *data);
+double		distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
+void		render_rays(t_data *data, double x1, double y1);
+void		clear_image(mlx_image_t *img);
+double		normalize_angle(double angle);
+int			is_WALL(t_data *data, int x, int y);
+void		render_map(t_data *data);
+int			raycast(t_data *data);
+void		draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
+uint32_t	get_rgb(int r, int g, int b);
+void		color_background(mlx_image_t *bg, t_map *map);
+void	render_minimap(t_data *data);
 
 #endif
