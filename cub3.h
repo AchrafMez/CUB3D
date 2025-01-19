@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/18 18:34:45 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/19 04:44:37 by captain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 # define CUB3_H
 
 #include <stdio.h>
+#include <unistd.h>
 #include "./lib/lib.h"
 #include "./getnextline/get_next_line.h"
-#include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#include <math.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <math.h>   
+#include <ctype.h>   
 #include <float.h>
 #include "./MLX42/include/MLX42/MLX42.h"
 
@@ -91,7 +91,7 @@ typedef struct s_map
 	mlx_image_t	*mini_map;
 	mlx_image_t	*img;
 	mlx_image_t	*background;
-	mlx_image_t *textures[4];
+	mlx_texture_t *textures[4];
 } t_map;
 
 typedef struct	s_data
@@ -186,5 +186,7 @@ void		draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color
 uint32_t	get_rgb(int r, int g, int b);
 void		color_background(mlx_image_t *bg, t_map *map);
 void	render_minimap(t_data *data);
+void render_walls(t_ray **rays, t_data *data);
+void load_tex(t_data *data);
 
 #endif
