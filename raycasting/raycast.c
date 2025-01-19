@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/18 19:35:03 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/19 06:52:49 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,7 @@ void	render(void *param)
 	update_player_pos(data);
 	render_3d_projection_walls(cast_all_rays(data), data);
 	mouse_handling(data);
+	render_walls(cast_all_rays(data), data);
 }
 
 void	player_init(t_player *pl, t_data *data)
@@ -221,6 +222,7 @@ int	raycast(t_data *data)
 		write(STDERR_FILENO, "Failed to initialize MLX\n", 35);
 		return (EXIT_FAILURE);
 	}
+	load_tex(data);
 	init_imgs(data, pl);
 	mlx_loop_hook(data->map->mlx, render, data);
 	mlx_loop(data->map->mlx);

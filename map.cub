@@ -1,10 +1,10 @@
-SO ./so.jpeg
-WE ./we.jpeg
-NO    ./no.jpeg
-EA ./ea.jpeg
+SO /Users/amezioun/Desktop/cubtroidi/textures/grung.png
+WE /Users/amezioun/Desktop/cubtroidi/darkmetal.png
+NO   /Users/amezioun/Desktop/cubtroidi/textures/grung.png
+EA /Users/amezioun/Desktop/cubtroidi/darkmetal.png
 
-F	165, 42, 42
-C 202,  240, 248
+F	0, 0, 0
+C 10,  10, 50
 
 
         1111111111111111111111111        1111111111111111111111111         

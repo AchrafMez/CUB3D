@@ -12,6 +12,7 @@ LIBS	= $(MLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 HEADER = cub3.h
 
 SRC = cub3.c \
+	./raycasting/texture.c \
 	./config/check_map.c \
 	./config/check.c\
 	./config/FC.c\
