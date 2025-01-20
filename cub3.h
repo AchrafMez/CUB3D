@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/19 06:50:51 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/20 21:16:26 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,8 @@ int valid_map(char *line);
 //check_map
 int check_map_walls(char **map);
 void check_filled_map(t_map *map);
-void check_ones(char *line);
-int check_map_chars(char **map);
+void check_ones(char *line, t_map *map);
+int check_map_chars(t_map *map);
 void check_zeros(t_map *map, int i, int j);
 void check_map_spaces(t_map *map);
 
