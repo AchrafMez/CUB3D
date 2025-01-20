@@ -1,7 +1,7 @@
-SO /Users/amezioun/Desktop/cubtroidi/textures/grung.png
-WE /Users/amezioun/Desktop/cubtroidi/darkmetal.png
-NO   /Users/amezioun/Desktop/cubtroidi/textures/grung.png
-EA /Users/amezioun/Desktop/cubtroidi/darkmetal.png
+SO textures/grung.png
+WE darkmetal.png
+NO   textures/grung.png
+EA darkmetal.png
 
 F	0, 0, 0
 C 10,  10, 50

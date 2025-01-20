@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 10:19:04 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/17 10:20:53 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/20 11:30:24 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
-void	color_background(mlx_image_t *bg, t_map *map)
+void	bg_coloring(mlx_image_t *bg, t_map *map)
 {
 	int	y;
 	int	x;
