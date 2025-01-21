@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 13:36:37 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 17:09:49 by captain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct	s_player {
 	int				walk_direction;
 	bool			walk;
 	double			rotation_angle;
+	double 			vertical;
 	double			move_speed;
 	double			rotation_speed;
 	double			side_angle;

@@ -96,8 +96,32 @@ void render_walls(t_ray **rays, t_data *data)
 {
     int i = -1;
     float proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
+    int vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
     
     clear_image(data->map->img);
+    int y = 0;
+    while (y < WIN_HEIGHT) 
+    {
+        int x = 0;
+        while (x < WIN_WIDTH) 
+        {
+            int adjusted_y = y - vertical;
+            
+            uint32_t color = get_rgb(data->map->ciel_rgb[0], data->map->ciel_rgb[1], data->map->ciel_rgb[2], 255);
+            if (adjusted_y < WIN_HEIGHT / 2)
+                mlx_put_pixel(data->map->img, x, y, color); 
+            else
+            {
+                uint32_t color2 = get_rgb(data->map->floor_rgb[0], data->map->floor_rgb[1], data->map->floor_rgb[2], 255);
+                mlx_put_pixel(data->map->img, x, y, color2); // Floor color
+            }
+            x++;
+        }
+        y++;
+    }
+
+
+
     while (++i < WIN_WIDTH)
     {
         t_ray *ray = rays[i];
@@ -106,7 +130,7 @@ void render_walls(t_ray **rays, t_data *data)
             correct_dist = 1.0f;
             
         int wall_height = (int)((float)TILE_SIZE / correct_dist * proj_plane_dist);
-        int wall_top = (WIN_HEIGHT / 2) - (wall_height / 2);
+        int wall_top = (WIN_HEIGHT / 2) - (wall_height / 2) + vertical;
         
         mlx_texture_t *tex;
         if (ray->was_vert) {
@@ -125,3 +149,5 @@ void render_walls(t_ray **rays, t_data *data)
         draw_tex(i, wall_top, wall_height, tex_x, tex, data);
     }
 }
+
+

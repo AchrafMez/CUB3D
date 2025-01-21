@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 13:36:51 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 17:14:58 by captain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,24 @@ void	mouse_handling(t_data *data)
 	int32_t		x;
 	int32_t		y;
 	static int	pos;
+	static int	last_y;
 
 	x = 0;
 	y = 0;
 	mlx_get_mouse_pos(data->map->mlx, &x, &y);
 	if (pos != 0)
 		data->player->rotation_angle += (x - pos) * 0.001;
+	if (last_y != 0)
+    {
+        data->player->vertical += (y - last_y) * 0.001;
+        // if (data->player->vertical > M_PI / 2)
+        //     data->player->vertical = M_PI / 2;
+        // if (data->player->vertical < -M_PI / 2)
+        //     data->player->vertical = -M_PI / 2;
+    }
+    
+    // last_x = x;
+    last_y = y;
 	pos = x;
 }
 
@@ -191,6 +203,7 @@ void	player_init(t_player *pl, t_data *data)
 {
 	pl->walk_direction = 0;
 	pl->turn_direction = 0;
+	pl->vertical = 0.0;
 	pl->walk = false;
 	if (data->map->player == 'N')
 		pl->rotation_angle = (3 * M_PI) / 2;
@@ -269,7 +282,7 @@ int	raycast(t_data *data)
 	data->map->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3D", true);
 	if (!data->map->mlx)
 	{
-		write(STDERR_FILENO, "Failed to initialize MLX\n", 35);
+		write(STDERR_FILENO, "Failed to initialize MLX\n", 26);
 		return (EXIT_FAILURE);
 	}
 	data->animation = (t_animation){.current_frame = 0, .is_active = 0, .frame_delay = 2, .frame_counter = 0};
