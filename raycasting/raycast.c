@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/20 18:33:30 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 13:36:51 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,13 @@ t_ray	*create_Ray(double angle)
 	ray->ray_facing_left = !ray->ray_facing_right;
 	ray->found_horz_hit = false;
 	ray->found_vert_hit = false;
-
+	ray->horz_wall_hit_x = 0;
+	ray->horz_wall_hit_y = 0;
+	ray->vert_wall_hit_x = 0;
+	ray->vert_wall_hit_y = 0;
+	ray->next_x = 0;
+	ray->next_y = 0;
+	ray->flg = -1;
 	return (ray);
 }
 
@@ -114,18 +120,15 @@ void	sprite_player(t_data *data)
 	mlx_resize_image(data->player->gun, 300, 300);
 }
 
-void	render(void *param)
+void	gun_animation(t_data *data)
 {
-	t_data	*data;
-
-	data = (t_data *)param;
-	if (mlx_is_mouse_down(data->map->mlx, MLX_MOUSE_BUTTON_LEFT) && !data->animation.is_active)
+	if (mlx_is_mouse_down(data->map->mlx, MLX_MOUSE_BUTTON_LEFT)
+		&& !data->animation.is_active)
 	{
 		data->animation.is_active = 1;
 		data->animation.current_frame = 0;
 		data->animation.frame_counter = 0;
 	}
-
 	if (data->animation.is_active)
 	{
 		data->animation.frame_counter++;
@@ -141,6 +144,28 @@ void	render(void *param)
 			}
 		}
 	}
+}
+
+void	ft_right_left_arrow(t_data *data)
+{
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
+		data->player->turn_direction = 1;
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
+		data->player->turn_direction = -1;
+	else
+		data->player->turn_direction = 0;
+	gun_animation(data);
+	render_minimap(data);
+	update_player_pos(data);
+	mouse_handling(data);
+	render_walls(cast_all_rays(data), data);
+}
+
+void	render(void *param)
+{
+	t_data	*data;
+
+	data = (t_data *)param;
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(data->map->mlx);
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
@@ -159,17 +184,7 @@ void	render(void *param)
 	}
 	else
 		data->player->walk_direction = 0;
-	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
-		data->player->turn_direction = 1;
-	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
-		data->player->turn_direction = -1;
-	else
-		data->player->turn_direction = 0;
-	render_minimap(data);
-	update_player_pos(data);
-	// render_3d_projection_walls(cast_all_rays(data), data);
-	mouse_handling(data);
-	render_walls(cast_all_rays(data), data);
+	ft_right_left_arrow(data);
 }
 
 void	player_init(t_player *pl, t_data *data)
@@ -195,6 +210,35 @@ void	player_init(t_player *pl, t_data *data)
 	data->map->HEIGHT *= TILE_SIZE;
 }
 
+void	load_textures(t_data *data)
+{
+	data->player->txr1 = mlx_load_png("./textures/1.png");
+	if (!data->player->txr1)
+	{
+		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		// leaks !!!
+		exit(1);
+	}
+	data->player->txr2 = mlx_load_png("./textures/2.png");
+	if (!data->player->txr2)
+	{
+		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		exit(1);
+	}
+	data->player->txr3 = mlx_load_png("./textures/3.png");
+	if (!data->player->txr3)
+	{
+		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		exit(1);
+	}
+	data->player->txr4 = mlx_load_png("./textures/4.png");
+	if (!data->player->txr4)
+	{
+		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		exit(1);
+	}
+}
+
 void	init_imgs(t_data *data, t_player *pl)
 {
 	data->map->background = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
@@ -208,10 +252,7 @@ void	init_imgs(t_data *data, t_player *pl)
 	mlx_image_to_window(data->map->mlx, pl->pl, (pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
 	pl->ray = mlx_new_image(data->map->mlx, data->map->WIDHT, data->map->HEIGHT);
 	mlx_image_to_window(data->map->mlx, pl->ray, 0, 0);
-	data->player->txr1 = mlx_load_png("./gun_animation/1.png");
-	data->player->txr2 = mlx_load_png("./gun_animation/2.png");
-	data->player->txr3 = mlx_load_png("./gun_animation/3.png");
-	data->player->txr4 = mlx_load_png("./gun_animation/4.png");
+	load_textures(data);
 	data->player->gun = mlx_texture_to_image(data->map->mlx, data->player->txr1);
 	mlx_image_to_window(data->map->mlx, data->player->gun, WIN_WIDTH / 2.5, WIN_HEIGHT - 300);
 	mlx_resize_image(data->player->gun, 300, 300);
@@ -225,7 +266,6 @@ int	raycast(t_data *data)
 	pl = (t_player *)malloc(sizeof(t_player));
 	player_init(pl, data);
 	data->player = pl;
-
 	data->map->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "cub3D", true);
 	if (!data->map->mlx)
 	{

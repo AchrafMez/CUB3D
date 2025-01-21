@@ -6,15 +6,15 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 10:09:34 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/18 12:12:39 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 13:30:02 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
 
-uint32_t	get_rgb(int r, int g, int b)
+uint32_t	get_rgb(int r, int g, int b, int a)
 {
-	return (r << 16 | g << 8 | b);
+	return (r << 24 | g << 16 | b << 8 | a);
 }
 
 int	is_WALL(t_data *data, int x, int y)
@@ -45,7 +45,7 @@ int	is_collision(t_data *data, double new_X, double new_Y)
 	return (0);
 }
 
-double	distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2)
+double	dst_2_pts(int32_t x1, int32_t y1, double x2, double y2)
 {
 	return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
