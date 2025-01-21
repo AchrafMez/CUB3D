@@ -154,8 +154,8 @@ int valid_map(char *line);
 //check_map
 int check_map_walls(char **map);
 void check_filled_map(t_map *map);
-void check_ones(char *line);
-int check_map_chars(char **map);
+void check_ones(char *line, t_map *map);
+int check_map_chars(t_map *map);
 void check_zeros(t_map *map, int i, int j);
 void check_map_spaces(t_map *map);
 

@@ -16,25 +16,14 @@ int check_extension(char *file_name)
 
 int check_color(char *fc, t_map *map)
 {
-
-//    int digit = 0;
         while((*fc ==' ' || *fc =='\t'))
-        {
-            // printf("char in spaces: '%c'\n",*fc);
             fc++;
-        }
         if(*fc == '\0')
-            ft_exit("Error: empty RGB part\n", map);
+            ft_exit("Error: Empty RGB\n", map);
         while(isdigit(*fc) != 0)
-        {
-            // printf("char in digit: '%c'\n",*fc);
             fc++;
-        }
         while((*fc ==' ' || *fc =='\t'))
-        {
-            // printf("char in spaces: '%c'\n",*fc);
             fc++;
-        }
         if(*fc != '\0')
             ft_exit("Error: Invalid Color format\n", map);
         return 0;
@@ -42,8 +31,6 @@ int check_color(char *fc, t_map *map)
 
 int check_positions(char *line, char f, char s, t_map **map)
 {
-    (void)map;
-
     int i = 0;
     while(line[i])
     {
@@ -59,7 +46,6 @@ int check_positions(char *line, char f, char s, t_map **map)
             {
                 free(line);
                 free(path);
-                printf("some error here\n");
                 exit(EXIT_FAILURE);
             }
             free(path);

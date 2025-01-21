@@ -1,5 +1,20 @@
 #include "../cub3.h"
 
+
+int lines_count_checker(char *trimmed_line, int map_started, char *line)
+{
+    if(*trimmed_line == '\0' && map_started == 0)
+    {
+        free(line);
+        return 0;
+    }
+    else if(*trimmed_line == '\0' && map_started == 1)
+    {
+        free(line);
+        return 0;
+    }
+    return 1;
+}
 int lines_count(int fd, t_map *map)
 {
     char *line;
@@ -9,24 +24,11 @@ int lines_count(int fd, t_map *map)
     while ((line = get_next_line(fd)) != NULL)
     {
         char *trimmed_line = skip_whiespaces(line);
-        if (*trimmed_line == '\0' && map_started == 0)
-        {
-            free(line);
-            continue;
-        }
-        else if (*trimmed_line == '\0' && map_started == 1)
-        {
-//            printf("empty lines inside map\n");
-            free(line);
+        if(lines_count_checker(trimmed_line, map_started, line) == 0)
             continue ;
-//            exit(EXIT_FAILURE);
-        }
-
         else if (is_map(trimmed_line) == 0)
         {
-            // printf("line in map lines: %s\n", trimmed_line);
             map_started = 1;
-            //store map
             count++;
         }
         else if (map_started == 1)
@@ -34,7 +36,6 @@ int lines_count(int fd, t_map *map)
             free(line);
             ft_exit("Error: Invalid line inside the map\n", map);
         }
-
         free(line);
     }
     return count;
