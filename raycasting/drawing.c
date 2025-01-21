@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 10:19:04 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/17 10:20:53 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 10:38:57 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
-void	color_background(mlx_image_t *bg, t_map *map)
+void	bg_coloring(mlx_image_t *bg, t_map *map)
 {
 	int	y;
 	int	x;
@@ -84,13 +84,13 @@ void	color_background(mlx_image_t *bg, t_map *map)
 	{
 		x = -1;
 		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->ciel_rgb[0], map->ciel_rgb[1], map->ciel_rgb[2]));
+			mlx_put_pixel(bg, x, y, get_rgb(map->ciel_rgb[0], map->ciel_rgb[1], map->ciel_rgb[2], 255));
 	}
 	y = bg->height / 2;
 	while ((uint32_t)++y < bg->height)
 	{
 		x = -1;
 		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->floor_rgb[0], map->floor_rgb[1], map->floor_rgb[2]));
+			mlx_put_pixel(bg, x, y, get_rgb(map->floor_rgb[0], map->floor_rgb[1], map->floor_rgb[2], 255));
 	}
 }

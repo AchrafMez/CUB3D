@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/20 21:16:26 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/21 13:36:37 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,31 +31,28 @@
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
-#define MINIMAP_SCALE_FACTOR 0.2
+#define MINIMAP_SCALE_FACTOR 0.5
 #define MINIMAP_SIZE 150
 #define SCALE_FACTOR 0.3
 
 typedef struct	s_player {
-	double	x;
-	double	y;
-	int		turn_direction;
-	int		walk_direction;
-	bool	walk;
-	double	rotation_angle;
-	double	move_speed;
-	double	rotation_speed;
-	double	side_angle;
-	double	FOV;
-	mlx_image_t	*pl;
-	mlx_image_t	*ray;
-	mlx_texture_t	*txr;
+	double			x;
+	double			y;
+	int				turn_direction;
+	int				walk_direction;
+	bool			walk;
+	double			rotation_angle;
+	double			move_speed;
+	double			rotation_speed;
+	double			side_angle;
+	double			FOV;
+	mlx_image_t		*pl;
+	mlx_image_t		*ray;
 	mlx_texture_t	*txr1;
 	mlx_texture_t	*txr2;
 	mlx_texture_t	*txr3;
-	mlx_image_t		*tt;
-	mlx_image_t		*tt1;
-	mlx_image_t		*tt2;
-	mlx_image_t		*tt3;;
+	mlx_texture_t	*txr4;
+	mlx_image_t		*gun;
 }				t_player;
 
 typedef struct	s_ray
@@ -71,22 +68,29 @@ typedef struct	s_ray
 	bool	was_vert;
 	bool	found_vert_hit;
 	bool	found_horz_hit;
+	double	horz_wall_hit_x;
+	double	horz_wall_hit_y;
+	double	vert_wall_hit_x;
+	double	vert_wall_hit_y;
+	double	next_x;
+	double	next_y;
+	int		flg;
 }				t_ray;
 
 typedef struct s_map
 {
-    char player;
-    const char *NO;
-    const char *SO;
-    const char *WE;
-    const char *EA;
-    int *floor_rgb;
-    int *ciel_rgb;
-    char **map;
-    int player_x;
-    int player_y;
-    int HEIGHT;
-    int WIDHT;
+	char player;
+	const char *NO;
+	const char *SO;
+	const char *WE;
+	const char *EA;
+	int *floor_rgb;
+	int *ciel_rgb;
+	char **map;
+	int player_x;
+	int player_y;
+	int HEIGHT;
+	int WIDHT;
 	mlx_t	*mlx;
 	mlx_image_t	*mini_map;
 	mlx_image_t	*img;
@@ -94,13 +98,21 @@ typedef struct s_map
 	mlx_texture_t *textures[4];
 } t_map;
 
+typedef struct s_animation
+{
+	int	current_frame;
+	int	is_active;
+	int	frame_delay;
+	int	frame_counter;
+}				t_animation;
+
 typedef struct	s_data
 {
 	t_map		*map;
 	t_player	*player;
 	t_ray		*rays;
+	t_animation	animation;
 }				t_data;
-
 
 //config
 void free_fc(char **fc);
@@ -167,7 +179,6 @@ int lines_count(int fd, t_map *map);
 int map_lines(int fd, t_map *map);
 
 
-
 void		player_init(t_player *pl, t_data *data);
 int			is_collision(t_data *data, double new_X, double new_Y);
 void		render_3d_projection_walls(t_ray **rays, t_data *data);
@@ -175,7 +186,7 @@ void		draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint
 t_ray		**cast_all_rays(t_data *data);
 t_ray		*create_Ray(double angle);
 void		cast_ray(t_ray *ray, t_data *data);
-double		distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
+double		dst_2_pts(int32_t x1, int32_t y1, double x2, double y2);
 void		render_rays(t_data *data, double x1, double y1);
 void		clear_image(mlx_image_t *img);
 double		normalize_angle(double angle);
@@ -183,10 +194,10 @@ int			is_WALL(t_data *data, int x, int y);
 void		render_map(t_data *data);
 int			raycast(t_data *data);
 void		draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
-uint32_t	get_rgb(int r, int g, int b);
-void		color_background(mlx_image_t *bg, t_map *map);
-void	render_minimap(t_data *data);
-void render_walls(t_ray **rays, t_data *data);
-void load_tex(t_data *data);
+uint32_t	get_rgb(int r, int g, int b, int a);
+void		bg_coloring(mlx_image_t *bg, t_map *map);
+void		render_minimap(t_data *data);
+void		render_walls(t_ray **rays, t_data *data);
+void		load_tex(t_data *data);
 
 #endif
