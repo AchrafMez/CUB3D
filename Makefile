@@ -51,12 +51,13 @@ libmlx:
 	@cmake $(MLX) -B $(MLX)/build && make -C $(MLX)/build -j4
 
 $(OBJ_DIR)%.o: %.c $(HEADER)
+	@echo "$(GREEN)Compiling $<...$(NC)"
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
 
 
 $(NAME): $(OBJ)
-	@echo "$(GREEN)Compiling C objects...$(NC)"
+	@echo "$(YELLOW)Compiling $(NAME)...$(NC)"
 	@$(CC) $(CFLAGS) $(LIBS) $(OBJ) $(HEADERS) -o $(NAME)
 
 clean: 
