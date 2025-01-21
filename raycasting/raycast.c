@@ -6,7 +6,7 @@
 /*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 17:14:58 by captain          ###   ########.fr       */
+/*   Updated: 2025/01/21 17:17:29 by captain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ void	load_textures(t_data *data)
 void	init_imgs(t_data *data, t_player *pl)
 {
 	data->map->background = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
-	bg_coloring(data->map->background, data->map);
+	// bg_coloring(data->map->background, data->map);
 	mlx_image_to_window(data->map->mlx, data->map->background, 0, 0);
 
 	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
