@@ -14,7 +14,7 @@
              // printf("correct");
              read_map(av[1], &map);
              check_filled_map(map);
-             check_map_chars(map->map);
+             check_map_chars(map);
              WHXY(&map);
              check_map_spaces(map);
 			//  print_map(map);
@@ -22,7 +22,8 @@
              // if(map->map) {
  //               check_map_walls(map->map);
              //    }
-			 raycast(&data);
+			 if (raycast(&data))
+			 	return (EXIT_FAILURE);
             //  print_map(map);
              free_map(map);
          }
