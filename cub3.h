@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/20 18:30:40 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/21 13:36:37 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,13 @@ typedef struct	s_ray
 	bool	was_vert;
 	bool	found_vert_hit;
 	bool	found_horz_hit;
+	double	horz_wall_hit_x;
+	double	horz_wall_hit_y;
+	double	vert_wall_hit_x;
+	double	vert_wall_hit_y;
+	double	next_x;
+	double	next_y;
+	int		flg;
 }				t_ray;
 
 typedef struct s_map
@@ -179,7 +186,7 @@ void		draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint
 t_ray		**cast_all_rays(t_data *data);
 t_ray		*create_Ray(double angle);
 void		cast_ray(t_ray *ray, t_data *data);
-double		distance_between_2_points(int32_t x1, int32_t y1, double x2, double y2);
+double		dst_2_pts(int32_t x1, int32_t y1, double x2, double y2);
 void		render_rays(t_data *data, double x1, double y1);
 void		clear_image(mlx_image_t *img);
 double		normalize_angle(double angle);
@@ -187,7 +194,7 @@ int			is_WALL(t_data *data, int x, int y);
 void		render_map(t_data *data);
 int			raycast(t_data *data);
 void		draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
-uint32_t	get_rgb(int r, int g, int b);
+uint32_t	get_rgb(int r, int g, int b, int a);
 void		bg_coloring(mlx_image_t *bg, t_map *map);
 void		render_minimap(t_data *data);
 void		render_walls(t_ray **rays, t_data *data);

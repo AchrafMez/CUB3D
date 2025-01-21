@@ -3,8 +3,8 @@ WE darkmetal.png
 NO   textures/grung.png
 EA darkmetal.png
 
-F	0, 0, 0
-C 10,  10, 50
+F	10, 10, 10
+C 10,  10, 10
 
 
         1111111111111111111111111        1111111111111111111111111         
