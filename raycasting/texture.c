@@ -24,7 +24,7 @@ float get_tex_x(t_ray *ray, mlx_texture_t *tex)
         if (tex_x < 0)
             tex_x += TILE_SIZE;
         tex_x = (tex_x * tex_width) / TILE_SIZE;
-        if (ray->ray_facing_left)
+        if (!ray->ray_facing_left)
             tex_x = tex_width - tex_x - 1;
     }
     else
@@ -91,6 +91,8 @@ void draw_tex(int i, int wall_top, int wall_height,
         draw_start++;
     }
 }
+
+
 
 void render_walls(t_ray **rays, t_data *data)
 {
