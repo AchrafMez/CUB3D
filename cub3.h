@@ -6,7 +6,7 @@
 /*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 17:09:49 by captain          ###   ########.fr       */
+/*   Updated: 2025/01/22 12:47:38 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
 #define COLOR_SPACE 0x37373737
-#define MINIMAP_SCALE_FACTOR 0.5
 #define MINIMAP_SIZE 150
 #define SCALE_FACTOR 0.3
 
@@ -48,7 +47,6 @@ typedef struct	s_player {
 	double			side_angle;
 	double			FOV;
 	mlx_image_t		*pl;
-	mlx_image_t		*ray;
 	mlx_texture_t	*txr1;
 	mlx_texture_t	*txr2;
 	mlx_texture_t	*txr3;
@@ -58,8 +56,8 @@ typedef struct	s_player {
 
 typedef struct	s_ray
 {
-	double	wall_hit_X;
-	double	wall_hit_Y;
+	double	wall_hit_x;
+	double	wall_hit_y;
 	double	distance;
 	double	ray_angle;
 	int		ray_facing_down;
@@ -179,26 +177,22 @@ void fill_map(int fd, char *file_namp, t_map **map);
 int lines_count(int fd, t_map *map);
 int map_lines(int fd, t_map *map);
 
-
 void		player_init(t_player *pl, t_data *data);
 int			is_collision(t_data *data, double new_X, double new_Y);
-void		render_3d_projection_walls(t_ray **rays, t_data *data);
-void		draw_rectangle(mlx_image_t *img, int x, int y, int width, int height, uint32_t color);
 t_ray		**cast_all_rays(t_data *data);
-t_ray		*create_Ray(double angle);
+t_ray		*create_ray(double angle);
 void		cast_ray(t_ray *ray, t_data *data);
 double		dst_2_pts(int32_t x1, int32_t y1, double x2, double y2);
-void		render_rays(t_data *data, double x1, double y1);
-void		clear_image(mlx_image_t *img);
 double		normalize_angle(double angle);
-int			is_WALL(t_data *data, int x, int y);
-void		render_map(t_data *data);
+int			is_wall(t_data *data, int x, int y);
 int			raycast(t_data *data);
-void		draw_line(mlx_image_t *img, int x0, int y0, int x1, int y1, uint32_t color);
 uint32_t	get_rgb(int r, int g, int b, int a);
+void		clear_image(mlx_image_t *img);
 void		bg_coloring(mlx_image_t *bg, t_map *map);
 void		render_minimap(t_data *data);
 void		render_walls(t_ray **rays, t_data *data);
 void		load_tex(t_data *data);
+void		render(void *param);
+void		gun_animation(t_data *data);
 
 #endif
