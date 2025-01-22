@@ -6,17 +6,26 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 10:37:04 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 13:09:04 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
 
+void	_set_player_pos(t_data *data, int32_t x, int32_t y)
+{
+	if (!is_collision(data, x, y))
+	{
+		data->player->pl->instances->x = x;
+		data->player->pl->instances->y = y;
+	}
+}
+
 void	update_player_pos(t_data *data)
 {
 	t_player	*player;
-	int32_t 	new_X;
-	int32_t 	new_Y;
+	int32_t		new_x;
+	int32_t		new_y;
 	double		move_step;
 
 	player = data->player;
@@ -25,20 +34,20 @@ void	update_player_pos(t_data *data)
 	if (player->walk)
 	{
 		player->side_angle = player->rotation_angle + (M_PI / 2);
-		new_X = player->pl->instances->x + round(cos(player->side_angle) * move_step);
-		new_Y = player->pl->instances->y + round(sin(player->side_angle) * move_step);
+		new_x = player->pl->instances->x
+			+ round(cos(player->side_angle) * move_step);
+		new_y = player->pl->instances->y
+			+ round(sin(player->side_angle) * move_step);
 		player->walk = false;
 	}
 	else
 	{
-		new_X = player->pl->instances->x + round(cos(player->rotation_angle) * move_step);
-		new_Y = player->pl->instances->y + round(sin(player->rotation_angle) * move_step);
+		new_x = player->pl->instances->x
+			+ round(cos(player->rotation_angle) * move_step);
+		new_y = player->pl->instances->y
+			+ round(sin(player->rotation_angle) * move_step);
 	}
-	if (!is_collision(data, new_X, new_Y))
-	{
-		player->pl->instances->x = new_X;
-		player->pl->instances->y = new_Y;
-	}
+	_set_player_pos(data, new_x, new_y);
 }
 
 void	mouse_handling(t_data *data)
@@ -60,15 +69,15 @@ void	ft_right_left_arrow(t_data *data)
 	t_ray	**rays;
 	int		i;
 
-	i = -1;	
+	i = -1;
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
 		data->player->turn_direction = 1;
 	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
 		data->player->turn_direction = -1;
 	else
 		data->player->turn_direction = 0;
-	gun_animation(data);
 	render_minimap(data);
+	gun_animation(data);
 	update_player_pos(data);
 	mouse_handling(data);
 	rays = cast_all_rays(data);

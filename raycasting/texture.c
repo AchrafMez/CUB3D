@@ -18,7 +18,7 @@ float get_tex_x(t_ray *ray, mlx_texture_t *tex)
     
     if (ray->was_vert)
     {
-        tex_x = ray->wall_hit_Y;
+        tex_x = ray->wall_hit_y;
         tex_x = fmod(tex_x, TILE_SIZE);
 
         if (tex_x < 0)
@@ -29,7 +29,7 @@ float get_tex_x(t_ray *ray, mlx_texture_t *tex)
     }
     else
     {
-        tex_x = ray->wall_hit_X;
+        tex_x = ray->wall_hit_x;
         tex_x = fmod(tex_x, TILE_SIZE);
         if (tex_x < 0)
             tex_x += TILE_SIZE;

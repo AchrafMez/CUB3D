@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 13:37:54 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 12:47:50 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ double	*_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 	while (ray->next_x >= 0 && ray->next_x <= data->map->WIDHT
 		&& ray->next_y >= 0 && ray->next_y <= data->map->HEIGHT)
 	{
-		if (is_WALL(data, ray->next_x, ray->next_y))
+		if (is_wall(data, ray->next_x, ray->next_y))
 		{
 			if (ray->flg == 1)
 				ray->found_horz_hit = true;
@@ -101,14 +101,14 @@ void	_set_wall_hit(t_ray *ray, double horz_dis, double vert_dis)
 {
 	if (horz_dis < vert_dis)
 	{
-		ray->wall_hit_X = ray->horz_wall_hit_x;
-		ray->wall_hit_Y = ray->horz_wall_hit_y;
+		ray->wall_hit_x = ray->horz_wall_hit_x;
+		ray->wall_hit_y = ray->horz_wall_hit_y;
 		ray->distance = horz_dis;
 	}
 	else
 	{
-		ray->wall_hit_X = ray->vert_wall_hit_x;
-		ray->wall_hit_Y = ray->vert_wall_hit_y;
+		ray->wall_hit_x = ray->vert_wall_hit_x;
+		ray->wall_hit_y = ray->vert_wall_hit_y;
 		ray->distance = vert_dis;
 		ray->was_vert = true;
 	}
