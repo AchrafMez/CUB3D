@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
 /*   Updated: 2025/01/22 12:25:08 by abmahfou         ###   ########.fr       */
@@ -65,6 +65,7 @@ void	player_init(t_player *pl, t_data *data)
 {
 	pl->walk_direction = 0;
 	pl->turn_direction = 0;
+	pl->vertical = 0.0;
 	pl->walk = false;
 	if (data->map->player == 'N')
 		pl->rotation_angle = (3 * M_PI) / 2;
