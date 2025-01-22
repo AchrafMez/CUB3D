@@ -1,6 +1,6 @@
 NAME=cub3D
 CC=gcc 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
 MLX = ~/MLX42
 GREEN=\033[0;32m
 YELLOW=\033[0;33m

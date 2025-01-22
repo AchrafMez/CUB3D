@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 10:28:11 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 12:47:38 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ typedef struct	s_player {
 	double			side_angle;
 	double			FOV;
 	mlx_image_t		*pl;
-	mlx_image_t		*ray;
 	mlx_texture_t	*txr1;
 	mlx_texture_t	*txr2;
 	mlx_texture_t	*txr3;
@@ -56,8 +55,8 @@ typedef struct	s_player {
 
 typedef struct	s_ray
 {
-	double	wall_hit_X;
-	double	wall_hit_Y;
+	double	wall_hit_x;
+	double	wall_hit_y;
 	double	distance;
 	double	ray_angle;
 	int		ray_facing_down;
@@ -180,11 +179,11 @@ int map_lines(int fd, t_map *map);
 void		player_init(t_player *pl, t_data *data);
 int			is_collision(t_data *data, double new_X, double new_Y);
 t_ray		**cast_all_rays(t_data *data);
-t_ray		*create_Ray(double angle);
+t_ray		*create_ray(double angle);
 void		cast_ray(t_ray *ray, t_data *data);
 double		dst_2_pts(int32_t x1, int32_t y1, double x2, double y2);
 double		normalize_angle(double angle);
-int			is_WALL(t_data *data, int x, int y);
+int			is_wall(t_data *data, int x, int y);
 int			raycast(t_data *data);
 uint32_t	get_rgb(int r, int g, int b, int a);
 void		clear_image(mlx_image_t *img);
