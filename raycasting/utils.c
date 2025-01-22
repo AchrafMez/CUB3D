@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 10:09:34 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/21 13:30:02 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 12:47:18 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,31 @@ uint32_t	get_rgb(int r, int g, int b, int a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
-int	is_WALL(t_data *data, int x, int y)
+int	is_wall(t_data *data, int x, int y)
 {
-	int	X_index;
-	int	Y_index;
+	int	x_index;
+	int	y_index;
 
 	if (x < 0 || x >= data->map->WIDHT || y < 0 || y >= data->map->HEIGHT)
 		return (1);
-	Y_index = floor(y / TILE_SIZE);
-	X_index = floor(x / TILE_SIZE);
-	if (Y_index >= data->map->HEIGHT / TILE_SIZE || X_index >= data->map->WIDHT / TILE_SIZE)
+	y_index = floor(y / TILE_SIZE);
+	x_index = floor(x / TILE_SIZE);
+	if (y_index >= data->map->HEIGHT / TILE_SIZE
+		|| x_index >= data->map->WIDHT / TILE_SIZE)
 		return (1);
-	if (X_index >= ft_strlen(data->map->map[Y_index]))
+	if (x_index >= ft_strlen(data->map->map[y_index]))
 		return (1);
-	if (data->map->map[Y_index][X_index] == '1')
+	if (data->map->map[y_index][x_index] == '1')
 		return (1);
 	return (0);
 }
 
-int	is_collision(t_data *data, double new_X, double new_Y)
+int	is_collision(t_data *data, double new_x, double new_y)
 {
-	if (is_WALL(data, new_X - TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(data, new_X + TILE_SIZE / 4, new_Y - TILE_SIZE / 4) ||
-		is_WALL(data, new_X - TILE_SIZE / 4, new_Y + TILE_SIZE / 4) ||
-		is_WALL(data, new_X + TILE_SIZE / 4, new_Y + TILE_SIZE / 4))
+	if (is_wall(data, new_x - TILE_SIZE / 4, new_y - TILE_SIZE / 4)
+		|| is_wall(data, new_x + TILE_SIZE / 4, new_y - TILE_SIZE / 4)
+		|| is_wall(data, new_x - TILE_SIZE / 4, new_y + TILE_SIZE / 4)
+		|| is_wall(data, new_x + TILE_SIZE / 4, new_y + TILE_SIZE / 4))
 		return (1);
 	return (0);
 }
