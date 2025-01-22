@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 13:09:04 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 13:23:46 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,24 @@ void	mouse_handling(t_data *data)
 	int32_t		x;
 	int32_t		y;
 	static int	pos;
+	static int	last_y;
 
 	x = 0;
 	y = 0;
 	mlx_get_mouse_pos(data->map->mlx, &x, &y);
 	if (pos != 0)
 		data->player->rotation_angle += (x - pos) * 0.001;
+	if (last_y != 0)
+    {
+        data->player->vertical -= (y - last_y) * 0.001;
+        // if (data->player->vertical > M_PI / 2)
+        //     data->player->vertical = M_PI / 2;
+        // if (data->player->vertical < -M_PI / 2)
+        //     data->player->vertical = -M_PI / 2;
+    }
+    
+    // last_x = x;
+    last_y = y;
 	pos = x;
 }
 

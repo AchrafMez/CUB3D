@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 12:25:08 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/22 13:25:29 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ void	init_imgs(t_data *data, t_player *pl)
 {
 	data->map->background = mlx_new_image(data->map->mlx,
 			WIN_WIDTH, WIN_HEIGHT);
-	bg_coloring(data->map->background, data->map);
 	mlx_image_to_window(data->map->mlx, data->map->background, 0, 0);
 	data->map->img = mlx_new_image(data->map->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mlx_image_to_window(data->map->mlx, data->map->img, 0, 0);
