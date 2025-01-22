@@ -24,7 +24,7 @@ float get_tex_x(t_ray *ray, mlx_texture_t *tex)
         if (tex_x < 0)
             tex_x += TILE_SIZE;
         tex_x = (tex_x * tex_width) / TILE_SIZE;
-        if (!ray->ray_facing_left)
+        if (ray->ray_facing_left)
             tex_x = tex_width - tex_x - 1;
     }
     else
@@ -35,7 +35,7 @@ float get_tex_x(t_ray *ray, mlx_texture_t *tex)
             tex_x += TILE_SIZE;
         tex_x = (tex_x * tex_width) / TILE_SIZE;
 
-        if (ray->ray_facing_up)
+        if (!ray->ray_facing_up)
             tex_x = tex_width - tex_x - 1;
     }
     
