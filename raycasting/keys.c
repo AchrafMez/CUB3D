@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 13:23:46 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/23 12:04:06 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,26 @@ void	_set_player_pos(t_data *data, int32_t x, int32_t y)
 		data->player->pl->instances->x = x;
 		data->player->pl->instances->y = y;
 	}
+}
+
+void	ft_free(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 4)
+	{
+		if (data->map->textures[i])
+			mlx_delete_texture(data->map->textures[i]);
+	}
+	if (data->player->txr1)
+		mlx_delete_texture(data->player->txr1);
+	if (data->player->txr1)
+		mlx_delete_texture(data->player->txr2);
+	if (data->player->txr1)
+		mlx_delete_texture(data->player->txr3);
+	if (data->player->txr1)
+		mlx_delete_texture(data->player->txr4);
 }
 
 void	update_player_pos(t_data *data)
@@ -63,25 +83,16 @@ void	mouse_handling(t_data *data)
 	if (pos != 0)
 		data->player->rotation_angle += (x - pos) * 0.001;
 	if (last_y != 0)
-    {
-        data->player->vertical -= (y - last_y) * 0.001;
-        // if (data->player->vertical > M_PI / 2)
-        //     data->player->vertical = M_PI / 2;
-        // if (data->player->vertical < -M_PI / 2)
-        //     data->player->vertical = -M_PI / 2;
-    }
-    
-    // last_x = x;
-    last_y = y;
+		data->player->vertical -= (y - last_y) * 0.001;
+	last_y = y;
 	pos = x;
 }
 
-void	ft_right_left_arrow(t_data *data)
+void	ft_keys(t_data *data)
 {
 	t_ray	**rays;
 	int		i;
 
-	i = -1;
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
 		data->player->turn_direction = 1;
 	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
@@ -94,6 +105,7 @@ void	ft_right_left_arrow(t_data *data)
 	mouse_handling(data);
 	rays = cast_all_rays(data);
 	render_walls(rays, data);
+	i = -1;
 	while (++i < WIN_WIDTH)
 		free(rays[i]);
 }
@@ -104,7 +116,12 @@ void	render(void *param)
 
 	data = (t_data *)param;
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
+	{
+		ft_free(data);
+		free(data->player);
 		mlx_close_window(data->map->mlx);
+		return ;
+	}
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
 		data->player->walk_direction = 1;
 	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_S))
@@ -121,5 +138,5 @@ void	render(void *param)
 	}
 	else
 		data->player->walk_direction = 0;
-	ft_right_left_arrow(data);
+	ft_keys(data);
 }

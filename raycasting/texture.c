@@ -93,7 +93,6 @@ void draw_tex(int i, int wall_top, int wall_height,
 }
 
 
-
 void render_walls(t_ray **rays, t_data *data)
 {
     int i = -1;
