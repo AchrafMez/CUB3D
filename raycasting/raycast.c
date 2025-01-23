@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 13:25:29 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/23 11:52:51 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void	init_imgs(t_data *data, t_player *pl)
 int	print_error(int err)
 {
 	if (err == 1)
-		write(STDERR_FILENO, "Failed to initialize MLX\n", 35);
+		write(STDERR_FILENO, "Failed to initialize MLX\n", 26);
 	return (EXIT_FAILURE);
 }
 
@@ -153,13 +153,11 @@ int	raycast(t_data *data)
 		return (print_error(1));
 	}
 	data->animation = (t_animation){.current_frame = 0, .is_active = 0,
-		.frame_delay = 3, .frame_counter = 0};
+		.frame_delay = 3, .frame_counter = 0, .move = 0};
 	load_tex(data);
 	init_imgs(data, pl);
 	mlx_loop_hook(data->map->mlx, render, data);
 	mlx_loop(data->map->mlx);
 	mlx_terminate(data->map->mlx);
-	free(pl);
-	// system("leaks cub3D");
 	return (EXIT_SUCCESS);
 }

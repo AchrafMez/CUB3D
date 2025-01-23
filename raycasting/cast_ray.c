@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 12:47:50 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/23 10:48:47 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	ft_horizontal_interc(t_ray *ray, t_data *data)
 	double	y_intercept;
 	double	x_step;
 	double	y_step;
+	double	*points;
 
 	y_intercept = floor(data->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_down)
@@ -64,8 +65,10 @@ void	ft_horizontal_interc(t_ray *ray, t_data *data)
 	if (ray->ray_facing_up)
 		ray->next_y -= 0.001;
 	ray->flg = 1;
-	ray->horz_wall_hit_x = _points_check(data, ray, x_step, y_step)[0];
-	ray->horz_wall_hit_y = _points_check(data, ray, x_step, y_step)[1];
+	points = _points_check(data, ray, x_step, y_step);
+	ray->horz_wall_hit_x = points[0];
+	ray->horz_wall_hit_y = points[1];
+	free(points);
 }
 
 void	ft_vertical_interc(t_ray *ray, t_data *data)
@@ -74,6 +77,7 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	double	y_intercept;
 	double	x_step;
 	double	y_step;
+	double	*points;
 
 	x_intercept = floor(data->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_right)
@@ -93,8 +97,10 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	if (ray->ray_facing_left)
 		ray->next_x -= 0.001;
 	ray->flg = 0;
-	ray->vert_wall_hit_x = _points_check(data, ray, x_step, y_step)[0];
-	ray->vert_wall_hit_y = _points_check(data, ray, x_step, y_step)[1];
+	points = _points_check(data, ray, x_step, y_step);
+	ray->vert_wall_hit_x = points[0];
+	ray->vert_wall_hit_y = points[1];
+	free(points);
 }
 
 void	_set_wall_hit(t_ray *ray, double horz_dis, double vert_dis)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: captain <captain@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 12:47:38 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/23 09:46:24 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ typedef struct s_animation
 	int	is_active;
 	int	frame_delay;
 	int	frame_counter;
+	int	move;
 }				t_animation;
 
 typedef struct	s_data

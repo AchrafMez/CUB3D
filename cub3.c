@@ -1,5 +1,9 @@
 #include "cub3.h"
 
+void leak()
+{
+	system("leaks cub3D");
+}
  int main(int ac, char **av)
  {
 	t_data	data;
@@ -9,28 +13,21 @@
          {
              t_map *map = malloc(sizeof(t_map));
              if(!map)
-                 return 1;
+                 return (free_map(map), EXIT_FAILURE);
              null_init(map);
-             // printf("correct");
              read_map(av[1], &map);
              check_filled_map(map);
              check_map_chars(map);
              WHXY(&map);
              check_map_spaces(map);
-			//  print_map(map);
 			 data.map = map;
-             // if(map->map) {
- //               check_map_walls(map->map);
-             //    }
 			 if (raycast(&data))
-			 	return (EXIT_FAILURE);
-            //  print_map(map);
+			 	return (free_map(map), EXIT_FAILURE);
              free_map(map);
          }
          else
              printf("Uncorrect filename\n");
-
-     //    atexit(leak);
+        atexit(leak);
      }
      return 0;
  }
