@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/23 09:46:24 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/24 10:13:50 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 #define	WIN_HEIGHT 820
 #define MAIN_COLOR 0xd3d3d3FF
 #define COLOR_WALL 0x6468699B
-#define COLOR_SPACE 0x37373737
 #define MINIMAP_SIZE 150
 #define SCALE_FACTOR 0.3
 
@@ -189,11 +188,18 @@ int			is_wall(t_data *data, int x, int y);
 int			raycast(t_data *data);
 uint32_t	get_rgb(int r, int g, int b, int a);
 void		clear_image(mlx_image_t *img);
-void		bg_coloring(mlx_image_t *bg, t_map *map);
 void		render_minimap(t_data *data);
 void		render_walls(t_ray **rays, t_data *data);
+void		free_txtr(t_data *data);
 void		load_tex(t_data *data);
 void		render(void *param);
 void		gun_animation(t_data *data);
+void		mouse_handling(t_data *data);
+void		_set_points(double *points, t_ray *ray);
+void		load_textures(t_data *data);
+int			print_error(int err);
+void		player_init(t_player *pl, t_data *data);
+void		init_imgs(t_data *data, t_player *pl);
+t_ray		*create_ray(double angle);
 
 #endif
