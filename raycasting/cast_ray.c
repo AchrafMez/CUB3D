@@ -6,13 +6,13 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/23 10:48:47 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/24 10:01:14 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3.h"
 
-double	*_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
+void	_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 {
 	double	*points;
 
@@ -36,7 +36,7 @@ double	*_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 			ray->next_y += y_step;
 		}
 	}
-	return (points);
+	_set_points(points, ray);
 }
 
 void	ft_horizontal_interc(t_ray *ray, t_data *data)
@@ -45,7 +45,6 @@ void	ft_horizontal_interc(t_ray *ray, t_data *data)
 	double	y_intercept;
 	double	x_step;
 	double	y_step;
-	double	*points;
 
 	y_intercept = floor(data->player->pl->instances->y / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_down)
@@ -65,10 +64,7 @@ void	ft_horizontal_interc(t_ray *ray, t_data *data)
 	if (ray->ray_facing_up)
 		ray->next_y -= 0.001;
 	ray->flg = 1;
-	points = _points_check(data, ray, x_step, y_step);
-	ray->horz_wall_hit_x = points[0];
-	ray->horz_wall_hit_y = points[1];
-	free(points);
+	_points_check(data, ray, x_step, y_step);
 }
 
 void	ft_vertical_interc(t_ray *ray, t_data *data)
@@ -77,7 +73,6 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	double	y_intercept;
 	double	x_step;
 	double	y_step;
-	double	*points;
 
 	x_intercept = floor(data->player->pl->instances->x / TILE_SIZE) * TILE_SIZE;
 	if (ray->ray_facing_right)
@@ -97,10 +92,7 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	if (ray->ray_facing_left)
 		ray->next_x -= 0.001;
 	ray->flg = 0;
-	points = _points_check(data, ray, x_step, y_step);
-	ray->vert_wall_hit_x = points[0];
-	ray->vert_wall_hit_y = points[1];
-	free(points);
+	_points_check(data, ray, x_step, y_step);
 }
 
 void	_set_wall_hit(t_ray *ray, double horz_dis, double vert_dis)
