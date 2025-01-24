@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/23 12:04:06 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/24 09:37:26 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,6 @@ void	_set_player_pos(t_data *data, int32_t x, int32_t y)
 		data->player->pl->instances->x = x;
 		data->player->pl->instances->y = y;
 	}
-}
-
-void	ft_free(t_data *data)
-{
-	int	i;
-
-	i = -1;
-	while (++i < 4)
-	{
-		if (data->map->textures[i])
-			mlx_delete_texture(data->map->textures[i]);
-	}
-	if (data->player->txr1)
-		mlx_delete_texture(data->player->txr1);
-	if (data->player->txr1)
-		mlx_delete_texture(data->player->txr2);
-	if (data->player->txr1)
-		mlx_delete_texture(data->player->txr3);
-	if (data->player->txr1)
-		mlx_delete_texture(data->player->txr4);
 }
 
 void	update_player_pos(t_data *data)
@@ -70,35 +50,11 @@ void	update_player_pos(t_data *data)
 	_set_player_pos(data, new_x, new_y);
 }
 
-void	mouse_handling(t_data *data)
-{
-	int32_t		x;
-	int32_t		y;
-	static int	pos;
-	static int	last_y;
-
-	x = 0;
-	y = 0;
-	mlx_get_mouse_pos(data->map->mlx, &x, &y);
-	if (pos != 0)
-		data->player->rotation_angle += (x - pos) * 0.001;
-	if (last_y != 0)
-		data->player->vertical -= (y - last_y) * 0.001;
-	last_y = y;
-	pos = x;
-}
-
-void	ft_keys(t_data *data)
+void	render_all(t_data *data)
 {
 	t_ray	**rays;
 	int		i;
 
-	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
-		data->player->turn_direction = 1;
-	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
-		data->player->turn_direction = -1;
-	else
-		data->player->turn_direction = 0;
 	render_minimap(data);
 	gun_animation(data);
 	update_player_pos(data);
@@ -108,20 +64,11 @@ void	ft_keys(t_data *data)
 	i = -1;
 	while (++i < WIN_WIDTH)
 		free(rays[i]);
+	free(rays);
 }
 
-void	render(void *param)
+void	ft_keys(t_data *data)
 {
-	t_data	*data;
-
-	data = (t_data *)param;
-	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
-	{
-		ft_free(data);
-		free(data->player);
-		mlx_close_window(data->map->mlx);
-		return ;
-	}
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
 		data->player->walk_direction = 1;
 	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_S))
@@ -138,5 +85,26 @@ void	render(void *param)
 	}
 	else
 		data->player->walk_direction = 0;
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_RIGHT))
+		data->player->turn_direction = 1;
+	else if (mlx_is_key_down(data->map->mlx, MLX_KEY_LEFT))
+		data->player->turn_direction = -1;
+	else
+		data->player->turn_direction = 0;
+}
+
+void	render(void *param)
+{
+	t_data	*data;
+
+	data = (t_data *)param;
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
+	{
+		free_txtr(data);
+		free(data->player);
+		mlx_close_window(data->map->mlx);
+		return ;
+	}
 	ft_keys(data);
+	render_all(data);
 }

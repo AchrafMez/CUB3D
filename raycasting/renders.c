@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:46:39 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/22 13:02:02 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/23 18:29:30 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,29 +27,6 @@ void	clear_image(mlx_image_t *img)
 			x++;
 		}
 		y++;
-	}
-}
-
-void	bg_coloring(mlx_image_t *bg, t_map *map)
-{
-	int	y;
-	int	x;
-
-	y = -1;
-	while ((uint32_t)(++y) < bg->height / 2)
-	{
-		x = -1;
-		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->ciel_rgb[0],
-					map->ciel_rgb[1], map->ciel_rgb[2], 255));
-	}
-	y = bg->height / 2;
-	while ((uint32_t)++y < bg->height)
-	{
-		x = -1;
-		while ((uint32_t)++x < bg->width)
-			mlx_put_pixel(bg, x, y, get_rgb(map->floor_rgb[0],
-					map->floor_rgb[1], map->floor_rgb[2], 255));
 	}
 }
 
