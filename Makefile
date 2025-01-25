@@ -1,6 +1,6 @@
 NAME=cub3D
 CC=gcc 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
 MLX = ~/MLX42
 GREEN=\033[0;32m
 YELLOW=\033[0;33m
@@ -12,6 +12,9 @@ LIBS	= $(MLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 HEADER = cub3.h
 
 SRC = cub3.c \
+	./config/utils.c \
+	./raycasting/tex_utils.c \
+	./raycasting/tex_util.c \
 	./raycasting/texture.c \
 	./config/check_map.c \
 	./config/check.c\
