@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 10:11:42 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 10:13:35 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/24 11:41:49 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	init_imgs(t_data *data, t_player *pl)
 	data->player->gun = mlx_texture_to_image(data->map->mlx,
 			data->player->txr1);
 	mlx_image_to_window(data->map->mlx, data->player->gun,
-		WIN_WIDTH / 2.5, WIN_HEIGHT - 138 * 2);
-	mlx_resize_image(data->player->gun, 91 * 2, 138 * 2);
+		WIN_WIDTH / 2.5, WIN_HEIGHT - 106 * 2.5);
+	mlx_resize_image(data->player->gun, 91 * 2.5, 106 * 2.5);
 	mlx_set_cursor_mode(data->map->mlx, MLX_MOUSE_DISABLED);
 }
 
