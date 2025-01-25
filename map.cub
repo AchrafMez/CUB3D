@@ -1,7 +1,7 @@
 SO textures/grung.png
-WE darkmetal.png
+WE textures/darkmetal.png
 NO   textures/grung.png
-EA darkmetal.png
+EA textures/darkmetal.png
 
 F	10, 10, 10
 C 80,  0, 0
