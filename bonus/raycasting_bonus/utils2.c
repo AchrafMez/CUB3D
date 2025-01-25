@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 18:32:08 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 12:23:13 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 13:58:31 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,10 @@ void	free_txtr(t_data *data)
 	}
 	if (data->player->txr1)
 		mlx_delete_texture(data->player->txr1);
-	if (data->player->txr1)
+	if (data->player->txr2)
 		mlx_delete_texture(data->player->txr2);
-	if (data->player->txr1)
+	if (data->player->txr3)
 		mlx_delete_texture(data->player->txr3);
-	if (data->player->txr1)
-		mlx_delete_texture(data->player->txr4);
 }
 
 void	_set_points(double *points, t_ray *ray)
@@ -81,12 +79,6 @@ void	load_textures(t_data *data)
 	}
 	data->player->txr3 = mlx_load_png("./textures/3.png");
 	if (!data->player->txr3)
-	{
-		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
-		exit(1);
-	}
-	data->player->txr4 = mlx_load_png("./textures/4.png");
-	if (!data->player->txr4)
 	{
 		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
 		exit(1);

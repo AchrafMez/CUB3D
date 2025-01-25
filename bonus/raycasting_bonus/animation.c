@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:25:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 11:59:40 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 13:57:47 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,6 @@ void	sprite_player(t_data *data)
 		data->player->gun = mlx_texture_to_image(data->map->mlx,
 				data->player->txr3);
 	else if (data->animation.current_frame == 3)
-		data->player->gun = mlx_texture_to_image(data->map->mlx,
-				data->player->txr4);
-	else if (data->animation.current_frame == 4)
 		data->player->gun = mlx_texture_to_image(data->map->mlx,
 				data->player->txr1);
 	mlx_image_to_window(data->map->mlx, data->player->gun,
@@ -52,7 +49,7 @@ void	gun_animation(t_data *data)
 			data->animation.frame_counter = 0;
 			sprite_player(data);
 			data->animation.current_frame++;
-			if (data->animation.current_frame > 4)
+			if (data->animation.current_frame > 3)
 			{
 				data->animation.is_active = 0;
 				data->animation.current_frame = 0;

@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 12:53:31 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 13:57:28 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ typedef struct s_player
 	mlx_texture_t	*txr1;
 	mlx_texture_t	*txr2;
 	mlx_texture_t	*txr3;
-	mlx_texture_t	*txr4;
 	mlx_image_t		*gun;
 }					t_player;
 
