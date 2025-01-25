@@ -6,11 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:25:59 by abmahfou          #+#    #+#             */
-<<<<<<< HEAD:raycasting/animation.c
-/*   Updated: 2025/01/24 11:57:42 by abmahfou         ###   ########.fr       */
-=======
-/*   Updated: 2025/01/25 11:59:40 by abmahfou         ###   ########.fr       */
->>>>>>> main:bonus/raycasting_bonus/animation.c
+/*   Updated: 2025/01/25 15:43:10 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
