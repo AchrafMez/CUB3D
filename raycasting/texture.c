@@ -1,154 +1,121 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   texture.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/25 04:53:02 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/25 05:22:58 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3.h"
 
-void load_tex(t_data *data)
+void	draw_tex_helper(t_tex_params *p, int tex_x_pixel, int draw_start)
 {
-	t_map *map = data->map;	
-	map->textures[0] = mlx_load_png(map->SO);
-	map->textures[1] = mlx_load_png(map->NO);
-	map->textures[2] = mlx_load_png(map->WE);
-	map->textures[3] = mlx_load_png(map->EA);
-	if(!map->textures[0] || !map->textures[1] || !map->textures[2] || !map->textures[3] )
-		exit(1);
+	int			tex_y_pixel;
+	int			tex_pos;
+	uint32_t	color;
+
+	tex_y_pixel = (int)(((float)(draw_start - 1 - p->wall_top) / p->wall_height)
+			* p->tex->height);
+	if (tex_y_pixel < 0)
+		tex_y_pixel = 0;
+	else if ((uint16_t)tex_y_pixel >= p->tex->height)
+		tex_y_pixel = p->tex->height - 1;
+	tex_pos = (tex_y_pixel * p->tex->width + tex_x_pixel)
+		* p->tex->bytes_per_pixel;
+	color = get_pixel_color(p->tex, tex_pos);
+	if (p->x >= 0 && p->x < WIN_WIDTH && draw_start - 1 >= 0 && draw_start
+		- 1 < WIN_HEIGHT)
+		mlx_put_pixel(p->data->map->img, p->x, draw_start - 1, color);
 }
 
-float get_tex_x(t_ray *ray, mlx_texture_t *tex)
+void	draw_tex(t_tex_params *p)
 {
-    float tex_x;
-    float tex_width = (float)tex->width;
-    
-    if (ray->was_vert)
-    {
-        tex_x = ray->wall_hit_y;
-        tex_x = fmod(tex_x, TILE_SIZE);
+	int	draw_start;
+	int	draw_end;
+	int	tex_x_pixel;
 
-        if (tex_x < 0)
-            tex_x += TILE_SIZE;
-        tex_x = (tex_x * tex_width) / TILE_SIZE;
-        if (ray->ray_facing_left)
-            tex_x = tex_width - tex_x - 1;
-    }
-    else
-    {
-        tex_x = ray->wall_hit_x;
-        tex_x = fmod(tex_x, TILE_SIZE);
-        if (tex_x < 0)
-            tex_x += TILE_SIZE;
-        tex_x = (tex_x * tex_width) / TILE_SIZE;
-
-        if (!ray->ray_facing_up)
-            tex_x = tex_width - tex_x - 1;
-    }
-    
-
-    if (tex_x >= tex_width)
-        tex_x = tex_width - 1;
-    if (tex_x < 0)
-        tex_x = 0;
-        
-    return tex_x;
-}
-void draw_tex(int i, int wall_top, int wall_height, 
-                        float tex_x, mlx_texture_t *tex, t_data *data)
-{
-    int draw_start = wall_top;
-    int draw_end = wall_top + wall_height;
-    
-    if (draw_start < 0)
-        draw_start = 0;
-    if (draw_end >= WIN_HEIGHT)
-        draw_end = WIN_HEIGHT - 1;
-
-    int tex_x_pixel = (int)tex_x;
-    if (tex_x_pixel < 0)
-        tex_x_pixel = 0;
-    else if ((uint32_t)tex_x_pixel >= tex->width)
-        tex_x_pixel = tex->width - 1;
-    
-    while (draw_start <= draw_end)
-    {
-        float tex_y_ratio = (float)(draw_start - wall_top) / wall_height;
-        int tex_y_pixel = (int)(tex_y_ratio * tex->height);
-        
-        if (tex_y_pixel < 0)
-            tex_y_pixel = 0;
-        else if ((uint16_t)tex_y_pixel >= tex->height)
-            tex_y_pixel = tex->height - 1;
-        
-        int tex_pos = (tex_y_pixel * tex->width + tex_x_pixel) * tex->bytes_per_pixel;
-        uint32_t color;
-        
-        // if (tex->bytes_per_pixel == 4)
-        // {
-            color = (tex->pixels[tex_pos] << 24) |  (tex->pixels[tex_pos + 1] << 16) | (tex->pixels[tex_pos + 2] << 8) |  tex->pixels[tex_pos + 3];
-        // }
-        // else
-        // {
-            // color = (tex->pixels[tex_pos] << 16) |    (tex->pixels[tex_pos + 1] << 8) | tex->pixels[tex_pos + 2] | 0xFF000000;
-        // }
-        
-        if (i >= 0 && i < WIN_WIDTH && draw_start >= 0 && draw_start < WIN_HEIGHT)
-            mlx_put_pixel(data->map->img, i, draw_start, color);
-        draw_start++;
-    }
+	draw_start = 0;
+	draw_end = 0;
+	tex_x_pixel = 0;
+	adjust_draw_bounds(p, &draw_start, &draw_end);
+	tex_x_pixel = get_tex_x_pixel(p->tex_x, p->tex);
+	while (draw_start++ <= draw_end)
+		draw_tex_helper(p, tex_x_pixel, draw_start);
 }
 
-
-void render_walls(t_ray **rays, t_data *data)
+void	draw_fc(t_data *data, int vertical)
 {
-    int i = -1;
-    float proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
-    int vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
-    
-    clear_image(data->map->img);
-    int y = 0;
-    while (y < WIN_HEIGHT) 
-    {
-        int x = 0;
-        while (x < WIN_WIDTH) 
-        {
-            int adjusted_y = y - vertical;
-            
-            uint32_t color = get_rgb(data->map->ciel_rgb[0], data->map->ciel_rgb[1], data->map->ciel_rgb[2], 255);
-            if (adjusted_y < WIN_HEIGHT / 2)
-                mlx_put_pixel(data->map->img, x, y, color); 
-            else
-            {
-                uint32_t color2 = get_rgb(data->map->floor_rgb[0], data->map->floor_rgb[1], data->map->floor_rgb[2], 255);
-                mlx_put_pixel(data->map->img, x, y, color2); // Floor color
-            }
-            x++;
-        }
-        y++;
-    }
+	int			x;
+	int			y;
+	int			adjusted_y;
+	uint32_t	ceil_color;
+	uint32_t	floor_color;
 
-
-
-    while (++i < WIN_WIDTH)
-    {
-        t_ray *ray = rays[i];
-        float correct_dist = ray->distance * cos(ray->ray_angle - data->player->rotation_angle);
-        if (correct_dist <= 1.0f)
-            correct_dist = 1.0f;
-            
-        int wall_height = (int)((float)TILE_SIZE / correct_dist * proj_plane_dist);
-        int wall_top = (WIN_HEIGHT / 2) - (wall_height / 2) + vertical;
-        
-        mlx_texture_t *tex;
-        if (ray->was_vert) {
-            if (ray->ray_facing_left)
-                tex = data->map->textures[2];
-            else
-                tex = data->map->textures[3];
-        } else {
-            if (ray->ray_facing_up)
-                tex = data->map->textures[0];
-            else
-                tex = data->map->textures[1];
-        }
-            
-        float tex_x = get_tex_x(ray, tex);
-        draw_tex(i, wall_top, wall_height, tex_x, tex, data);
-    }
+	y = 0;
+	while (y < WIN_HEIGHT)
+	{
+		x = 0;
+		while (x < WIN_WIDTH)
+		{
+			adjusted_y = y - vertical;
+			ceil_color = get_rgb_color(data->map->ciel_rgb);
+			if (adjusted_y < WIN_HEIGHT / 2)
+				mlx_put_pixel(data->map->img, x, y, ceil_color);
+			else
+			{
+				floor_color = get_rgb_color(data->map->floor_rgb);
+				mlx_put_pixel(data->map->img, x, y, floor_color);
+			}
+			x++;
+		}
+		y++;
+	}
 }
 
+static mlx_texture_t	*select_texture(t_ray *ray, t_data *data)
+{
+	if (ray->was_vert)
+	{
+		if (ray->ray_facing_left)
+			return (data->map->textures[2]);
+		return (data->map->textures[3]);
+	}
+	else
+	{
+		if (ray->ray_facing_up)
+			return (data->map->textures[0]);
+		return (data->map->textures[1]);
+	}
+}
 
+void	render_walls(t_ray **rays, t_data *data)
+{
+	int				i;
+	float			proj_plane_dist;
+	int				vertical;
+	t_ray			*ray;
+	t_tex_params	p;
+
+	i = -1;
+	proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
+	vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
+	clear_image(data->map->img);
+	draw_fc(data, vertical);
+	while (++i < WIN_WIDTH)
+	{
+		ray = rays[i];
+		p.data = data;
+		p.x = i;
+		p.wall_height = (int)((float)TILE_SIZE / (ray->distance
+					* cos(ray->ray_angle - data->player->rotation_angle))
+				* proj_plane_dist);
+		p.wall_top = (WIN_HEIGHT / 2) - (p.wall_height / 2) + vertical;
+		p.tex = select_texture(ray, data);
+		p.tex_x = get_tex_x(ray, p.tex);
+		draw_tex(&p);
+	}
+}
