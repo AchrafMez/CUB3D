@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 03:30:57 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 03:31:26 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:42:56 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*substring(char *line)
 	while (line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
 		i++;
 	start = i;
-	end = strlen(line) - 1;
+	end = ft_strlen(line) - 1;
 	while (line[end] && (line[end] == ' ' || line[end] == '\t'
 			|| line[end] == '\v'))
 		end--;

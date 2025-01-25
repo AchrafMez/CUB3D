@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:48:09 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 04:56:17 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:46:51 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ void	load_tex(t_data *data)
 	t_map	*map;
 
 	map = data->map;
-	map->textures[0] = mlx_load_png(map->SO);
-	map->textures[1] = mlx_load_png(map->NO);
-	map->textures[2] = mlx_load_png(map->WE);
-	map->textures[3] = mlx_load_png(map->EA);
+	map->textures[0] = mlx_load_png(map->so);
+	map->textures[1] = mlx_load_png(map->no);
+	map->textures[2] = mlx_load_png(map->we);
+	map->textures[3] = mlx_load_png(map->ea);
 	if (!map->textures[0] || !map->textures[1] || !map->textures[2]
 		|| !map->textures[3])
 		exit(1);

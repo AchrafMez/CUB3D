@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cast_ray.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 10:01:14 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:50:02 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 	double	*points;
 
 	points = malloc(sizeof(double) * 2);
-	while (ray->next_x >= 0 && ray->next_x <= data->map->WIDHT
-		&& ray->next_y >= 0 && ray->next_y <= data->map->HEIGHT)
+	while (ray->next_x >= 0 && ray->next_x <= data->map->width
+		&& ray->next_y >= 0 && ray->next_y <= data->map->height)
 	{
 		if (is_wall(data, ray->next_x, ray->next_y))
 		{

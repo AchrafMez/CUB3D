@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:46:37 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 02:00:15 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:37:53 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	check_color(char *fc, t_map *map)
 		fc++;
 	if (*fc == '\0')
 		ft_exit("Error: Empty RGB\n", map);
-	while (isdigit(*fc) != 0)
+	while (ft_isdigit(*fc) != 0)
 		fc++;
 	while ((*fc == ' ' || *fc == '\t'))
 		fc++;

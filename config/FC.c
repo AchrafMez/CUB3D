@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 02:08:45 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 02:08:56 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:40:59 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ void	store_fc(char **fc, int flag, t_map **map)
 
 int	check_fc_prototype(char *line, t_map *map)
 {
-	unsigned long	i;
-	int				comma;
+	int	i;
+	int	comma;
 
 	i = 0;
 	while (line[i] && (line[i] == ' ' || line[i] == '\t' || line[i] == '\v'))
@@ -69,13 +69,13 @@ int	check_fc_prototype(char *line, t_map *map)
 	{
 		if (line[i] == ',')
 			comma++;
-		if (isdigit(line[i]) == 0 && line[i] != ',' && line[i] != ' ')
+		if (ft_isdigit(line[i]) == 0 && line[i] != ',' && line[i] != ' ')
 			return (1);
 		i++;
 	}
 	if (comma != 2)
 		ft_exit("Error: Invalid color format\n", map);
-	if (i == (strlen(line)))
+	if (i == (ft_strlen(line)))
 		return (0);
 	return (1);
 }

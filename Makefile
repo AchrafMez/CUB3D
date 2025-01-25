@@ -46,6 +46,7 @@ SRC = cub3.c \
     ./lib/substring.c \
 	./lib/subtring2.c\
 	./lib/trime.c \
+	./lib/ft_isdigit.c \
 
 OBJ_DIR = objs/
 

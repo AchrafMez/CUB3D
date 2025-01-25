@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 02:09:11 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 02:09:27 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:47:29 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ void	fre_maplines(char **map)
 
 void	free_map(t_map *map)
 {
-	free((void *)map->NO);
-	free((void *)map->EA);
-	free((void *)map->SO);
-	free((void *)map->WE);
+	free((void *)map->no);
+	free((void *)map->ea);
+	free((void *)map->so);
+	free((void *)map->we);
 	free(map->floor_rgb);
 	free(map->ciel_rgb);
 	fre_maplines(map->map);

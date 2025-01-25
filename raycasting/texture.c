@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:53:02 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 05:22:58 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:45:20 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	render_walls(t_ray **rays, t_data *data)
 	t_tex_params	p;
 
 	i = -1;
-	proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->FOV / 2);
+	proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->fov / 2);
 	vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
 	clear_image(data->map->img);
 	draw_fc(data, vertical);

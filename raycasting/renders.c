@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   renders.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:46:39 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/23 18:29:30 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:51:22 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void	draw_minimap(t_data *data, int start_x, int start_y)
 		{
 			map_x = start_x + (x / SCALE_FACTOR);
 			map_y = start_y + (y / SCALE_FACTOR);
-			if (map_x >= 0 && map_x < data->map->WIDHT && map_y >= 0
-				&& map_y < data->map->HEIGHT
+			if (map_x >= 0 && map_x < data->map->width && map_y >= 0
+				&& map_y < data->map->height
 				&& map_x / TILE_SIZE
 				<= ft_strlen(data->map->map[map_y / TILE_SIZE]))
 			{

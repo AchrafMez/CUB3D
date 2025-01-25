@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:46:05 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 01:46:06 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:47:14 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	check_filled_map(t_map *map)
 {
 	if (!map->map || map->ciel_rgb[0] == -1 || map->floor_rgb[0] == -1
-		|| !map->EA || !map->NO || !map->SO || !map->WE)
+		|| !map->ea || !map->no || !map->so || !map->we)
 		ft_exit("Error: Map not filled correctly!\n", map);
 }
 
@@ -35,7 +35,7 @@ void	check_map_last_char(t_map *map, int i)
 
 	end = 0;
 	check_ones(map->map[0], map);
-	end = strlen(map->map[i]) - 1;
+	end = ft_strlen(map->map[i]) - 1;
 	if (map->map[i][end] != '1' && map->map[i][end] != ' ')
 		ft_exit("Error: Last character in the map\n", map);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 10:15:01 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:45:20 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ t_ray	**cast_all_rays(t_data *data)
 
 	player = data->player;
 	rays = malloc(sizeof(t_ray *) * WIN_WIDTH);
-	ray_angle = player->rotation_angle - (player->FOV / 2);
+	ray_angle = player->rotation_angle - (player->fov / 2);
 	i = -1;
 	while (++i < WIN_WIDTH)
 	{
 		ray = create_ray(ray_angle);
 		cast_ray(ray, data);
 		rays[i] = ray;
-		ray_angle += player->FOV / WIN_WIDTH;
+		ray_angle += player->fov / WIN_WIDTH;
 	}
 	return (rays);
 }

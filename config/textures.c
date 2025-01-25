@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 02:11:19 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 02:11:20 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:48:42 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,27 @@ void	store_textures(char index, char *line, t_map **map)
 {
 	if (index == 'E')
 	{
-		if ((*map)->EA)
+		if ((*map)->ea)
 			ft_exit("Error: EA texture already exist\n", *map);
-		(*map)->EA = ft_strdup(line);
+		(*map)->ea = ft_strdup(line);
 	}
 	else if (index == 'N')
 	{
-		if ((*map)->NO)
+		if ((*map)->no)
 			ft_exit("Error: NO texture already exist\n", *map);
-		(*map)->NO = ft_strdup(line);
+		(*map)->no = ft_strdup(line);
 	}
 	else if (index == 'W')
 	{
-		if ((*map)->WE)
+		if ((*map)->we)
 			ft_exit("Error: WE texture already exist\n", *map);
-		(*map)->WE = ft_strdup(line);
+		(*map)->we = ft_strdup(line);
 	}
 	else if (index == 'S')
 	{
-		if ((*map)->SO)
+		if ((*map)->so)
 			ft_exit("Error: SO texture already exist\n", *map);
-		(*map)->SO = ft_strdup(line);
+		(*map)->so = ft_strdup(line);
 	}
 }
 

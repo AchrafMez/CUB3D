@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:45:02 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 03:28:09 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:36:55 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	check_extension(char *file_name)
 	int			file_counter;
 
 	check_counter = 3;
-	file_counter = strlen(file_name) - 1;
+	file_counter = ft_strlen(file_name) - 1;
 	while (check_counter >= 0 && extension[check_counter])
 	{
 		if (file_name[file_counter--] != extension[check_counter--])

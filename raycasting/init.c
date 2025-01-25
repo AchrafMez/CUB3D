@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 10:11:42 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 10:13:35 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:52:01 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ void	player_init(t_player *pl, t_data *data)
 		pl->rotation_angle = M_PI / 2;
 	pl->move_speed = 2.0;
 	pl->rotation_speed = 2 * (M_PI / 180);
-	pl->FOV = 60 * (M_PI / 180);
+	pl->fov = 60 * (M_PI / 180);
 	pl->side_angle = 0.0;
 	pl->x = data->map->player_x * TILE_SIZE;
 	pl->y = data->map->player_y * TILE_SIZE;
-	data->map->WIDHT *= TILE_SIZE;
-	data->map->HEIGHT *= TILE_SIZE;
+	data->map->width *= TILE_SIZE;
+	data->map->height *= TILE_SIZE;
 }
 
 void	init_imgs(t_data *data, t_player *pl)

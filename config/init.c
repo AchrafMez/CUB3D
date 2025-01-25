@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 02:09:36 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 02:09:37 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:47:46 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	null_init(t_map *map)
 {
-	map->NO = NULL;
-	map->SO = NULL;
-	map->WE = NULL;
-	map->EA = NULL;
+	map->no = NULL;
+	map->so = NULL;
+	map->we = NULL;
+	map->ea = NULL;
 	map->map = NULL;
 	map->player_x = 0;
 	map->player_y = 0;

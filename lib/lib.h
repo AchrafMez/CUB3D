@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 03:30:42 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 03:30:43 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:39:34 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@ char	*substring(char *line);
 char	*substring2(char *line);
 char	*trime_line(char *line);
 char	*skip_whiespaces(char *line);
+int		ft_isdigit(int c);
 
 #endif

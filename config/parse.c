@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 03:06:13 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 03:08:02 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 05:49:47 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,6 @@ void	whxy(t_map **map)
 			}
 		}
 	}
-	(*map)->HEIGHT = i;
-	(*map)->WIDHT = get_map_width((*map)->map);
+	(*map)->height = i;
+	(*map)->width = get_map_width((*map)->map);
 }
