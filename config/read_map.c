@@ -1,12 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   read_map.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/25 03:08:54 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/25 03:08:57 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3.h"
 
-void	check_position(char *line, t_map **map)
+void	texture_position(char *line, t_map **map)
 {
 	check_positions(line, 'N', 'O', map);
 	check_positions(line, 'S', 'O', map);
 	check_positions(line, 'W', 'E', map);
 	check_positions(line, 'E', 'A', map);
 }
+
 void	read_map(char *file_name, t_map **map)
 {
 	char	*line;
@@ -23,8 +36,8 @@ void	read_map(char *file_name, t_map **map)
 	while (line)
 	{
 		if (check_identif(line) == 0)
-			check_position(line, map);
-		if (check_FC(line, *map) == 0)
+			texture_position(line, map);
+		if (check_fc(line, *map) == 0)
 			parse_colors(line, map);
 		free(line);
 		line = get_next_line(fd);

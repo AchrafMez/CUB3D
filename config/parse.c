@@ -1,11 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/25 03:06:13 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/25 03:08:02 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3.h"
 
 void	parse_colors(char *line, t_map **map)
 {
 	char	*floor;
 
-	// int i = 0;
-	(void)map;
 	while (*line && (*line == ' ' || *line == '\t' || *line == '\v'))
 		line++;
 	if (*line == 'F')
@@ -42,40 +52,6 @@ int	is_map(char *line)
 	return (0);
 }
 
-int	empty_line(char *line)
-{
-	if (!line)
-		return (1);
-	while (*line)
-	{
-		if (*line != ' ' && *line != '\t')
-			return (1);
-		line++;
-	}
-	return (0);
-}
-
-int	wall(char *map)
-{
-	int	i;
-
-	i = 0;
-	while (map[i])
-	{
-		if (map[i] == ' ' || map[i] == '\t')
-			i++;
-		if (map[i] == '1')
-		{
-			printf("'%c'\n", map[i]);
-			return (1);
-		}
-		else
-			return (0);
-		i++;
-	}
-	return (0);
-}
-
 int	get_map_width(char **map)
 {
 	int	i;
@@ -94,7 +70,7 @@ int	get_map_width(char **map)
 	return (width);
 }
 
-void	WHXY(t_map **map)
+void	whxy(t_map **map)
 {
 	int	i;
 	int	j;
@@ -113,15 +89,7 @@ void	WHXY(t_map **map)
 				(*map)->player_x = j;
 			}
 		}
-		i++;
 	}
 	(*map)->HEIGHT = i;
 	(*map)->WIDHT = get_map_width((*map)->map);
-}
-
-int	is_WESN(char c)
-{
-	if (c != 'N' && c != 'E' && c != 'S' && c != 'W')
-		return (1);
-	return (0);
 }

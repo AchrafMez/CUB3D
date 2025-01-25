@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_map.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/25 01:46:05 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/25 01:46:06 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../cub3.h"
 
@@ -52,25 +63,6 @@ void	check_map_char(t_map *map, int i, int *player_count)
 	}
 }
 
-int	check_map_chars(t_map *map)
-{
-	int	i;
-	int	player_count;
-
-	i = 0;
-	player_count = 0;
-	while (map->map[i])
-	{
-		check_map_last_char(map, i);
-		check_map_char(map, i, &player_count);
-		i++;
-	}
-	if (player_count != 1)
-		ft_exit("Error: The map needs one player\n", map);
-	check_ones(map->map[i - 1], map);
-	return (0);
-}
-
 void	check_zeros(t_map *map, int i, int j)
 {
 	if (map->map[i][j + 1] == ' ' || map->map[i][j - 1] == ' ')
@@ -78,26 +70,4 @@ void	check_zeros(t_map *map, int i, int j)
 	if (ft_strlen(map->map[i - 1]) <= j || ft_strlen(map->map[i + 1]) <= j
 		|| map->map[i - 1][j] == ' ' || map->map[i + 1][j] == ' ')
 		ft_exit("Error: an area inside the map must be closed\n", map);
-}
-
-void	check_map_spaces(t_map *map)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	j = 0;
-	while (map->map[i])
-	{
-		while (map->map[i][j])
-		{
-			if (map->map[i][j] == '0' || map->map[i][j] == 'N'
-				|| map->map[i][j] == 'S' || map->map[i][j] == 'E'
-				|| map->map[i][j] == 'W')
-				check_zeros(map, i, j);
-			j++;
-		}
-		j = 0;
-		i++;
-	}
 }

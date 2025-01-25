@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fill_map.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/25 02:09:03 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/25 02:09:04 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3.h"
 
 int	fill_mapline_checker(char *end, char *line, int map_started)
 {
-	if (*end == '\0' && map_started == 0)
+	if (*end == '\0' && (map_started == 0))
 	{
 		free(line);
 		free(end);
@@ -17,11 +29,19 @@ int	fill_mapline_checker(char *end, char *line, int map_started)
 	return (1);
 }
 
-void	free_mapline_lines(char *end, char *line)
+void	init_map(t_map **map, int map_line)
 {
-	free(end);
-	free(line);
+	(*map)->map = malloc(sizeof(char *) * (map_line + 1));
+	if (!(*map)->map)
+		return ;
 }
+
+void	free_line_end(char *line, char *end)
+{
+	free(line);
+	free(end);
+}
+
 void	fill_mapline(int map_line, int fd, t_map **map)
 {
 	char	*line;
@@ -29,15 +49,15 @@ void	fill_mapline(int map_line, int fd, t_map **map)
 	int		i;
 	char	*end;
 
-	if (map_line < 0)
-		return ;
-	(*map)->map = malloc(sizeof(char *) * (map_line + 1));
-	if (!(*map)->map)
-		return ;
+	line = NULL;
 	map_started = 0;
+	init_map(map, map_line);
 	i = 0;
-	while ((line = get_next_line(fd)) != NULL)
+	while (1)
 	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
 		end = substring2(line);
 		if (fill_mapline_checker(end, line, map_started) == 0)
 			continue ;
@@ -46,7 +66,7 @@ void	fill_mapline(int map_line, int fd, t_map **map)
 			map_started = 1;
 			(*map)->map[i++] = ft_strdup(end);
 		}
-		free_mapline_lines(end, line);
+		free_line_end(line, end);
 	}
 	(*map)->map[i] = NULL;
 }
@@ -58,7 +78,7 @@ void	fill_map(int fd, char *file_namp, t_map **map)
 	fd = open(file_namp, O_RDONLY);
 	if (fd < 0)
 	{
-		perror("Error");
+		perror("Errror");
 		return ;
 	}
 	if (map_lines(fd, *map) == 0)
@@ -74,8 +94,6 @@ void	fill_map(int fd, char *file_namp, t_map **map)
 		close(fd);
 		fd = open(file_namp, O_RDONLY);
 		fill_mapline(map_line, fd, map);
-		close(fd);
 	}
-	else
-		close(fd);
+	close(fd);
 }
