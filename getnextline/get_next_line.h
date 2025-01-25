@@ -6,7 +6,7 @@
 /*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/06 10:24:44 by amezioun          #+#    #+#             */
-/*   Updated: 2024/12/23 06:50:00 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 03:37:38 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #  define BUFFER_SIZE 10
 # endif
 
-#include "../lib/lib.h"
+# include "../lib/lib.h"
 # include <fcntl.h>
 # include <stdlib.h>
 # include <unistd.h>
