@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 06:05:10 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 06:05:11 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 11:53:24 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,6 @@ int	main(int ac, char **av)
 		// atexit(leak);
 	}
 	else
-		printf("Two arguments needed\n");
+		printf("Usage: cub3D *.cub\n");
 	return (0);
 }

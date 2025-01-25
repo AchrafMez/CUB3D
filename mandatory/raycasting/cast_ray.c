@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cast_ray.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 05:50:02 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 12:53:16 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ void	cast_ray(t_ray *ray, t_data *data)
 	double	horz_hit_distance;
 	double	vert_hit_distance;
 
-	horz_hit_distance = DBL_MAX;
-	vert_hit_distance = DBL_MAX;
+	horz_hit_distance = MAX_DOUBLE;
+	vert_hit_distance = MAX_DOUBLE;
 	ft_horizontal_interc(ray, data);
 	ft_vertical_interc(ray, data);
 	if (ray->found_horz_hit == true)

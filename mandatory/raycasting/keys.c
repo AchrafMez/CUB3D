@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 09:37:26 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/25 10:54:02 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,7 @@ void	render_all(t_data *data)
 	t_ray	**rays;
 	int		i;
 
-	render_minimap(data);
-	gun_animation(data);
 	update_player_pos(data);
-	mouse_handling(data);
 	rays = cast_all_rays(data);
 	render_walls(rays, data);
 	i = -1;

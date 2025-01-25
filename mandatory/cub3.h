@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 06:03:40 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 12:53:03 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,11 @@
 # include <fcntl.h>
 # include <math.h>
 # include <stdlib.h>
-#include <float.h>
 
 # define TILE_SIZE 32
 # define WIN_WIDTH 1220
 # define WIN_HEIGHT 800
-# define MAIN_COLOR 0xd3d3d3FF
-# define COLOR_WALL 0x6468699B
-# define MINIMAP_SIZE 150
-# define SCALE_FACTOR 0.3
+# define MAX_DOUBLE 1.7976931348623157e+308
 
 typedef struct s_player
 {
@@ -45,11 +41,6 @@ typedef struct s_player
 	double			side_angle;
 	double			fov;
 	mlx_image_t		*pl;
-	mlx_texture_t	*txr1;
-	mlx_texture_t	*txr2;
-	mlx_texture_t	*txr3;
-	mlx_texture_t	*txr4;
-	mlx_image_t		*gun;
 }					t_player;
 
 typedef struct s_ray
@@ -89,27 +80,16 @@ typedef struct s_map
 	int				height;
 	int				width;
 	mlx_t			*mlx;
-	mlx_image_t		*mini_map;
 	mlx_image_t		*img;
 	mlx_image_t		*background;
 	mlx_texture_t	*textures[4];
 }					t_map;
-
-typedef struct s_animation
-{
-	int				current_frame;
-	int				is_active;
-	int				frame_delay;
-	int				frame_counter;
-	int				move;
-}					t_animation;
 
 typedef struct s_data
 {
 	t_map			*map;
 	t_player		*player;
 	t_ray			*rays;
-	t_animation		animation;
 }					t_data;
 
 typedef struct s_tex_params
@@ -193,20 +173,15 @@ int					is_wall(t_data *data, int x, int y);
 int					raycast(t_data *data);
 uint32_t			get_rgb(int r, int g, int b, int a);
 void				clear_image(mlx_image_t *img);
-void				render_minimap(t_data *data);
 void				render_walls(t_ray **rays, t_data *data);
 void				free_txtr(t_data *data);
 void				load_tex(t_data *data);
 void				render(void *param);
-void				gun_animation(t_data *data);
-void				mouse_handling(t_data *data);
 void				_set_points(double *points, t_ray *ray);
-void				load_textures(t_data *data);
 int					print_error(int err);
 void				player_init(t_player *pl, t_data *data);
 void				init_imgs(t_data *data, t_player *pl);
 t_ray				*create_ray(double angle);
-void				load_tex(t_data *data);
 float				calc_tex_x_vertical(t_ray *ray, float tex_width);
 float				calc_tex_x_horizontal(t_ray *ray, float tex_width);
 float				get_tex_x(t_ray *ray, mlx_texture_t *tex);

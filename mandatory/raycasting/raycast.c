@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 05:45:20 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 10:51:55 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ int	raycast(t_data *data)
 		free(pl);
 		return (print_error(1));
 	}
-	data->animation = (t_animation){.current_frame = 0, .is_active = 0,
-		.frame_delay = 2, .frame_counter = 0, .move = 0};
 	load_tex(data);
 	init_imgs(data, pl);
 	mlx_loop_hook(data->map->mlx, render, data);

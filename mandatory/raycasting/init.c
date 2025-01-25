@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 10:11:42 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 05:52:01 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/25 10:57:06 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,6 @@ void	init_imgs(t_data *data, t_player *pl)
 	pl->pl = mlx_new_image(data->map->mlx, TILE_SIZE, TILE_SIZE);
 	mlx_image_to_window(data->map->mlx, pl->pl,
 		(pl->x + TILE_SIZE / 3), (pl->y + TILE_SIZE / 3));
-	load_textures(data);
-	data->player->gun = mlx_texture_to_image(data->map->mlx,
-			data->player->txr1);
-	mlx_image_to_window(data->map->mlx, data->player->gun,
-		WIN_WIDTH / 2.5, WIN_HEIGHT - 138 * 2);
-	mlx_resize_image(data->player->gun, 91 * 2, 138 * 2);
-	mlx_set_cursor_mode(data->map->mlx, MLX_MOUSE_DISABLED);
 }
 
 t_ray	*create_ray(double angle)
