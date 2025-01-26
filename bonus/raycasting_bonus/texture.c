@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:53:02 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 12:23:07 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 10:24:30 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ void	draw_fc(t_data *data, int vertical)
 
 static mlx_texture_t	*select_texture(t_ray *ray, t_data *data)
 {
+	if(ray->is_door == true)
+		return (data->map->textures[4]);
 	if (ray->was_vert)
 	{
 		if (ray->ray_facing_left)
@@ -92,30 +94,60 @@ static mlx_texture_t	*select_texture(t_ray *ray, t_data *data)
 	}
 }
 
-void	render_walls(t_ray **rays, t_data *data)
+mlx_texture_t *select_door_texture(t_data *data)
 {
-	int				i;
-	float			proj_plane_dist;
-	int				vertical;
-	t_ray			*ray;
-	t_tex_params	p;
+    return data->map->textures[4];
+}
 
-	i = -1;
-	proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->fov / 2);
-	vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
-	clear_image(data->map->img);
-	draw_fc(data, vertical);
-	while (++i < WIN_WIDTH)
-	{
-		ray = rays[i];
-		p.data = data;
-		p.x = i;
-		p.wall_height = (int)((float)TILE_SIZE / (ray->distance
-					* cos(ray->ray_angle - data->player->rotation_angle))
-				* proj_plane_dist);
-		p.wall_top = (WIN_HEIGHT / 2) - (p.wall_height / 2) + vertical;
-		p.tex = select_texture(ray, data);
-		p.tex_x = get_tex_x(ray, p.tex);
-		draw_tex(&p);
-	}
+void draw_door_tex(t_tex_params *p)
+{
+    int draw_start;
+    int draw_end;
+    int tex_x_pixel;
+
+    draw_start = 0;
+    draw_end = 0;
+    tex_x_pixel = 0;
+    adjust_draw_bounds(p, &draw_start, &draw_end);
+    tex_x_pixel = get_tex_x_pixel(p->tex_x, p->tex);
+    
+    while (draw_start++ <= draw_end)
+        draw_tex_helper(p, tex_x_pixel, draw_start);
+}
+
+void render_walls(t_ray **rays, t_data *data)
+{
+    int             i;
+    float           proj_plane_dist;
+    int             vertical;
+    t_ray           *ray;
+    t_tex_params    p;
+
+    i = -1;
+    proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->fov / 2);
+    vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
+    draw_fc(data, vertical);
+    clear_image(data->map->img);
+    while (++i < WIN_WIDTH)
+    {
+        ray = rays[i];
+        p.data = data;
+        p.x = i;
+        p.wall_height = (int)((float)TILE_SIZE / (ray->distance
+                    * cos(ray->ray_angle - data->player->rotation_angle))
+                * proj_plane_dist);
+        p.wall_top = (WIN_HEIGHT / 2) - (p.wall_height / 2) + vertical;
+        // if (ray->is_door == true)
+        // {
+        //     p.tex = select_door_texture(data);
+        //     p.tex_x = get_tex_x(ray, p.tex);
+        //     draw_door_tex(&p);
+        // }
+        // else
+        // {
+            p.tex = select_texture(ray, data);
+            p.tex_x = get_tex_x(ray, p.tex);
+            draw_tex(&p);
+        // }
+    }
 }

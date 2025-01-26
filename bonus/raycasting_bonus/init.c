@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 10:11:42 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 12:35:47 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 05:29:35 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,6 @@ t_ray	*create_ray(double angle)
 	ray->next_x = 0;
 	ray->next_y = 0;
 	ray->flg = -1;
+	ray->is_door = false;
 	return (ray);
 }

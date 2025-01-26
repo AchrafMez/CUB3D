@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 01:45:02 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 12:24:53 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 10:22:02 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,27 @@ int	check_fc(char *line, t_map *map)
 			return (0);
 	}
 	return (1);
+}
+
+void	is_valid_door(t_map *map)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (map->map[i])
+	{
+		j = 0;
+		while (map->map[i][j])
+		{
+			if (map->map[i][j] == 'D')
+			{
+				if (map->map[i][j + 1] == ' ' || map->map[i][j - 1] == ' '
+					|| map->map[i + 1][j] == ' ' || map->map[i - 1][j] == ' ')
+					ft_exit("Error: Not a valid door!\n", map);
+			}
+			j++;
+		}
+		i++;
+	}
 }

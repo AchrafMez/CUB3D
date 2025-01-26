@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tex_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:48:09 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 12:23:05 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 10:30:22 by amezioun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ void	load_tex(t_data *data)
 	map->textures[1] = mlx_load_png(map->no);
 	map->textures[2] = mlx_load_png(map->we);
 	map->textures[3] = mlx_load_png(map->ea);
+	map->textures[4] = mlx_load_png("textures/door.png");	
+	
 	if (!map->textures[0] || !map->textures[1] || !map->textures[2]
-		|| !map->textures[3])
+		|| !map->textures[3] || !map->textures[4])
 		exit(1);
 }
 
@@ -54,21 +56,39 @@ float	calc_tex_x_horizontal(t_ray *ray, float tex_width)
 	return (tex_x);
 }
 
-float	get_tex_x(t_ray *ray, mlx_texture_t *tex)
+float get_tex_x(t_ray *ray, mlx_texture_t *tex)
 {
-	float	tex_x;
-	float	tex_width;
+    float tex_x;
+    float tex_width = (float)tex->width;
+    float angle_correction;
 
-	tex_width = (float)tex->width;
-	if (ray->was_vert)
-		tex_x = calc_tex_x_vertical(ray, tex_width);
+    if (ray->was_vert)
+        tex_x = ray->wall_hit_y;
+    else
+        tex_x = ray->wall_hit_x;
+
+    tex_x = fmod(tex_x, TILE_SIZE);
+    if (tex_x < 0)
+        tex_x += TILE_SIZE;
+    angle_correction = fabs(cos(ray->ray_angle - ray->ray_angle));
+    tex_x *= angle_correction;
+    tex_x = (tex_x * tex_width) / TILE_SIZE;
+    if (ray->was_vert)
+	{
+        if (ray->ray_facing_left)
+            tex_x = tex_width - tex_x - 1;
+    }
 	else
-		tex_x = calc_tex_x_horizontal(ray, tex_width);
-	if (tex_x >= tex_width)
-		tex_x = tex_width - 1;
-	if (tex_x < 0)
-		tex_x = 0;
-	return (tex_x);
+	{
+        if (!ray->ray_facing_up)
+            tex_x = tex_width - tex_x - 1;
+    }
+    if (tex_x >= tex_width)
+        tex_x = tex_width - 1;
+    if (tex_x < 0)
+        tex_x = 0;
+
+    return tex_x;
 }
 
 uint32_t	get_pixel_color(mlx_texture_t *tex, int tex_pos)

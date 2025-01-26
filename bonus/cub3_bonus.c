@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/26 09:09:06 by amezioun          #+#    #+#             */
+/*   Updated: 2025/01/26 10:23:28 by amezioun         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3_bonus.h"
 
 void	leak(void)
@@ -23,6 +35,7 @@ int	main(int ac, char **av)
 			check_map_chars(map);
 			whxy(&map);
 			check_map_spaces(map);
+			is_valid_door(map);
 			data.map = map;
 			if (raycast(&data))
 				return (free_map(map), EXIT_FAILURE);
