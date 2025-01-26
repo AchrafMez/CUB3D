@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:53:02 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/26 15:29:06 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 20:03:23 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ void	render_walls(t_ray **rays, t_data *data)
 	i = -1;
 	proj_plane_dist = (WIN_WIDTH / 2) / tan(data->player->fov / 2);
 	vertical = (int)(WIN_HEIGHT * tan(data->player->vertical));
-	draw_fc(data, vertical);
 	clear_image(data->map->img);
+	draw_fc(data, vertical);
 	while (++i < WIN_WIDTH)
 	{
 		ray = rays[i];
