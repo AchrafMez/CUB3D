@@ -3,79 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   cast_ray.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/26 06:00:36 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:49:07 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3_bonus.h"
 
-// void	_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
-// {
-// 	double	*points;
-
-// 	points = malloc(sizeof(double) * 2);
-// 	while (ray->next_x >= 0 && ray->next_x <= data->map->width
-// 		&& ray->next_y >= 0 && ray->next_y <= data->map->height)
-// 	{
-// 		if (is_wall(data, ray->next_x, ray->next_y) || data->map->map[(int)(ray->next_y / TILE_SIZE)][(int)(ray->next_x / TILE_SIZE)] == 'D')
-// 		{
-// 			if (ray->flg == 1)
-// 				ray->found_horz_hit = true;
-// 			else if (ray->flg == 0)
-// 				ray->found_vert_hit = true;
-// 			points[0] = ray->next_x;
-// 			points[1] = ray->next_y;
-// 			break ;
-// 		}
-// 		else
-// 		{
-// 			ray->next_x += x_step;
-// 			ray->next_y += y_step;
-// 		}
-// 	}
-// 	_set_points(points, ray);
-// }
-
-void _points_check(t_data *data, t_ray *ray, double x_step, double y_step)
+void	_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 {
-    double *points = malloc(sizeof(double) * 2);
-    
-    while (ray->next_x >= 0 && ray->next_x <= data->map->width
-        && ray->next_y >= 0 && ray->next_y <= data->map->height)
-    {
-        int map_x = (int)(ray->next_x / TILE_SIZE);
-        int map_y = (int)(ray->next_y / TILE_SIZE);
-        
-        // Check for walls and doors with additional conditions
-        if (is_wall(data, ray->next_x, ray->next_y) || 
-            data->map->map[map_y][map_x] == 'D')
-        {
-            // Only set is_door if it's a specific door condition
-            // Add your specific door state/interaction logic here
-            if (data->map->map[map_y][map_x] == 'D' /* && additional door state conditions */)
-            {
-                ray->is_door = true;
-            }
-            
-            if (ray->flg == 1)
-                ray->found_horz_hit = true;
-            else if (ray->flg == 0)
-                ray->found_vert_hit = true;
-            
-            points[0] = ray->next_x;
-            points[1] = ray->next_y;
-            break;
-        }
-        else
-        {
-            ray->next_x += x_step;
-            ray->next_y += y_step;
-        }
-    }
-    _set_points(points, ray);
+	double	*points;
+	int		map_x;
+	int		map_y;
+
+	points = malloc(sizeof(double) * 2);
+	while (ray->next_x >= 0 && ray->next_x <= data->map->width
+		&& ray->next_y >= 0 && ray->next_y <= data->map->height)
+	{
+		map_x = (int)(ray->next_x / TILE_SIZE);
+		map_y = (int)(ray->next_y / TILE_SIZE);
+		if (is_wall(data, ray->next_x, ray->next_y) || 
+			data->map->map[map_y][map_x] == 'D')
+		{
+			_flg(ray, data, map_x, map_y);
+			points[0] = ray->next_x;
+			points[1] = ray->next_y;
+			break ;
+		}
+		else
+		{
+			ray->next_x += x_step;
+			ray->next_y += y_step;
+		}
+	}
+	_set_points(points, ray);
 }
 
 void	ft_horizontal_interc(t_ray *ray, t_data *data)
@@ -134,30 +97,31 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	_points_check(data, ray, x_step, y_step);
 }
 
-void _set_wall_hit(t_ray *ray, double horz_dis, double vert_dis, t_data *data)
+void	_set_wall_hit(t_ray *ray, double horz_dis,
+						double vert_dis, t_data *data)
 {
-    ray->is_door = false;
-    ray->was_vert = false;
+	int	map_x;
+	int	map_y;
 
-    if (horz_dis < vert_dis)
-    {
-        ray->wall_hit_x = ray->horz_wall_hit_x;
-        ray->wall_hit_y = ray->horz_wall_hit_y;
-        ray->distance = horz_dis;
-    }
-    else
-    {
-        ray->wall_hit_x = ray->vert_wall_hit_x;
-        ray->wall_hit_y = ray->vert_wall_hit_y;
-        ray->distance = vert_dis;
-        ray->was_vert = true;
-    }
-
-    // Check for door
-    int map_x = (int)(ray->wall_hit_x / TILE_SIZE);
-    int map_y = (int)(ray->wall_hit_y / TILE_SIZE);
-    if (data->map->map[map_y][map_x] == 'D')
-        ray->is_door = true;
+	ray->is_door = false;
+	ray->was_vert = false;
+	if (horz_dis < vert_dis)
+	{
+		ray->wall_hit_x = ray->horz_wall_hit_x;
+		ray->wall_hit_y = ray->horz_wall_hit_y;
+		ray->distance = horz_dis;
+	}
+	else
+	{
+		ray->wall_hit_x = ray->vert_wall_hit_x;
+		ray->wall_hit_y = ray->vert_wall_hit_y;
+		ray->distance = vert_dis;
+		ray->was_vert = true;
+	}
+	map_x = (int)(ray->wall_hit_x / TILE_SIZE);
+	map_y = (int)(ray->wall_hit_y / TILE_SIZE);
+	if (data->map->map[map_y][map_x] == 'D')
+		ray->is_door = true;
 }
 
 void	cast_ray(t_ray *ray, t_data *data)

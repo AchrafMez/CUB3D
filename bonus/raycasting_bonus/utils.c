@@ -3,19 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 10:09:34 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/26 10:37:21 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:02:51 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3_bonus.h"
-
-uint32_t	get_rgb(int r, int g, int b, int a)
-{
-	return (r << 24 | g << 16 | b << 8 | a);
-}
 
 int	is_wall(t_data *data, int x, int y)
 {
@@ -62,11 +57,10 @@ int	is_collision(t_data *data, double new_x, double new_y)
 		|| is_wall(data, new_x - TILE_SIZE / 4, new_y + TILE_SIZE / 4)
 		|| is_wall(data, new_x + TILE_SIZE / 4, new_y + TILE_SIZE / 4))
 		return (1);
-
-	if (is_door(data, new_x - TILE_SIZE, new_y - TILE_SIZE)
-		|| is_door(data, new_x + TILE_SIZE, new_y - TILE_SIZE)
-		|| is_door(data, new_x - TILE_SIZE, new_y + TILE_SIZE)
-		|| is_door(data, new_x + TILE_SIZE, new_y + TILE_SIZE))
+	if (is_door(data, new_x - TILE_SIZE / 12, new_y - TILE_SIZE / 12)
+		|| is_door(data, new_x + TILE_SIZE / 12, new_y - TILE_SIZE / 12)
+		|| is_door(data, new_x - TILE_SIZE / 12, new_y + TILE_SIZE / 12)
+		|| is_door(data, new_x + TILE_SIZE / 12, new_y + TILE_SIZE / 12))
 		return (1);
 	return (0);
 }

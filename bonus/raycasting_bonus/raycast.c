@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 11:31:49 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 11:59:57 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:21:30 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,22 @@ void	_close(void *param)
 	data = (t_data *)param;
 	free_txtr(data);
 	free(data->player);
+}
+
+void	render(void *param)
+{
+	t_data	*data;
+
+	data = (t_data *)param;
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
+	{
+		free_txtr(data);
+		free(data->player);
+		mlx_close_window(data->map->mlx);
+		return ;
+	}
+	ft_keys(data);
+	render_all(data);
 }
 
 int	raycast(t_data *data)

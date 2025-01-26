@@ -3,18 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   cub3_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/26 09:09:06 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/26 10:23:28 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/26 17:02:28 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3_bonus.h"
 
-void	leak(void)
+void	_run(t_map *map, char **av)
 {
-	system("leaks cub3D");
+	null_init(map);
+	read_map(av[1], &map);
+	check_filled_map(map);
+	check_map_chars(map);
+	whxy(&map);
+	check_map_spaces(map);
+	is_valid_door(map);
 }
 
 int	main(int ac, char **av)
@@ -29,21 +35,14 @@ int	main(int ac, char **av)
 			map = malloc(sizeof(t_map));
 			if (!map)
 				return (free_map(map), EXIT_FAILURE);
-			null_init(map);
-			read_map(av[1], &map);
-			check_filled_map(map);
-			check_map_chars(map);
-			whxy(&map);
-			check_map_spaces(map);
-			is_valid_door(map);
 			data.map = map;
+			_run(map, av);
 			if (raycast(&data))
 				return (free_map(map), EXIT_FAILURE);
 			free_map(map);
 		}
 		else
 			printf("Uncorrect filename\n");
-		// atexit(leak);
 	}
 	else
 		printf("Usage: cub3D *.cub\n");

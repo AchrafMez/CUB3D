@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3_bonus.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amezioun <amezioun@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/26 10:22:17 by amezioun         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:49:19 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,4 +214,14 @@ uint32_t			get_rgb_color(int *rgb);
 int					get_tex_x_pixel(float tex_x, mlx_texture_t *tex);
 void				adjust_draw_bounds(t_tex_params *p, int *draw_start,
 						int *draw_end);
+int					is_door(t_data *data, int x, int y);
+void				_flg(t_ray *ray, t_data *data, int map_x, int map_y);
+void				handle_door_interaction(t_data *data);
+void				ft_keys(t_data *data);
+void				render_all(t_data *data);
+void				draw_tex(t_tex_params *p);
+void				draw_fc(t_data *data, int vertical);
+void				draw_tex_helper(t_tex_params *p, int tex_x_pixel,
+						int draw_start);
+
 #endif
