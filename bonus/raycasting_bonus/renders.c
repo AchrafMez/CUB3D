@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:46:39 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 12:23:00 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:22:51 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,26 @@ void	clear_image(mlx_image_t *img)
 	}
 }
 
+void	color_cell(t_data *data, int x, int y)
+{
+	int	map_x;
+	int	map_y;
+	int	start_x;
+	int	start_y;
+
+	start_x = data->player->pl->instances->x
+		- (MINIMAP_SIZE / 2) / SCALE_FACTOR;
+	start_y = data->player->pl->instances->y
+		- (MINIMAP_SIZE / 2) / SCALE_FACTOR;
+	map_x = start_x + (x / SCALE_FACTOR);
+	map_y = start_y + (y / SCALE_FACTOR);
+	if (data->map->map[map_y / TILE_SIZE][map_x / TILE_SIZE] == '1')
+		mlx_put_pixel(data->map->mini_map, x, y, COLOR_WALL);
+	if (data->map->map[map_y / TILE_SIZE][map_x / TILE_SIZE] == 'D'
+		|| data->map->map[map_y / TILE_SIZE][map_x / TILE_SIZE] == 'O')
+		mlx_put_pixel(data->map->mini_map, x, y, get_rgb(119, 141, 169, 255));
+}
+
 void	draw_minimap(t_data *data, int start_x, int start_y)
 {
 	int	y;
@@ -49,10 +69,7 @@ void	draw_minimap(t_data *data, int start_x, int start_y)
 				&& map_y < data->map->height
 				&& map_x / TILE_SIZE
 				<= ft_strlen(data->map->map[map_y / TILE_SIZE]))
-			{
-				if (data->map->map[map_y / TILE_SIZE][map_x / TILE_SIZE] == '1')
-					mlx_put_pixel(data->map->mini_map, x, y, COLOR_WALL);
-			}
+				color_cell(data, x, y);
 		}
 	}
 }

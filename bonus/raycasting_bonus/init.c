@@ -6,11 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 10:11:42 by abmahfou          #+#    #+#             */
-<<<<<<< HEAD:raycasting/init.c
-/*   Updated: 2025/01/24 11:41:49 by abmahfou         ###   ########.fr       */
-=======
-/*   Updated: 2025/01/25 12:35:47 by abmahfou         ###   ########.fr       */
->>>>>>> main:bonus/raycasting_bonus/init.c
+/*   Updated: 2025/01/26 23:12:20 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +79,6 @@ t_ray	*create_ray(double angle)
 	ray->next_x = 0;
 	ray->next_y = 0;
 	ray->flg = -1;
+	ray->is_door = false;
 	return (ray);
 }

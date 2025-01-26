@@ -1,29 +1,28 @@
-<<<<<<< HEAD:cub3.c
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3.c                                             :+:      :+:    :+:   */
+/*   cub3_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/24 12:38:37 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/24 19:21:02 by abmahfou         ###   ########.fr       */
+/*   Created: 2025/01/26 23:13:10 by abmahfou          #+#    #+#             */
+/*   Updated: 2025/01/26 23:13:18 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3.h"
-=======
 #include "cub3_bonus.h"
->>>>>>> main:bonus/cub3_bonus.c
 
-void	leak(void)
+void	_run(t_map *map, char **av)
 {
-	system("leaks cub3D");
+	null_init(map);
+	read_map(av[1], &map);
+	check_filled_map(map);
+	check_map_chars(map);
+	whxy(&map);
+	check_map_spaces(map);
+	is_valid_door(map);
 }
-<<<<<<< HEAD:cub3.c
-=======
 
->>>>>>> main:bonus/cub3_bonus.c
 int	main(int ac, char **av)
 {
 	t_data	data;
@@ -36,20 +35,14 @@ int	main(int ac, char **av)
 			map = malloc(sizeof(t_map));
 			if (!map)
 				return (free_map(map), EXIT_FAILURE);
-			null_init(map);
-			read_map(av[1], &map);
-			check_filled_map(map);
-			check_map_chars(map);
-			whxy(&map);
-			check_map_spaces(map);
 			data.map = map;
+			_run(map, av);
 			if (raycast(&data))
 				return (free_map(map), EXIT_FAILURE);
 			free_map(map);
 		}
 		else
 			printf("Uncorrect filename\n");
-		// atexit(leak);
 	}
 	else
 		printf("Usage: cub3D *.cub\n");

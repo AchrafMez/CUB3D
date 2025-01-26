@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 18:32:08 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 15:42:06 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 23:12:37 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	free_txtr(t_data *data)
 	int	i;
 
 	i = -1;
-	while (++i < 4)
+	while (++i < 5)
 	{
 		if (data->map->textures[i])
 			mlx_delete_texture(data->map->textures[i]);
@@ -69,18 +69,21 @@ void	load_textures(t_data *data)
 	if (!data->player->txr1)
 	{
 		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		free_txtr(data);
 		exit(1);
 	}
 	data->player->txr2 = mlx_load_png("./textures/2.png");
 	if (!data->player->txr2)
 	{
 		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		free_txtr(data);
 		exit(1);
 	}
 	data->player->txr3 = mlx_load_png("./textures/3.png");
 	if (!data->player->txr3)
 	{
 		write(STDERR_FILENO, "TXTR ERROR !!\n", 14);
+		free_txtr(data);
 		exit(1);
 	}
 }

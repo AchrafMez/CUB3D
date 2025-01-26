@@ -53,6 +53,7 @@ SRC_BNS = ./bonus/cub3_bonus.c \
 		./bonus/raycasting_bonus/tex_utils.c \
 		./bonus/raycasting_bonus/tex_util.c \
 		./bonus/raycasting_bonus/texture.c \
+		./bonus/raycasting_bonus/tex_util2.c \
 		./bonus/config_bonus/check_map.c \
 		./bonus/config_bonus/check.c\
 		./bonus/config_bonus/FC.c\
@@ -73,6 +74,7 @@ SRC_BNS = ./bonus/cub3_bonus.c \
 		./bonus/raycasting_bonus/init.c \
 		./bonus/raycasting_bonus/renders.c \
 		./bonus/raycasting_bonus/animation.c \
+		./bonus/raycasting_bonus/doors.c \
     	./bonus/getnextline_bonus/get_next_line.c \
     	./bonus/getnextline_bonus/get_next_line_utils.c \
     	./bonus/lib_bonus/ft_split.c \

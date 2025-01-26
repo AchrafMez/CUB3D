@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/15 19:21:31 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 12:53:45 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:49:07 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 void	_points_check(t_data *data, t_ray *ray, double x_step, double y_step)
 {
 	double	*points;
+	int		map_x;
+	int		map_y;
 
 	points = malloc(sizeof(double) * 2);
 	while (ray->next_x >= 0 && ray->next_x <= data->map->width
 		&& ray->next_y >= 0 && ray->next_y <= data->map->height)
 	{
-		if (is_wall(data, ray->next_x, ray->next_y))
+		map_x = (int)(ray->next_x / TILE_SIZE);
+		map_y = (int)(ray->next_y / TILE_SIZE);
+		if (is_wall(data, ray->next_x, ray->next_y) || 
+			data->map->map[map_y][map_x] == 'D')
 		{
-			if (ray->flg == 1)
-				ray->found_horz_hit = true;
-			else if (ray->flg == 0)
-				ray->found_vert_hit = true;
+			_flg(ray, data, map_x, map_y);
 			points[0] = ray->next_x;
 			points[1] = ray->next_y;
 			break ;
@@ -95,8 +97,14 @@ void	ft_vertical_interc(t_ray *ray, t_data *data)
 	_points_check(data, ray, x_step, y_step);
 }
 
-void	_set_wall_hit(t_ray *ray, double horz_dis, double vert_dis)
+void	_set_wall_hit(t_ray *ray, double horz_dis,
+						double vert_dis, t_data *data)
 {
+	int	map_x;
+	int	map_y;
+
+	ray->is_door = false;
+	ray->was_vert = false;
 	if (horz_dis < vert_dis)
 	{
 		ray->wall_hit_x = ray->horz_wall_hit_x;
@@ -110,6 +118,10 @@ void	_set_wall_hit(t_ray *ray, double horz_dis, double vert_dis)
 		ray->distance = vert_dis;
 		ray->was_vert = true;
 	}
+	map_x = (int)(ray->wall_hit_x / TILE_SIZE);
+	map_y = (int)(ray->wall_hit_y / TILE_SIZE);
+	if (data->map->map[map_y][map_x] == 'D')
+		ray->is_door = true;
 }
 
 void	cast_ray(t_ray *ray, t_data *data)
@@ -135,5 +147,5 @@ void	cast_ray(t_ray *ray, t_data *data)
 				data->player->pl->instances->y,
 				ray->vert_wall_hit_x, ray->vert_wall_hit_y);
 	}
-	_set_wall_hit(ray, horz_hit_distance, vert_hit_distance);
+	_set_wall_hit(ray, horz_hit_distance, vert_hit_distance, data);
 }

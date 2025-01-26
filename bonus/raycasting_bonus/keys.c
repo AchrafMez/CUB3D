@@ -6,7 +6,7 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:29:59 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 11:59:55 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:23:39 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,22 @@ void	render_all(t_data *data)
 	free(rays);
 }
 
+void	door_key(t_data *data)
+{
+	static bool	e_key_pressed = false;
+
+	if (mlx_is_key_down(data->map->mlx, MLX_KEY_E))
+	{
+		if (!e_key_pressed)
+		{
+			handle_door_interaction(data);
+			e_key_pressed = true;
+		}
+	}
+	else
+		e_key_pressed = false;
+}
+
 void	ft_keys(t_data *data)
 {
 	if (mlx_is_key_down(data->map->mlx, MLX_KEY_W))
@@ -91,20 +107,5 @@ void	ft_keys(t_data *data)
 		data->player->turn_direction = -1;
 	else
 		data->player->turn_direction = 0;
-}
-
-void	render(void *param)
-{
-	t_data	*data;
-
-	data = (t_data *)param;
-	if (mlx_is_key_down(data->map->mlx, MLX_KEY_ESCAPE))
-	{
-		free_txtr(data);
-		free(data->player);
-		mlx_close_window(data->map->mlx);
-		return ;
-	}
-	ft_keys(data);
-	render_all(data);
+	door_key(data);
 }

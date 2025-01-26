@@ -6,21 +6,21 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 09:45:56 by abmahfou          #+#    #+#             */
-/*   Updated: 2025/01/25 13:57:28 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:49:19 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3_BONUS_H
 # define CUB3_BONUS_H
 
-# include <stdio.h>
-# include <unistd.h>
 # include "../MLX42/include/MLX42/MLX42.h"
 # include "./getnextline_bonus/get_next_line.h"
 # include "./lib_bonus/lib.h"
 # include <fcntl.h>
 # include <math.h>
+# include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 # define TILE_SIZE 32
 # define WIN_WIDTH 1220
@@ -71,6 +71,7 @@ typedef struct s_ray
 	double			next_x;
 	double			next_y;
 	int				flg;
+	bool			is_door;
 }					t_ray;
 
 typedef struct s_map
@@ -91,7 +92,7 @@ typedef struct s_map
 	mlx_image_t		*mini_map;
 	mlx_image_t		*img;
 	mlx_image_t		*background;
-	mlx_texture_t	*textures[4];
+	mlx_texture_t	*textures[5];
 }					t_map;
 
 typedef struct s_animation
@@ -130,7 +131,7 @@ void				fill_floor(char **fc, t_map **map);
 void				fill_ciel(char **fc, t_map **map);
 void				store_textures(char index, char *line, t_map **map);
 int					check_texture_perm(char *path);
-
+void				is_valid_door(t_map *map);
 void				store_fc(char **fc, int flag, t_map **map);
 int					check_fc_prototype(char *line, t_map *map);
 int					check_fc(char *line, t_map *map);
@@ -213,4 +214,14 @@ uint32_t			get_rgb_color(int *rgb);
 int					get_tex_x_pixel(float tex_x, mlx_texture_t *tex);
 void				adjust_draw_bounds(t_tex_params *p, int *draw_start,
 						int *draw_end);
+int					is_door(t_data *data, int x, int y);
+void				_flg(t_ray *ray, t_data *data, int map_x, int map_y);
+void				handle_door_interaction(t_data *data);
+void				ft_keys(t_data *data);
+void				render_all(t_data *data);
+void				draw_tex(t_tex_params *p);
+void				draw_fc(t_data *data, int vertical);
+void				draw_tex_helper(t_tex_params *p, int tex_x_pixel,
+						int draw_start);
+
 #endif

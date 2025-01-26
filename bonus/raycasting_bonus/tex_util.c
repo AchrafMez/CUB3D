@@ -6,11 +6,16 @@
 /*   By: abmahfou <abmahfou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 04:51:47 by amezioun          #+#    #+#             */
-/*   Updated: 2025/01/25 12:23:02 by abmahfou         ###   ########.fr       */
+/*   Updated: 2025/01/26 16:49:37 by abmahfou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3_bonus.h"
+
+uint32_t	get_rgb(int r, int g, int b, int a)
+{
+	return (r << 24 | g << 16 | b << 8 | a);
+}
 
 uint32_t	get_rgb_color(int *rgb)
 {
@@ -37,4 +42,18 @@ void	adjust_draw_bounds(t_tex_params *p, int *draw_start, int *draw_end)
 		*draw_start = 0;
 	if (*draw_end >= WIN_HEIGHT)
 		*draw_end = WIN_HEIGHT - 1;
+}
+
+void	_flg(t_ray *ray, t_data *data, int map_x, int map_y)
+{
+	if (map_y <= data->map->height && map_x <= data->map->width
+		&& map_x <= ft_strlen(data->map->map[map_y]))
+	{
+		if (data->map->map[map_y][map_x] == 'D')
+			ray->is_door = true;
+	}
+	if (ray->flg == 1)
+		ray->found_horz_hit = true;
+	else if (ray->flg == 0)
+		ray->found_vert_hit = true;
 }
