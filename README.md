@@ -7,3 +7,17 @@ Developed with my teammate [@Kl3z](https://github.com/abdelali77).
 # Preview
 
 ![Preview](https://github.com/AchrafMez/CUB3D/blob/main/cub3d.gif)
+
+## Run
+```sh
+git clone https://github.com/AchrafMez/CUB3D
+cd CUB3D
+
+make
+./cub3D maps/map.cub
+
+make bonus
+./cub3D_bonus maps/map_bonus.cub
+```
+
+---
